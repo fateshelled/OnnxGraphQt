@@ -1,0 +1,6 @@
+networkx
+PySide2
+numpy
+onnx
+onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
+git+https://github.com/jchanvfx/NodeGraphQt.git#egg=NodeGraphQt

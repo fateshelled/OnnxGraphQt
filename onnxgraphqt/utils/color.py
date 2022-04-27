@@ -1,0 +1,39 @@
+COLOR_WHITE = [235, 235, 235]
+COLOR_LIGHTGRAY = [200, 200, 203]
+COLOR_GRAY = [132, 145, 158]
+COLOR_BLACK = [20, 20, 20]
+
+COLOR_RED = [112, 41, 33]
+COLOR_GREEN = [51, 85, 51]
+COLOR_BLUE = [51, 85, 136]
+COLOR_BROWN = [89, 66, 59]
+
+COLOR_BG = COLOR_LIGHTGRAY
+COLOR_FONT = COLOR_BLACK
+COLOR_GRID = COLOR_GRAY
+INPUT_NODE_COLOR = COLOR_WHITE
+OUTPUT_NODE_COLOR = COLOR_WHITE
+DEFAULT_COLOR = COLOR_GRAY
+NODE_COLORS = {
+    'Conv': COLOR_BLUE,
+    'Clip': COLOR_RED,
+    'Add': COLOR_BLACK,
+    'Shape': COLOR_BLACK,
+    'Gather': COLOR_GREEN,
+    'Unsqueeze': COLOR_GREEN,
+    'GlobalAveragePool': COLOR_GREEN,
+    'Concat': COLOR_BROWN,
+    'Reshape': COLOR_BROWN,
+    'Gemm': COLOR_BLUE,
+    'Sigmoid': COLOR_RED,
+    'Mul': COLOR_BLACK,
+    'MaxPool': COLOR_GREEN,
+    'Slice': COLOR_BROWN,
+    'Transpose': COLOR_GREEN,
+    'QuantizeLinear': COLOR_BLACK,
+    'QLinearConv': COLOR_BLUE,
+    'DequantizeLinear': COLOR_BLACK,
+    'QLinearGlobalAveragePool': COLOR_GREEN,
+    'QLinearAdd': COLOR_BLACK,
+    'QLinearMatMul': COLOR_BLACK,
+}
