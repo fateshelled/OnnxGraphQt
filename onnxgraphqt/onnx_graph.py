@@ -81,13 +81,13 @@ class ONNXNode(BaseNode):
     def set_attrs(self, attrs:OrderedDict):
         self.attrs = attrs
         for key, val in self.attrs.items():
-            if self.has_property(key):
-                self.set_property(key, val)
+            if self.has_property(key + "_"):
+                self.set_property(key + "_", val)
             else:
-                self.create_property(key, val, widget_type=NODE_PROP_QLINEEDIT)
+                self.create_property(key + "_", val, widget_type=NODE_PROP_QLINEEDIT)
 
     def get_attrs(self)->OrderedDict:
-        d = [(key, self.get_property(key)) for key in self.attrs.keys()]
+        d = [(key, self.get_property(key + "_")) for key in self.attrs.keys()]
         return OrderedDict(d)
 
     def set_op(self, op:str):
@@ -255,12 +255,12 @@ class ONNXNodeGraph(NodeGraph):
         n.set_onnx_outputs(onnx_outputs)
         if n.op in ['Constant', 'ConstantOfShape']:
             d = {
-                "inputs_":onnx_node.attrs["value"].inputs,
-                "name_": onnx_node.attrs["value"].name,
-                "outputs_": onnx_node.attrs["value"].outputs,
-                "shape_": onnx_node.attrs["value"].shape,
-                "dtype_": str(onnx_node.attrs["value"].values.dtype),
-                "values_": onnx_node.attrs["value"].values.tolist()
+                "inputs":onnx_node.attrs["value"].inputs,
+                "name": onnx_node.attrs["value"].name,
+                "outputs": onnx_node.attrs["value"].outputs,
+                "shape": onnx_node.attrs["value"].shape,
+                "dtype": str(onnx_node.attrs["value"].values.dtype),
+                "values": onnx_node.attrs["value"].values.tolist()
             }
             n.set_attrs(d)
         else:

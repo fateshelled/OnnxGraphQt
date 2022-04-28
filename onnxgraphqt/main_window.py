@@ -20,8 +20,7 @@ from utils.opset import DEFAULT_OPSET
 class MainWindow(QtWidgets.QMainWindow):
     _default_window_width = 1200
     _default_window_height = 800
-    _graph_size_ratio = 3
-    _sidemenu_size_ratio = 1
+    _sidemenu_width = 400
     _ENABLE_EXPORT_BUTTON = False
 
     def __init__(self, onnx_model_path="", parent=None):
@@ -33,6 +32,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.properties_bin: PropertiesBinWidget = None
 
         self.init_ui()
+
+        if onnx_model_path:
+            self.btnImportONNX.setEnabled(True)
+            # self.btnExportONNX.setEnabled(True)
 
     def init_ui(self):
         # Window size
@@ -50,18 +53,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMenuBar(self.menu_bar)
 
         # Main Layout
-        self.layout_base = QtWidgets.QHBoxLayout()
+        # Fixed side menu size.
         self.layout_graph = QtWidgets.QStackedLayout()
-        self.layout_sidemenu = QtWidgets.QVBoxLayout()
-        self.layout_base.addLayout(self.layout_graph, stretch=self._graph_size_ratio)
-        self.layout_base.addLayout(self.layout_sidemenu, stretch=self._sidemenu_size_ratio)
+        self.layout_base = QtWidgets.QHBoxLayout()
+
+        self.widget_sidemenu = QtWidgets.QWidget()
+        self.widget_sidemenu.setFixedWidth(self._sidemenu_width)
+        self.layout_sidemenu = QtWidgets.QVBoxLayout(self.widget_sidemenu)
+        self.layout_main_properties = QtWidgets.QVBoxLayout()
+        self.layout_node_properties = QtWidgets.QVBoxLayout()
+        self.layout_sidemenu.addLayout(self.layout_main_properties)
+        self.layout_sidemenu.addSpacerItem(QtWidgets.QSpacerItem(self._sidemenu_width, 10))
+        self.layout_sidemenu.addLayout(self.layout_node_properties)
+
+        self.layout_base.addLayout(self.layout_graph)
+        self.layout_base.addWidget(self.widget_sidemenu)
+
         central_widget = QtWidgets.QWidget()
         central_widget.setLayout(self.layout_base)
         self.setCentralWidget(central_widget)
 
         # Label
         layout_lbl = QtWidgets.QVBoxLayout()
-        layout_lbl.setAlignment(QtCore.Qt.AlignTop)
 
         lbl_graph_opset = QtWidgets.QLabel()
         lbl_graph_opset.setText(f"opset: {self.graph.opset}")
@@ -75,8 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout_lbl.addWidget(lbl_graph_name)
         layout_lbl.addWidget(lbl_graph_opset)
         layout_lbl.addWidget(lbl_graph_doc_string)
-        self.layout_sidemenu.addLayout(layout_lbl)
-
+        self.layout_main_properties.addLayout(layout_lbl)
 
         # Button
         layout_btn = QtWidgets.QHBoxLayout()
@@ -95,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout_btn.addWidget(self.btnOpenONNX)
         layout_btn.addWidget(self.btnImportONNX)
         layout_btn.addWidget(self.btnExportONNX)
-        self.layout_sidemenu.addLayout(layout_btn)
+        self.layout_main_properties.addLayout(layout_btn)
 
         # ONNXNodeGraph
         self.update_graph(self.graph)
@@ -120,17 +132,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # if self.nodes_tree is not None:
         #     self.nodes_tree.hide()
-        #     self.layout_sidemenu.removeWidget(self.nodes_tree)
+        #     self.layout_node_properties.removeWidget(self.nodes_tree)
         #     del self.nodes_tree
         # self.nodes_tree = self.create_nodes_tree(self.graph)
-        # self.layout_sidemenu.addWidget(self.nodes_tree)
+        # self.layout_node_properties.addWidget(self.nodes_tree)
 
         if self.properties_bin is not None:
             self.properties_bin.hide()
-            self.layout_sidemenu.removeWidget(self.properties_bin)
+            self.layout_node_properties.removeWidget(self.properties_bin)
             del self.properties_bin
         self.properties_bin = self.create_properties_bin(self.graph)
-        self.layout_sidemenu.addWidget(self.properties_bin)
+        self.layout_node_properties.addWidget(self.properties_bin)
 
         cursor.setShape(QtCore.Qt.ArrowCursor)
         self.setCursor(cursor)
