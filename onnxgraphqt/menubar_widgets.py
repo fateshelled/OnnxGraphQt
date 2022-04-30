@@ -1,13 +1,10 @@
 from PySide2 import QtCore, QtWidgets, QtGui
 
-class MenuBar(QtWidgets.QMenuBar):
+class MenuBarWidget(QtWidgets.QMenuBar):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         menu = {
             "File": {
-                # "open": self.file_open_clicked,
-                # "import": self.file_export_onnx_clicked,
-                # "export": self.file_export_onnx_clicked,
                 "exit": self.file_exit_clicked,
             },
             # "Edit": {

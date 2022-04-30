@@ -1,6 +1,7 @@
 from typing import (
-    Dict, OrderedDict, List, Any
+    Dict, List, Any, Optional
 )
+from collections import namedtuple, OrderedDict
 import copy
 
 import numpy as np
@@ -47,13 +48,14 @@ from utils.color import (
     COLOR_GRID,
     INPUT_NODE_COLOR,
     OUTPUT_NODE_COLOR,
-    DEFAULT_COLOR,
-    NODE_COLORS,
+    get_node_color,
+    PrintColor,
 )
 from utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,
 )
 
+ONNX_IO = namedtuple("ONNX_IO", ["name", "dtype", "shape", "values"])
 
 class ONNXNode(BaseNode):
     # unique node identifier.
@@ -70,8 +72,8 @@ class ONNXNode(BaseNode):
 
         # add property for visualize and serialize.
         self.create_property("op", self.op, widget_type=NODE_PROP_QLABEL)
-        self.create_property("onnx_inputs", self.onnx_inputs, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("onnx_outputs", self.onnx_outputs, widget_type=NODE_PROP_QLINEEDIT)
+        self.create_property("inputs_", self.onnx_inputs, widget_type=NODE_PROP_QLINEEDIT)
+        self.create_property("outputs_", self.onnx_outputs, widget_type=NODE_PROP_QLINEEDIT)
 
         # create node inputs.
         self.add_input('multi in', multi_input=True)
@@ -94,17 +96,26 @@ class ONNXNode(BaseNode):
         self.op = op
         self.set_property("op", self.op)
 
-    def set_onnx_inputs(self, onnx_inputs:List):
+    def set_onnx_inputs(self, onnx_inputs:List[ONNX_IO]):
         self.onnx_inputs = onnx_inputs
-        self.set_property("onnx_inputs", self.onnx_inputs)
+        self.set_property("inputs_", [[n, d, s, v] for n, d, s, v in self.onnx_inputs])
+        # for i, (name, dtype, shape, values) in enumerate(self.onnx_inputs):
+        #     prop_name = f"inputs_{i}"
+        #     if self.has_property(prop_name):
+        #         if dtype:
+        #             self.set_property(prop_name, name)
+        #         else:
+        #             self.set_property(prop_name, name)
+        #     else:
+        #         self.create_property(prop_name, name, widget_type=NODE_PROP_QLABEL)
 
-    def set_onnx_outputs(self, onnx_outputs:List):
+    def set_onnx_outputs(self, onnx_outputs:List[ONNX_IO]):
         self.onnx_outputs = onnx_outputs
-        self.set_property("onnx_outputs", self.onnx_outputs)
+        self.set_property("outputs_", [[n, d, s, v] for n, d, s, v in self.onnx_outputs])
 
     def set_color(self):
         self.view.text_color = COLOR_FONT + [255]
-        color = NODE_COLORS.get(self.op, DEFAULT_COLOR)
+        color = get_node_color(self.op)
         return super().set_color(*color)
 
 class ONNXInput(BaseNode):
@@ -224,32 +235,34 @@ class ONNXNodeGraph(NodeGraph):
     def create_qtnode(self, onnx_node: gs.Node)->NodeObject:
         node_name = onnx_node.name # str
         n = self.create_node("nodes.node.ONNXNode", name=node_name)
-        onnx_inputs = []
+        onnx_inputs:List[ONNX_IO] = []
         for inp in onnx_node.inputs:
-            if type(inp) is gs.Tensor:
-                onnx_inputs += [[inp.name, str(inp.dtype), inp.shape, -1]]
-            elif type(inp) is gs.Constant:
-                onnx_inputs += [[inp.name, str(inp.values.dtype), inp.shape, inp.values.tolist()]]
-            elif type(inp) is gs.Variable:
+            t = type(inp)
+            if t is gs.Tensor:
+                onnx_inputs += [ONNX_IO(inp.name, str(inp.dtype), inp.shape, None)]
+            elif t is gs.Constant:
+                onnx_inputs += [ONNX_IO(inp.name, str(inp.values.dtype), inp.shape, inp.values.tolist())]
+            elif t is gs.Variable:
                 if inp.dtype is None:
-                    onnx_inputs += [[inp.name, None, None, None]]
+                    onnx_inputs += [ONNX_IO(inp.name, None, None, None)]
                 else:
-                    onnx_inputs += [[inp.name, str(inp.dtype), inp.shape, -1]]
+                    onnx_inputs += [ONNX_IO(inp.name, str(inp.dtype), inp.shape, None)]
             else:
-                pass
+                onnx_inputs += [ONNX_IO(inp.name, None, None, None)]
         onnx_outputs = []
         for out in onnx_node.outputs:
-            if type(out) is gs.Tensor:
-                onnx_outputs += [[out.name, str(out._values.dtype), out.shape, -1]]
-            elif type(out) is gs.Constant:
-                onnx_outputs += [[out.name, str(out.values.dtype), out.shape, out.values.tolist()]]
-            elif type(out) is gs.Variable:
+            t = type(out)
+            if t is gs.Tensor:
+                onnx_outputs += [ONNX_IO(out.name, str(out._values.dtype), out.shape, None)]
+            elif t is gs.Constant:
+                onnx_outputs += [ONNX_IO(out.name, str(out.values.dtype), out.shape, out.values.tolist())]
+            elif t is gs.Variable:
                 if out.dtype is None:
-                    onnx_outputs += [[out.name, None, None, None]]
+                    onnx_outputs += [ONNX_IO(out.name, None, None, None)]
                 else:
-                    onnx_outputs += [[out.name, str(out.dtype), out.shape, -1]]
+                    onnx_outputs += [ONNX_IO(out.name, str(out.dtype), out.shape, None)]
             else:
-                pass
+                onnx_outputs += [ONNX_IO(out.name, None, None, None)]
         n.set_op(onnx_node.op) # str
         n.set_onnx_inputs(onnx_inputs)
         n.set_onnx_outputs(onnx_outputs)
@@ -276,8 +289,23 @@ class ONNXNodeGraph(NodeGraph):
     def to_networkx(self)->nx.DiGraph:
         return NodeGraphToNetworkX(self)
 
-    def to_onnx(self)->gs.Graph:
+    def to_onnx_gs(self)->gs.Graph:
         return NodeGraphtoONNX(self)
+
+    def to_onnx(self, non_verbose=True)->onnx.ModelProto:
+        graph = NodeGraphtoONNX(self)
+        ret = None
+        try:
+            ret = onnx.shape_inference.infer_shapes(gs.export_onnx(graph))
+        except:
+            ret = gs.export_onnx(graph)
+            if not non_verbose:
+                print(
+                    f'{PrintColor.YELLOW}WARNING:{PrintColor.RESET} '+
+                    'The input shape of the next OP does not match the output shape. '+
+                    'Be sure to open the .onnx file to verify the certainty of the geometry.'
+                )
+        return ret
 
     def auto_layout(self):
         auto_layout_nodes(self)
