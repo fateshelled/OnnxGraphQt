@@ -29,8 +29,8 @@ python3 onnxgraphqt/main.py
 - [ ] Export Model
 - [ ] Add and Remove Operator
 - [ ] Edit Operator Parameter
-- [ ] Change Opset
-- [ ] NCHW and NHWC conversion
+- [x] Change Opset
+- [x] NCHW and NHWC conversion
 
 ## References
 - https://github.com/jchanvfx/NodeGraphQt
