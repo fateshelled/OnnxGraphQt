@@ -23,6 +23,7 @@ from sna4onnx import add as onnx_tools_add
 
 from menubar_widgets import MenuBarWidget
 from add_node_widgets import AddNodeWidgets
+from change_opset_widgets import ChangeOpsetWidget
 from onnx_graph import ONNXNodeGraph, ONNXtoNodeGraph
 # from utils.color import *
 from utils.opset import DEFAULT_OPSET
@@ -213,11 +214,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if onnx_model:
             onnx_graph = gs.import_onnx(onnx_model)
         elif onnx_model_path:
+            self.setWindowTitle(os.path.basename(onnx_model_path))
             onnx_graph = gs.import_onnx(onnx.load(onnx_model_path))
 
         # create graph controller.
         if graph is None:
-            self.setWindowTitle(os.path.basename(onnx_model_path))
             node_graph = ONNXNodeGraph(name=onnx_graph.name,
                                        opset=onnx_graph.opset,
                                        doc_string=onnx_graph.doc_string,
@@ -299,6 +300,15 @@ class MainWindow(QtWidgets.QMainWindow):
         print(sys._getframe().f_code.co_name)
 
     def btnChangeOpset_clicked(self, e:bool):
+        w = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
+        if w.exec_():
+            props = w.get_properties()
+            onnx_model:onnx.ModelProto = onnx_tools_op_change(
+                opset=int(props.opset),
+                onnx_graph=self.graph.to_onnx(non_verbose=False)
+            )
+            graph = self.load_graph(onnx_model=onnx_model)
+            self.update_graph(graph)
         print(sys._getframe().f_code.co_name)
 
     def btnChannelConvert_clicked(self, e:bool):
