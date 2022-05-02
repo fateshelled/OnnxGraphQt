@@ -24,6 +24,7 @@ from sna4onnx import add as onnx_tools_add
 from menubar_widgets import MenuBarWidget
 from add_node_widgets import AddNodeWidgets
 from change_opset_widgets import ChangeOpsetWidget
+from change_channel_widgets import ChangeChannelWidgets
 from onnx_graph import ONNXNodeGraph, ONNXtoNodeGraph
 # from utils.color import *
 from utils.opset import DEFAULT_OPSET
@@ -285,7 +286,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if w.exec_():
             props = w.get_properties()
             onnx_model:onnx.ModelProto = onnx_tools_add(
-                onnx_graph=self.graph.to_onnx(non_verbose=False), **props)
+                onnx_graph=self.graph.to_onnx(non_verbose=False), **props._asdict())
 
             graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
             self.update_graph(graph)
@@ -312,6 +313,15 @@ class MainWindow(QtWidgets.QMainWindow):
         print(sys._getframe().f_code.co_name)
 
     def btnChannelConvert_clicked(self, e:bool):
+        w = ChangeChannelWidgets(parent=self)
+        if w.exec_():
+            props = w.get_properties()
+            onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
+                onnx_graph=self.graph.to_onnx(non_verbose=False),
+                **props._asdict()
+            )
+            graph = self.load_graph(onnx_model=onnx_model)
+            self.update_graph(graph)
         print(sys._getframe().f_code.co_name)
 
     def exit(self):

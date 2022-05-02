@@ -169,7 +169,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
             self.add_output_valiables[index]["dtype"] = QtWidgets.QComboBox()
             for dtype in AVAILABLE_DTYPES:
                 self.add_output_valiables[index]["dtype"].addItem(dtype)
-                self.add_output_valiables[index]["dtype"].setEditable(True)
+            self.add_output_valiables[index]["dtype"].setEditable(True)
             self.add_output_valiables[index]["dtype"].setFixedSize(100, 20)
             self.add_output_valiables[index]["dtype"].setPlaceholderText("dtype. e.g. `float32`")
             self.add_output_valiables[index]["shape"] = QtWidgets.QLineEdit()
