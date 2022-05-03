@@ -294,7 +294,7 @@ class ONNXNodeGraph(NodeGraph):
         return NodeGraphtoONNX(self)
 
     def to_onnx(self, non_verbose=True)->onnx.ModelProto:
-        graph = NodeGraphtoONNX(self)
+        graph = self.to_onnx_gs()
         ret = None
         try:
             ret = onnx.shape_inference.infer_shapes(gs.export_onnx(graph))
@@ -307,6 +307,16 @@ class ONNXNodeGraph(NodeGraph):
                     'Be sure to open the .onnx file to verify the certainty of the geometry.'
                 )
         return ret
+
+    def export(self, file_path:str):
+        try:
+            onnx.save(self.to_onnx(), file_path)
+            # from onnx_graphsurgeon.exporters.onnx_exporter import OnnxExporter
+            # og = OnnxExporter.export_graph(self.to_onnx_gs(), do_type_check=True)
+            # opset_imports = [onnx.helper.make_opsetid("", self.opset)]
+            # single_op_graph = make_model(og, opset_imports=opset_imports)
+        except Exception as e:
+            raise e
 
     def auto_layout(self):
         auto_layout_nodes(self)
@@ -347,7 +357,7 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
                         input_gs_variables.append(inp_v)
             elif dtype is None:
                 input_gs_variables.append(gs.Variable(name=name, dtype=None, shape=None))
-            elif val == -1:
+            elif val == -1 or val is None:
                 input_gs_variables.append(gs.Variable(name=name, dtype=dtype, shape=shape))
             else:
                 input_gs_variables.append(gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape)))
@@ -359,7 +369,7 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
                         output_gs_variables.append(out_v)
             elif dtype is None:
                 output_gs_variables.append(gs.Variable(name=name, dtype=None, shape=None))
-            elif val == -1:
+            elif val == -1 or val is None:
                 output_gs_variables.append(gs.Variable(name=name, dtype=dtype, shape=shape))
             else:
                 output_gs_variables.append(gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape)))

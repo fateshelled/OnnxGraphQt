@@ -133,7 +133,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
 
         self.btnDelNode = QtWidgets.QPushButton("Delete Node (snd4onnx)")
-        self.btnDelNode.setEnabled(True)
+        self.btnDelNode.setEnabled(False)
         self.btnDelNode.clicked.connect(self.btnDelNode_clicked)
 
         self.btnConstShrink = QtWidgets.QPushButton("Const Shrink (scs4onnx)")
@@ -265,6 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             filter="*.onnx")
         if not file_name:
             return
+        self.graph.export(file_name)
         print(f"Export: {file_name}.")
 
     def btnAddNode_clicked(self, e:bool):
@@ -332,8 +333,8 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication([])
 
     base_dir = os.path.dirname(__file__)
-    onnx_file = os.path.join(base_dir, "data", "mobilenetv2-12-int8.onnx")
-    onnx_file = "/media/ubuntu/my_passport/workspace/onnx_graph_qt/sample_nodegraphqt/mobilenetv2-7.onnx"
+    # onnx_file = os.path.join(base_dir, "data", "mobilenetv2-12-int8.onnx")
+    onnx_file = os.path.join(base_dir, "data", "mobilenetv2-7.onnx")
 
     main_window = MainWindow(onnx_model_path=onnx_file)
     main_window.show()
