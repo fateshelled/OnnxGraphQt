@@ -27,13 +27,16 @@ python3 onnxgraphqt/main.py
 ## ToDo
 - [x] Visualize Model
 - [x] Export Model
-- [ ] Model Combine [2. snc4onnx]
+- [ ] Combine Network [1. snc4onnx]
+- [ ] Extract Network [2. sne4onnx]
 - [ ] Delete Node [3. snd4onnx]
 - [x] Constant Value Shrink [4. scs4onnx]
-- [ ] Edit Operator Parameter [6. sam4onnx]
+- [x] Generate Operation [5. sog4onnx]
+- [ ] Modify Operator Parameter [6. sam4onnx]
 - [x] Change Opset [7. soc4onnx]
 - [x] NCHW and NHWC conversion [8. scc4onnx]
 - [x] Add Node (no tested) [9. sna4onnx]
+- [ ] Initialize Batchsize [10. sbi4onnx]
 
 ## References
 - https://github.com/jchanvfx/NodeGraphQt

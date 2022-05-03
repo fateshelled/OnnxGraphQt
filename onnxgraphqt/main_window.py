@@ -41,7 +41,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graph = self.load_graph(onnx_model_path=onnx_model_path)
         self.graph_widget = self.graph.widget
-        # self.nodes_tree: NodesTreeWidget = None
         self.properties_bin: PropertiesBinWidget = None
 
         self.init_ui()
@@ -121,17 +120,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # Operator Button
         layout_operator_btn = QtWidgets.QVBoxLayout()
 
-        self.btnChangeOpset = QtWidgets.QPushButton("Change Opset (soc4onnx)")
-        self.btnChangeOpset.setEnabled(True)
-        self.btnChangeOpset.clicked.connect(self.btnChangeOpset_clicked)
+        self.btnCombineNetwork = QtWidgets.QPushButton("Combine Network (snc4onnx)")
+        self.btnCombineNetwork.setEnabled(False)
+        self.btnCombineNetwork.clicked.connect(self.btnCombineNetwork_clicked)
 
-        self.btnAddNode = QtWidgets.QPushButton("Add Node (sna4onnx)")
-        self.btnAddNode.setEnabled(True)
-        self.btnAddNode.clicked.connect(self.btnAddNode_clicked)
-
-        self.btnGenerateOperator = QtWidgets.QPushButton("Generate Operator (sog4onnx)")
-        self.btnGenerateOperator.setEnabled(False)
-        self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
+        self.btnExtractNetwork = QtWidgets.QPushButton("Extract Network (sne4onnx)")
+        self.btnExtractNetwork.setEnabled(False)
+        self.btnExtractNetwork.clicked.connect(self.btnExtractNetwork_clicked)
 
         self.btnDelNode = QtWidgets.QPushButton("Delete Node (snd4onnx)")
         self.btnDelNode.setEnabled(False)
@@ -141,16 +136,41 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnConstShrink.setEnabled(True)
         self.btnConstShrink.clicked.connect(self.btnConstShrink_clicked)
 
+        self.btnGenerateOperator = QtWidgets.QPushButton("Generate Operator (sog4onnx)")
+        self.btnGenerateOperator.setEnabled(False)
+        self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
+
+        self.btnModifyAttrConst = QtWidgets.QPushButton("Modify Attribute and Constant (sam4onnx)")
+        self.btnModifyAttrConst.setEnabled(True)
+        self.btnModifyAttrConst.clicked.connect(self.btnModifyAttrConst_clicked)
+
+        self.btnChangeOpset = QtWidgets.QPushButton("Change Opset (soc4onnx)")
+        self.btnChangeOpset.setEnabled(True)
+        self.btnChangeOpset.clicked.connect(self.btnChangeOpset_clicked)
+
         self.btnChannelConvert = QtWidgets.QPushButton("Channel Convert (scc4onnx)")
         self.btnChannelConvert.setEnabled(True)
         self.btnChannelConvert.clicked.connect(self.btnChannelConvert_clicked)
 
-        layout_operator_btn.addWidget(self.btnChangeOpset)
-        layout_operator_btn.addWidget(self.btnAddNode)
-        layout_operator_btn.addWidget(self.btnGenerateOperator)
+        self.btnAddNode = QtWidgets.QPushButton("Add Node (sna4onnx)")
+        self.btnAddNode.setEnabled(True)
+        self.btnAddNode.clicked.connect(self.btnAddNode_clicked)
+
+        self.btnInitializeBatchSize = QtWidgets.QPushButton("Initialize Batchsize (sbi4onnx)")
+        self.btnInitializeBatchSize.setEnabled(False)
+        self.btnInitializeBatchSize.clicked.connect(self.btnInitializeBatchSize_clicked)
+
+        layout_operator_btn.addWidget(self.btnCombineNetwork)
+        layout_operator_btn.addWidget(self.btnExtractNetwork)
         layout_operator_btn.addWidget(self.btnDelNode)
         layout_operator_btn.addWidget(self.btnConstShrink)
+        layout_operator_btn.addWidget(self.btnGenerateOperator)
+        layout_operator_btn.addWidget(self.btnModifyAttrConst)
+        layout_operator_btn.addWidget(self.btnChangeOpset)
         layout_operator_btn.addWidget(self.btnChannelConvert)
+        layout_operator_btn.addWidget(self.btnAddNode)
+        layout_operator_btn.addWidget(self.btnInitializeBatchSize)
+
         self.layout_main_properties.addSpacerItem(QtWidgets.QSpacerItem(self._sidemenu_width, 10))
         self.layout_main_properties.addLayout(layout_operator_btn)
 
@@ -287,12 +307,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 "Add None",
                 parent=self)
 
-    def btnGenerateOperator_clicked(self, e:bool):
-        print(sys._getframe().f_code.co_name)
-
-    def btnDelNode_clicked(self, e:bool):
-        print(sys._getframe().f_code.co_name)
-
     def btnConstShrink_clicked(self, e:bool):
         w = ConstantShrinkWidgets(parent=self)
         if w.exec_():
@@ -346,6 +360,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"complete.",
                 "Channel Convert",
                 parent=self)
+
+    def btnCombineNetwork_clicked(self, e:bool):
+        print(sys._getframe().f_code.co_name)
+
+    def btnExtractNetwork_clicked(self, e:bool):
+        print(sys._getframe().f_code.co_name)
+
+    def btnGenerateOperator_clicked(self, e:bool):
+        print(sys._getframe().f_code.co_name)
+
+    def btnDelNode_clicked(self, e:bool):
+        print(sys._getframe().f_code.co_name)
+
+    def btnModifyAttrConst_clicked(self, e:bool):
+        print(sys._getframe().f_code.co_name)
+
+    def btnInitializeBatchSize_clicked(self, e:bool):
+        print(sys._getframe().f_code.co_name)
 
     def exit(self):
         self.close()
