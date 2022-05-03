@@ -26,6 +26,7 @@ from widgets_add_node import AddNodeWidgets
 from widgets_change_opset import ChangeOpsetWidget
 from widgets_change_channel import ChangeChannelWidgets
 from widgets_constant_shrink import ConstantShrinkWidgets
+from widgets_message_box import MessageBox
 from onnx_graph import ONNXNodeGraph, ONNXtoNodeGraph
 from utils.opset import DEFAULT_OPSET
 
@@ -267,6 +268,10 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.graph.export(file_name)
         print(f"Export: {file_name}.")
+        MessageBox(
+            f"Success. Export to {file_name}.",
+            "Export ONNX",
+            parent=self)
 
     def btnAddNode_clicked(self, e:bool):
         w = AddNodeWidgets(self)
@@ -277,6 +282,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
             self.update_graph(graph)
+            MessageBox(
+                f"complete.",
+                "Add None",
+                parent=self)
 
     def btnGenerateOperator_clicked(self, e:bool):
         print(sys._getframe().f_code.co_name)
@@ -295,17 +304,33 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
+            MessageBox(
+                f"complete.",
+                "Const Shrink",
+                parent=self)
 
     def btnChangeOpset_clicked(self, e:bool):
         w = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
+        old_opset = self.graph.opset
         if w.exec_():
             props = w.get_properties()
+            new_opset = int(props.opset)
+            if old_opset == new_opset:
+                MessageBox(
+                    f"opset num is same. not change.",
+                    "Change Opset",
+                    parent=self)
+                return
             onnx_model:onnx.ModelProto = onnx_tools_op_change(
-                opset=int(props.opset),
+                opset=new_opset,
                 onnx_graph=self.graph.to_onnx(non_verbose=False)
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
+            MessageBox(
+                f"Change opset {old_opset} to {new_opset}.",
+                "Change Opset",
+                parent=self)
 
     def btnChannelConvert_clicked(self, e:bool):
         w = ChangeChannelWidgets(parent=self)
@@ -317,6 +342,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
+            MessageBox(
+                f"complete.",
+                "Channel Convert",
+                parent=self)
 
     def exit(self):
         self.close()
