@@ -10,23 +10,23 @@ import onnx
 import onnx_graphsurgeon as gs
 
 
-from snc4onnx import combine as onnx_tools_combine
-from sne4onnx import extraction as onnx_tools_extraction
-from snd4onnx import remove as onnx_tools_deletion
-from scs4onnx import shrinking as onnx_tools_shrinking
-from sog4onnx import generate as onnx_tools_generate
-from sam4onnx import modify as onnx_tools_modify
-from soc4onnx import change as onnx_tools_op_change
-from scc4onnx import order_conversion as onnx_tools_order_conversion
-from sna4onnx import add as onnx_tools_add
+from snc4onnx import combine as onnx_tools_combine       #
+from sne4onnx import extraction as onnx_tools_extraction #
+from snd4onnx import remove as onnx_tools_deletion       #
+from scs4onnx import shrinking as onnx_tools_shrinking   # done.
+from sog4onnx import generate as onnx_tools_generate     #
+from sam4onnx import modify as onnx_tools_modify         #
+from soc4onnx import change as onnx_tools_op_change      # done.
+from scc4onnx import order_conversion as onnx_tools_order_conversion # done.
+from sna4onnx import add as onnx_tools_add               # done. (no tested)
 
 
-from menubar_widgets import MenuBarWidget
-from add_node_widgets import AddNodeWidgets
-from change_opset_widgets import ChangeOpsetWidget
-from change_channel_widgets import ChangeChannelWidgets
+from widgets_menubar import MenuBarWidget
+from widgets_add_node import AddNodeWidgets
+from widgets_change_opset import ChangeOpsetWidget
+from widgets_change_channel import ChangeChannelWidgets
+from widgets_constant_shrink import ConstantShrinkWidgets
 from onnx_graph import ONNXNodeGraph, ONNXtoNodeGraph
-# from utils.color import *
 from utils.opset import DEFAULT_OPSET
 
 
@@ -46,7 +46,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.init_ui()
 
         if onnx_model_path:
-            self.btnImportONNX.setEnabled(True)
+            # self.btnImportONNX.setEnabled(True)
             self.btnExportONNX.setEnabled(True)
 
     def init_ui(self):
@@ -104,22 +104,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnOpenONNX = QtWidgets.QPushButton("open")
         self.btnOpenONNX.clicked.connect(self.btnOpenONNX_clicked)
 
-        self.btnImportONNX = QtWidgets.QPushButton("import")
-        self.btnImportONNX.setEnabled(False)
-        self.btnImportONNX.clicked.connect(self.btnImportONNX_clicked)
+        # self.btnImportONNX = QtWidgets.QPushButton("import")
+        # self.btnImportONNX.setEnabled(False)
+        # self.btnImportONNX.clicked.connect(self.btnImportONNX_clicked)
 
         self.btnExportONNX = QtWidgets.QPushButton("export")
         self.btnExportONNX.setEnabled(False)
         self.btnExportONNX.clicked.connect(self.btnExportONNX_clicked)
 
         layout_file_btn.addWidget(self.btnOpenONNX)
-        layout_file_btn.addWidget(self.btnImportONNX)
+        # layout_file_btn.addWidget(self.btnImportONNX)
         layout_file_btn.addWidget(self.btnExportONNX)
         self.layout_main_properties.addLayout(layout_file_btn)
 
         # Operator Button
         layout_operator_btn = QtWidgets.QVBoxLayout()
-
 
         self.btnChangeOpset = QtWidgets.QPushButton("Change Opset (soc4onnx)")
         self.btnChangeOpset.setEnabled(True)
@@ -130,7 +129,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnAddNode.clicked.connect(self.btnAddNode_clicked)
 
         self.btnGenerateOperator = QtWidgets.QPushButton("Generate Operator (sog4onnx)")
-        self.btnGenerateOperator.setEnabled(True)
+        self.btnGenerateOperator.setEnabled(False)
         self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
 
         self.btnDelNode = QtWidgets.QPushButton("Delete Node (snd4onnx)")
@@ -178,13 +177,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lbl_graph_opset.setText(f"opset: {self.graph.opset}")
         self.lbl_graph_name.setText(f"name: {self.graph.name}")
         self.lbl_graph_doc_string.setText(f"doc_string: {self.graph.doc_string}")
-
-        # if self.nodes_tree is not None:
-        #     self.nodes_tree.hide()
-        #     self.layout_node_properties.removeWidget(self.nodes_tree)
-        #     del self.nodes_tree
-        # self.nodes_tree = self.create_nodes_tree(self.graph)
-        # self.layout_node_properties.addWidget(self.nodes_tree)
 
         if self.properties_bin is not None:
             self.properties_bin.hide()
@@ -238,13 +230,7 @@ class MainWindow(QtWidgets.QMainWindow):
         properties_bin.set_limit(1)
         return properties_bin
 
-    # def create_nodes_tree(self, graph: ONNXNodeGraph):
-    #     nodes_tree = NodesTreeWidget(node_graph=graph)
-    #     nodes_tree.set_category_label('nodes.node', 'Nodes')
-    #     return nodes_tree
-
     def btnOpenONNX_clicked(self, e:bool):
-        # self.dialog_open_file.show()
         file_name, exp = QtWidgets.QFileDialog.getOpenFileName(
                             self,
                             caption="Open ONNX Model File",
@@ -256,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
         graph = self.load_graph(onnx_model_path=file_name)
         self.update_graph(graph)
 
-        self.btnImportONNX.setEnabled(True)
+        # self.btnImportONNX.setEnabled(True)
         self.btnExportONNX.setEnabled(True)
 
     def btnImportONNX_clicked(self, e: bool):
@@ -298,7 +284,16 @@ class MainWindow(QtWidgets.QMainWindow):
         print(sys._getframe().f_code.co_name)
 
     def btnConstShrink_clicked(self, e:bool):
-        print(sys._getframe().f_code.co_name)
+        w = ConstantShrinkWidgets(parent=self)
+        if w.exec_():
+            props = w.get_properties()
+            onnx_model:onnx.ModelProto = None
+            onnx_model, _ = onnx_tools_shrinking(
+                onnx_graph=self.graph.to_onnx(non_verbose=False),
+                **props._asdict()
+            )
+            graph = self.load_graph(onnx_model=onnx_model)
+            self.update_graph(graph)
 
     def btnChangeOpset_clicked(self, e:bool):
         w = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
@@ -310,7 +305,6 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-        print(sys._getframe().f_code.co_name)
 
     def btnChannelConvert_clicked(self, e:bool):
         w = ChangeChannelWidgets(parent=self)
@@ -322,7 +316,6 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-        print(sys._getframe().f_code.co_name)
 
     def exit(self):
         self.close()

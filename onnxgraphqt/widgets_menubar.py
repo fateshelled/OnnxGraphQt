@@ -8,8 +8,8 @@ class MenuBarWidget(QtWidgets.QMenuBar):
                 "exit": self.file_exit_clicked,
             },
             # "Edit": {
-            #     "Redo": self.graph.undo_stack,
-            #     "Undo": self.graph.undo_stack,
+            #     "Redo": self.edit_redo_clicked,
+            #     "Undo": self.edit_undo_clicked,
             # }
         }
         self.actions = {}
@@ -29,3 +29,9 @@ class MenuBarWidget(QtWidgets.QMenuBar):
 
     def file_exit_clicked(self, e):
         print("exit")
+
+    def edit_redo_clicked(self, e):
+        pass
+
+    def edit_undo_clicked(self, e):
+        pass

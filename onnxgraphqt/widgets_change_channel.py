@@ -2,6 +2,7 @@ from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from utils.color import PrintColor
+from ast import literal_eval
 
 ChangeChannelProperties = namedtuple("ChangeChannelProperties",
     [
@@ -184,13 +185,13 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
             name = self.input_op_names_and_order_dims[i]["name"].text()
             value = self.input_op_names_and_order_dims[i]["value"].text()
             if name and value:
-                input_op_names_and_order_dims[name] = eval(value)
+                input_op_names_and_order_dims[name] = literal_eval(value)
         channel_change_inputs = {}
         for i in range(self.visible_channel_change_inputs_count):
             name = self.channel_change_inputs[i]["name"].text()
             value = self.channel_change_inputs[i]["value"].text()
             if name and value:
-                channel_change_inputs[name] = eval(value)
+                channel_change_inputs[name] = literal_eval(value)
         return ChangeChannelProperties(
             input_op_names_and_order_dims=input_op_names_and_order_dims,
             channel_change_inputs=channel_change_inputs,

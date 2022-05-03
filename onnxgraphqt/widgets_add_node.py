@@ -2,6 +2,7 @@ from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from utils.op_names import OP_NAMES
+from ast import literal_eval
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -249,13 +250,13 @@ class AddNodeWidgets(QtWidgets.QDialog):
             dtype = self.add_input_valiables[i]["dtype"].currentText()
             shape = self.add_input_valiables[i]["shape"].text()
             if name and dtype and shape:
-                add_op_input_variables[name] = [dtype, eval(shape)]
+                add_op_input_variables[name] = [dtype, literal_eval(shape)]
         for i in range(self.visible_output_valiables_count):
             name = self.add_output_valiables[i]["name"].text()
             dtype = self.add_output_valiables[i]["dtype"].currentText()
             shape = self.add_output_valiables[i]["shape"].text()
             if name and dtype and shape:
-                add_op_output_variables[name] = [dtype, eval(shape)]
+                add_op_output_variables[name] = [dtype, literal_eval(shape)]
 
         if len(add_op_input_variables) == 0:
             add_op_input_variables = None
@@ -267,7 +268,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
             name = self.add_op_attributes[i]["name"].text()
             value = self.add_op_attributes[i]["value"].text()
             if name and value:
-                add_op_attributes[name] = eval(value)
+                add_op_attributes[name] = literal_eval(value)
         if len(add_op_attributes) == 0:
             add_op_attributes = None
 

@@ -199,6 +199,7 @@ class ONNXNodeGraph(NodeGraph):
         self.set_background_color(*COLOR_BG)
         self.set_grid_mode(VIEWER_GRID_DOTS)
         self.set_grid_color(*COLOR_GRID)
+        # self.disable_context_menu(True)
 
     def _serialize(self, nodes)->Dict[str, Any]:
         ret = super()._serialize(nodes)
