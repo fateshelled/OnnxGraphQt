@@ -4,12 +4,4 @@ numpy
 onnx
 onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
 git+https://github.com/jchanvfx/NodeGraphQt.git#egg=NodeGraphQt
-snc4onnx
-sne4onnx
-snd4onnx
-scs4onnx
-sog4onnx
-sam4onnx
-soc4onnx
-scc4onnx
-sna4onnx
+simple-onnx-processing-tools

@@ -9,6 +9,7 @@ ONNX model visualizer with NodeGraphQt.
 - Numpy
 - onnx
 - onnx_graphsurgeon
+- [simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
 
 
 ## Install
