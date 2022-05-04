@@ -9,7 +9,6 @@ from NodeGraphQt.widgets.node_graph import NodeGraphWidget
 import onnx
 import onnx_graphsurgeon as gs
 
-
 from snc4onnx import combine as onnx_tools_combine       #
 from sne4onnx import extraction as onnx_tools_extraction #
 from snd4onnx import remove as onnx_tools_deletion       #
@@ -20,14 +19,13 @@ from soc4onnx import change as onnx_tools_op_change      # done.
 from scc4onnx import order_conversion as onnx_tools_order_conversion # done.
 from sna4onnx import add as onnx_tools_add               # done. (no tested)
 
-
 from widgets_menubar import MenuBarWidget
 from widgets_add_node import AddNodeWidgets
 from widgets_change_opset import ChangeOpsetWidget
 from widgets_change_channel import ChangeChannelWidgets
 from widgets_constant_shrink import ConstantShrinkWidgets
 from widgets_message_box import MessageBox
-from onnx_graph import ONNXNodeGraph, ONNXtoNodeGraph
+from onnx_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 
 
@@ -52,9 +50,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def init_ui(self):
         # Window size
         self.setGeometry(0, 0, self._default_window_width, self._default_window_height)
-
-        # visible only clone button.
-        self.setWindowFlags(QtCore.Qt.Window|QtCore.Qt.WindowCloseButtonHint)
 
         # MenuBar
         self.menu_bar = MenuBarWidget()
@@ -86,13 +81,8 @@ class MainWindow(QtWidgets.QMainWindow):
         layout_lbl = QtWidgets.QVBoxLayout()
 
         self.lbl_graph_opset = QtWidgets.QLabel()
-        self.lbl_graph_opset.setText(f"opset: {self.graph.opset}")
-
         self.lbl_graph_name = QtWidgets.QLabel()
-        self.lbl_graph_name.setText(f"name: {self.graph.name}")
-
         self.lbl_graph_doc_string = QtWidgets.QLabel()
-        self.lbl_graph_doc_string.setText(f"doc_string: {self.graph.doc_string}")
 
         layout_lbl.addWidget(self.lbl_graph_name)
         layout_lbl.addWidget(self.lbl_graph_opset)
@@ -270,7 +260,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             node_graph = graph
 
-        ONNXtoNodeGraph(onnx_graph, node_graph)
+        node_graph.load_onnx_graph(onnx_graph)
 
         cursor.setShape(cur_cursor)
         self.setCursor(cursor)

@@ -199,6 +199,7 @@ class ONNXNodeGraph(NodeGraph):
         self.set_background_color(*COLOR_BG)
         self.set_grid_mode(VIEWER_GRID_DOTS)
         self.set_grid_color(*COLOR_GRID)
+        # # Disable right click menu
         # self.disable_context_menu(True)
 
     def _serialize(self, nodes)->Dict[str, Any]:
@@ -289,6 +290,9 @@ class ONNXNodeGraph(NodeGraph):
             n.delete_input(0)
             n.set_port_deletion_allowed(False)
         return n
+
+    def load_onnx_graph(self, onnx_graph):
+        ONNXtoNodeGraph(onnx_graph, self)
 
     def to_networkx(self)->nx.DiGraph:
         return NodeGraphToNetworkX(self)
@@ -486,3 +490,10 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
         for inp in node_inputs:
             for out in node_outputs:
                 qt_nodes[out].set_output(0, qt_nodes[inp].input(0))
+    # Lock Node and Port
+    for n in node_graph.all_nodes():
+        for ip in n.input_ports():
+            ip.set_locked(state=True, connected_ports=True, push_undo=False)
+        for op in n.output_ports():
+            op.set_locked(state=True, connected_ports=True, push_undo=False)
+
