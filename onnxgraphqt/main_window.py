@@ -112,9 +112,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnExportONNX.setEnabled(False)
         self.btnExportONNX.clicked.connect(self.btnExportONNX_clicked)
 
+        self.btnAutoLayout = QtWidgets.QPushButton("auto layout")
+        self.btnAutoLayout.clicked.connect(self.btnAutoLayout_clicked)
+
         layout_file_btn.addWidget(self.btnOpenONNX)
         # layout_file_btn.addWidget(self.btnImportONNX)
         layout_file_btn.addWidget(self.btnExportONNX)
+        layout_file_btn.addWidget(self.btnAutoLayout)
         self.layout_main_properties.addLayout(layout_file_btn)
 
         # Operator Button
@@ -133,7 +137,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnDelNode.clicked.connect(self.btnDelNode_clicked)
 
         self.btnConstShrink = QtWidgets.QPushButton("Const Shrink (scs4onnx)")
-        self.btnConstShrink.setEnabled(True)
         self.btnConstShrink.clicked.connect(self.btnConstShrink_clicked)
 
         self.btnGenerateOperator = QtWidgets.QPushButton("Generate Operator (sog4onnx)")
@@ -141,19 +144,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
 
         self.btnModifyAttrConst = QtWidgets.QPushButton("Modify Attribute and Constant (sam4onnx)")
-        self.btnModifyAttrConst.setEnabled(True)
+        self.btnModifyAttrConst.setEnabled(False)
         self.btnModifyAttrConst.clicked.connect(self.btnModifyAttrConst_clicked)
 
         self.btnChangeOpset = QtWidgets.QPushButton("Change Opset (soc4onnx)")
-        self.btnChangeOpset.setEnabled(True)
         self.btnChangeOpset.clicked.connect(self.btnChangeOpset_clicked)
 
         self.btnChannelConvert = QtWidgets.QPushButton("Channel Convert (scc4onnx)")
-        self.btnChannelConvert.setEnabled(True)
         self.btnChannelConvert.clicked.connect(self.btnChannelConvert_clicked)
 
         self.btnAddNode = QtWidgets.QPushButton("Add Node (sna4onnx)")
-        self.btnAddNode.setEnabled(True)
         self.btnAddNode.clicked.connect(self.btnAddNode_clicked)
 
         self.btnInitializeBatchSize = QtWidgets.QPushButton("Initialize Batchsize (sbi4onnx)")
@@ -205,6 +205,36 @@ class MainWindow(QtWidgets.QMainWindow):
             del self.properties_bin
         self.properties_bin = self.create_properties_bin(self.graph)
         self.layout_node_properties.addWidget(self.properties_bin)
+
+
+        if self.graph.node_count() > 0:
+            self.btnExportONNX.setEnabled(True)
+
+            # self.btnCombineNetwork.setEnabled(False)
+            # self.btnExtractNetwork.setEnabled(False)
+            # self.btnDelNode.setEnabled(False)
+            self.btnConstShrink.setEnabled(True)
+            # self.btnModifyAttrConst.setEnabled(False)
+            self.btnChangeOpset.setEnabled(True)
+            self.btnChannelConvert.setEnabled(True)
+            # self.btnInitializeBatchSize.setEnabled(False)
+
+            # self.btnGenerateOperator.setEnabled(False)
+            self.btnAddNode.setEnabled(True)
+        else:
+            self.btnExportONNX.setEnabled(False)
+
+            # self.btnCombineNetwork.setEnabled(False)
+            # self.btnExtractNetwork.setEnabled(False)
+            # self.btnDelNode.setEnabled(False)
+            self.btnConstShrink.setEnabled(False)
+            # self.btnModifyAttrConst.setEnabled(False)
+            self.btnChangeOpset.setEnabled(False)
+            self.btnChannelConvert.setEnabled(False)
+            # self.btnInitializeBatchSize.setEnabled(False)
+
+            # self.btnGenerateOperator.setEnabled(False)
+            self.btnAddNode.setEnabled(True)
 
         cursor.setShape(QtCore.Qt.ArrowCursor)
         self.setCursor(cursor)
@@ -292,6 +322,9 @@ class MainWindow(QtWidgets.QMainWindow):
             f"Success. Export to {file_name}.",
             "Export ONNX",
             parent=self)
+
+    def btnAutoLayout_clicked(self, e:bool):
+        self.graph.auto_layout()
 
     def btnAddNode_clicked(self, e:bool):
         w = AddNodeWidgets(self)

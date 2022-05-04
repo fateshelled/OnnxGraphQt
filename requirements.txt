@@ -1,4 +1,5 @@
 networkx
+pydot
 PySide2
 numpy
 onnx

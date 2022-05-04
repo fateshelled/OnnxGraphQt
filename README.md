@@ -22,7 +22,13 @@ python3 -m pip install -r requirements.txt
 ## Usage
 ```bash
 cd OnnxGraphQt
+
+# Open empty graph
 python3 onnxgraphqt/main.py
+
+# Open with onnx model
+python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
+
 ```
 
 ## ToDo

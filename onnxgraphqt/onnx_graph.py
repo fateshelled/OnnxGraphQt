@@ -215,6 +215,9 @@ class ONNXNodeGraph(NodeGraph):
         self.doc_string = data['graph']['doc_string']
         return ret
 
+    def node_count(self)->int:
+        return len(self.all_nodes())
+
     def create_qtinput(self, input: gs.Tensor)->ONNXInput:
         node_name = input.name
         n = self.create_node("nodes.node.ONNXInput", node_name)
