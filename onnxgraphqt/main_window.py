@@ -11,10 +11,10 @@ import onnx_graphsurgeon as gs
 
 from snc4onnx import combine as onnx_tools_combine       #
 from sne4onnx import extraction as onnx_tools_extraction #
-from snd4onnx import remove as onnx_tools_deletion       #
+from snd4onnx import remove as onnx_tools_deletion       # done
 from scs4onnx import shrinking as onnx_tools_shrinking   # done.
 from sog4onnx import generate as onnx_tools_generate     #
-from sam4onnx import modify as onnx_tools_modify         #
+from sam4onnx import modify as onnx_tools_modify         # done
 from soc4onnx import change as onnx_tools_op_change      # done.
 from scc4onnx import order_conversion as onnx_tools_order_conversion # done.
 from sna4onnx import add as onnx_tools_add               # done. (no tested)
@@ -25,6 +25,7 @@ from widgets_change_opset import ChangeOpsetWidget
 from widgets_change_channel import ChangeChannelWidgets
 from widgets_constant_shrink import ConstantShrinkWidgets
 from widgets_modify_attrs import ModifyAttrsWidgets
+from widgets_delete_node import DeleteNodeWidgets
 from widgets_message_box import MessageBox
 from onnx_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
@@ -124,7 +125,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnExtractNetwork.clicked.connect(self.btnExtractNetwork_clicked)
 
         self.btnDelNode = QtWidgets.QPushButton("Delete Node (snd4onnx)")
-        self.btnDelNode.setEnabled(False)
         self.btnDelNode.clicked.connect(self.btnDelNode_clicked)
 
         self.btnConstShrink = QtWidgets.QPushButton("Const Shrink (scs4onnx)")
@@ -202,7 +202,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # self.btnCombineNetwork.setEnabled(False)
             # self.btnExtractNetwork.setEnabled(False)
-            # self.btnDelNode.setEnabled(False)
+            self.btnDelNode.setEnabled(True)
             self.btnConstShrink.setEnabled(True)
             self.btnModifyAttrConst.setEnabled(True)
             self.btnChangeOpset.setEnabled(True)
@@ -216,14 +216,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # self.btnCombineNetwork.setEnabled(False)
             # self.btnExtractNetwork.setEnabled(False)
-            # self.btnDelNode.setEnabled(False)
+            self.btnDelNode.setEnabled(False)
             self.btnConstShrink.setEnabled(False)
             self.btnModifyAttrConst.setEnabled(False)
             self.btnChangeOpset.setEnabled(False)
             self.btnChannelConvert.setEnabled(False)
             # self.btnInitializeBatchSize.setEnabled(False)
 
-            # self.btnGenerateOperator.setEnabled(False)
+            # self.btnGenerateOperator.setEnabled(True)
             self.btnAddNode.setEnabled(True)
 
         cursor.setShape(QtCore.Qt.ArrowCursor)
@@ -400,7 +400,20 @@ class MainWindow(QtWidgets.QMainWindow):
         print(sys._getframe().f_code.co_name)
 
     def btnDelNode_clicked(self, e:bool):
-        print(sys._getframe().f_code.co_name)
+        w = DeleteNodeWidgets(parent=self)
+        if w.exec_():
+            props = w.get_properties()
+            onnx_graph=self.graph.to_onnx(non_verbose=True)
+            onnx_model:onnx.ModelProto = onnx_tools_deletion(
+                onnx_graph=onnx_graph,
+                **props._asdict()
+            )
+            graph = self.load_graph(onnx_model=onnx_model)
+            self.update_graph(graph)
+            MessageBox(
+                f"complete.",
+                "Delete Node",
+                parent=self)
 
     def btnModifyAttrConst_clicked(self, e:bool):
         w = ModifyAttrsWidgets(parent=self)
