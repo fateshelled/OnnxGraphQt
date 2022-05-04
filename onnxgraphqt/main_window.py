@@ -3,7 +3,7 @@ import sys, os
 # from Qt import QtCore, QtWidgets, QtGui
 # from PyQt5 import QtCore, QtWidgets, QtGui
 from PySide2 import QtCore, QtWidgets, QtGui
-from NodeGraphQt import NodesTreeWidget, PropertiesBinWidget
+from NodeGraphQt import NodeGraph, NodesTreeWidget, PropertiesBinWidget
 from NodeGraphQt.widgets.node_graph import NodeGraphWidget
 
 import onnx
@@ -24,6 +24,7 @@ from widgets_add_node import AddNodeWidgets
 from widgets_change_opset import ChangeOpsetWidget
 from widgets_change_channel import ChangeChannelWidgets
 from widgets_constant_shrink import ConstantShrinkWidgets
+from widgets_modify_attrs import ModifyAttrsWidgets
 from widgets_message_box import MessageBox
 from onnx_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
@@ -134,7 +135,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
 
         self.btnModifyAttrConst = QtWidgets.QPushButton("Modify Attribute and Constant (sam4onnx)")
-        self.btnModifyAttrConst.setEnabled(False)
         self.btnModifyAttrConst.clicked.connect(self.btnModifyAttrConst_clicked)
 
         self.btnChangeOpset = QtWidgets.QPushButton("Change Opset (soc4onnx)")
@@ -204,7 +204,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # self.btnExtractNetwork.setEnabled(False)
             # self.btnDelNode.setEnabled(False)
             self.btnConstShrink.setEnabled(True)
-            # self.btnModifyAttrConst.setEnabled(False)
+            self.btnModifyAttrConst.setEnabled(True)
             self.btnChangeOpset.setEnabled(True)
             self.btnChannelConvert.setEnabled(True)
             # self.btnInitializeBatchSize.setEnabled(False)
@@ -218,7 +218,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # self.btnExtractNetwork.setEnabled(False)
             # self.btnDelNode.setEnabled(False)
             self.btnConstShrink.setEnabled(False)
-            # self.btnModifyAttrConst.setEnabled(False)
+            self.btnModifyAttrConst.setEnabled(False)
             self.btnChangeOpset.setEnabled(False)
             self.btnChannelConvert.setEnabled(False)
             # self.btnInitializeBatchSize.setEnabled(False)
@@ -321,7 +321,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if w.exec_():
             props = w.get_properties()
             onnx_model:onnx.ModelProto = onnx_tools_add(
-                onnx_graph=self.graph.to_onnx(non_verbose=False), **props._asdict())
+                onnx_graph=self.graph.to_onnx(non_verbose=True),
+                non_verbose=False,
+                **props._asdict(),
+            )
 
             graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
             self.update_graph(graph)
@@ -336,7 +339,8 @@ class MainWindow(QtWidgets.QMainWindow):
             props = w.get_properties()
             onnx_model:onnx.ModelProto = None
             onnx_model, _ = onnx_tools_shrinking(
-                onnx_graph=self.graph.to_onnx(non_verbose=False),
+                onnx_graph=self.graph.to_onnx(non_verbose=True),
+                non_verbose=False,
                 **props._asdict()
             )
             graph = self.load_graph(onnx_model=onnx_model)
@@ -360,7 +364,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             onnx_model:onnx.ModelProto = onnx_tools_op_change(
                 opset=new_opset,
-                onnx_graph=self.graph.to_onnx(non_verbose=False)
+                onnx_graph=self.graph.to_onnx(non_verbose=True),
+                non_verbose=False,
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
@@ -374,7 +379,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if w.exec_():
             props = w.get_properties()
             onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
-                onnx_graph=self.graph.to_onnx(non_verbose=False),
+                onnx_graph=self.graph.to_onnx(non_verbose=True),
+                non_verbose=False,
                 **props._asdict()
             )
             graph = self.load_graph(onnx_model=onnx_model)
@@ -397,7 +403,21 @@ class MainWindow(QtWidgets.QMainWindow):
         print(sys._getframe().f_code.co_name)
 
     def btnModifyAttrConst_clicked(self, e:bool):
-        print(sys._getframe().f_code.co_name)
+        w = ModifyAttrsWidgets(parent=self)
+        if w.exec_():
+            props = w.get_properties()
+            onnx_graph=self.graph.to_onnx(non_verbose=True)
+            onnx_model:onnx.ModelProto = onnx_tools_modify(
+                onnx_graph=onnx_graph,
+                non_verbose=False,
+                **props._asdict()
+            )
+            graph = self.load_graph(onnx_model=onnx_model)
+            self.update_graph(graph)
+            MessageBox(
+                f"complete.",
+                "Modify Attributes and Constants",
+                parent=self)
 
     def btnInitializeBatchSize_clicked(self, e:bool):
         print(sys._getframe().f_code.co_name)
