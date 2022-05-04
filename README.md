@@ -39,7 +39,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 - [ ] Extract Network [2. sne4onnx]
 - [x] Delete Node [3. snd4onnx]
 - [x] Constant Value Shrink [4. scs4onnx]
-- [x] Generate Operation [5. sog4onnx]
+- [ ] Generate Operation [5. sog4onnx]
 - [x] Modify Operator Parameter [6. sam4onnx]
 - [x] Change Opset [7. soc4onnx]
 - [x] NCHW and NHWC conversion [8. scc4onnx]
