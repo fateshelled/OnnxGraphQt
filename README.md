@@ -17,7 +17,7 @@ ONNX model visualizer with NodeGraphQt.
 ```bash
 git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt
-python3 -m pip install -r requirements.txt
+python3 -m pip install -U -r requirements.txt
 ```
 
 ## Usage
