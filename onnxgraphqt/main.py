@@ -2,7 +2,6 @@
 import sys
 import signal
 from PySide2 import QtCore, QtWidgets
-from yaml import parse
 from main_window import MainWindow
 
 if __name__ == "__main__":

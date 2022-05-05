@@ -1,8 +1,6 @@
 import sys, os
 import time
 
-# from Qt import QtCore, QtWidgets, QtGui
-# from PyQt5 import QtCore, QtWidgets, QtGui
 from PySide2 import QtCore, QtWidgets, QtGui
 from NodeGraphQt import NodeGraph, NodesTreeWidget, PropertiesBinWidget
 from NodeGraphQt.widgets.node_graph import NodeGraphWidget
@@ -430,7 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 parent=self)
 
     def btnModifyAttrConst_clicked(self, e:bool):
-        w = ModifyAttrsWidgets(parent=self)
+        w = ModifyAttrsWidgets(parent=self, graph_dict=self.graph.to_dict())
         if w.exec_():
             props = w.get_properties()
             onnx_graph=self.graph.to_onnx(non_verbose=True)

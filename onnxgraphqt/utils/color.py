@@ -1,6 +1,3 @@
-from opcode import opname
-
-
 COLOR_WHITE = [235, 235, 235]
 COLOR_LIGHTGRAY = [200, 200, 203]
 COLOR_GRAY = [132, 145, 158]

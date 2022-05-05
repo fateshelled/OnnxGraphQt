@@ -1,7 +1,8 @@
+from dataclasses import dataclass
 from typing import (
     Dict, List, Any, Optional
 )
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict
 import copy
 
 import numpy as np
@@ -55,7 +56,13 @@ from utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,
 )
 
-ONNX_IO = namedtuple("ONNX_IO", ["name", "dtype", "shape", "values"])
+@dataclass
+class ONNX_IO:
+    name: str
+    dtype: str
+    shape: List[int]
+    values: List
+
 
 class ONNXNode(BaseNode):
     # unique node identifier.
@@ -98,7 +105,7 @@ class ONNXNode(BaseNode):
 
     def set_onnx_inputs(self, onnx_inputs:List[ONNX_IO]):
         self.onnx_inputs = onnx_inputs
-        self.set_property("inputs_", [[n, d, s, v] for n, d, s, v in self.onnx_inputs])
+        self.set_property("inputs_", [[inp.name, inp.dtype, inp.shape, inp.values] for inp in self.onnx_inputs])
         # for i, (name, dtype, shape, values) in enumerate(self.onnx_inputs):
         #     prop_name = f"inputs_{i}"
         #     if self.has_property(prop_name):
@@ -111,7 +118,7 @@ class ONNXNode(BaseNode):
 
     def set_onnx_outputs(self, onnx_outputs:List[ONNX_IO]):
         self.onnx_outputs = onnx_outputs
-        self.set_property("outputs_", [[n, d, s, v] for n, d, s, v in self.onnx_outputs])
+        self.set_property("outputs_", [[out.name, out.dtype, out.shape, out.values] for out in self.onnx_outputs])
 
     def set_color(self):
         self.view.text_color = COLOR_FONT + [255]
@@ -315,6 +322,40 @@ class ONNXNodeGraph(NodeGraph):
                 )
         return ret
 
+    def to_dict(self)->Dict[str, Dict[str, Dict[str, object]]]:
+        ret = {
+            "inputs": {},
+            "outputs": {},
+            "nodes": {},
+        }
+        for n in self.all_nodes():
+            if isinstance(n, ONNXNode):
+                d = {
+                    "op" : n.op,
+                    # "inputs": {i.name: {"dtype": i.dtype, "shape": i.shape, "values": i.values} for i in n.onnx_inputs},
+                    "inputs": n.onnx_inputs,
+                    "outputs": n.onnx_outputs,
+                    "attrs": n.attrs
+                }
+                ret["nodes"][n.name()] = d
+            elif isinstance(n, ONNXInput):
+                d = {
+                    "shape": n.shape,
+                    "dtype": n.dtype,
+                    "output_names": n.output_names,
+                }
+                ret["inputs"][n.name()] = d
+            elif isinstance(n, ONNXOutput):
+                d = {
+                    "name": n.name(),
+                    "shape": n.shape,
+                    "dtype": n.dtype,
+                    "output_names": n.input_names,
+                }
+                ret["outputs"][n.name()] = d
+        return ret
+
+
     def export(self, file_path:str):
         try:
             onnx.save(self.to_onnx(), file_path)
@@ -357,7 +398,8 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
         input_gs_variables = []
         output_gs_variables = []
 
-        for name, dtype, shape, val in n.onnx_inputs:
+        for inp in n.onnx_inputs:
+            name, dtype, shape, val = inp.name, inp.dtype, inp.shape, inp.values
             if name in input_names:
                 for inp_v in input_variables:
                     if name == inp_v.name:
@@ -369,7 +411,8 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
             else:
                 input_gs_variables.append(gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape)))
 
-        for name, dtype, shape, val in n.onnx_outputs:
+        for out in n.onnx_outputs:
+            name, dtype, shape, val = out.name, out.dtype, out.shape, out.values
             if name in output_names:
                 for out_v in output_variables:
                     if name == out_v.name:

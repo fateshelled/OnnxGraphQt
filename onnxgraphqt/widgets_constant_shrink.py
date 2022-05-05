@@ -1,7 +1,6 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from utils.op_names import OP_NAMES
 from ast import literal_eval
 
 ConstantShrinkProperties = namedtuple("ConstantShrinkProperties",
