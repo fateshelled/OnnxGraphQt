@@ -1,4 +1,5 @@
 import sys, os
+import time
 
 # from Qt import QtCore, QtWidgets, QtGui
 # from PyQt5 import QtCore, QtWidgets, QtGui
@@ -170,6 +171,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_graph(self, graph: ONNXNodeGraph):
 
+        t0 = time.time()
         cursor = self.cursor()
         cursor.setShape(QtCore.Qt.BusyCursor)
         self.setCursor(cursor)
@@ -228,10 +230,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         cursor.setShape(QtCore.Qt.ArrowCursor)
         self.setCursor(cursor)
+        dt0 = time.time() - t0
+        print(f"update graph: {dt0}s")
 
 
     def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None)->ONNXNodeGraph:
 
+        t0 = time.time()
         cursor = self.cursor()
         cur_cursor = cursor.shape()
         cursor.setShape(QtCore.Qt.BusyCursor)
@@ -264,6 +269,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         cursor.setShape(cur_cursor)
         self.setCursor(cursor)
+        dt0 = time.time() - t0
+        print(f"load graph: {dt0}s")
         return node_graph
 
     def create_properties_bin(self, graph: ONNXNodeGraph):
@@ -314,7 +321,14 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self)
 
     def btnAutoLayout_clicked(self, e:bool):
+        cursor = self.cursor()
+        cursor.setShape(QtCore.Qt.BusyCursor)
+        self.setCursor(cursor)
+
         self.graph.auto_layout()
+
+        cursor.setShape(QtCore.Qt.ArrowCursor)
+        self.setCursor(cursor)
 
     def btnAddNode_clicked(self, e:bool):
         w = AddNodeWidgets(self)
