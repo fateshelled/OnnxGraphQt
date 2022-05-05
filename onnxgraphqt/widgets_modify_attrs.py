@@ -1,6 +1,7 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
+from charset_normalizer import detect
 from utils.op_names import OP_NAMES
 from ast import literal_eval
 import numpy as np
@@ -15,11 +16,13 @@ ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
         "op_name",
         "attributes",
         "input_constants",
+        "delete_attributes",
     ])
 
 class ModifyAttrsWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 500
     _MAX_ATTRIBUTES_COUNT = 5
+    _MAX_DELETE_ATTRIBUTES_COUNT = 5
     _MAX_CONST_COUNT = 4
 
     def __init__(self, parent=None) -> None:
@@ -102,10 +105,36 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         layout_btn_const.addWidget(self.btn_del_const)
         self.layout_const.addLayout(layout_btn_const)
 
+        # delete_attributes
+        self.layout_delete_attributes = QtWidgets.QVBoxLayout()
+        self.layout_delete_attributes.addWidget(QtWidgets.QLabel("delete_attributes [optional]"))
+        self.visible_delete_attributes_count = 3
+        self.delete_attributes = {}
+        for index in range(self._MAX_DELETE_ATTRIBUTES_COUNT):
+            self.delete_attributes[index] = {}
+            self.delete_attributes[index]["base"] = QtWidgets.QWidget()
+            self.delete_attributes[index]["layout"] = QtWidgets.QHBoxLayout(self.delete_attributes[index]["base"])
+            self.delete_attributes[index]["layout"].setContentsMargins(0, 0, 0, 0)
+            self.delete_attributes[index]["name"] = QtWidgets.QLineEdit()
+            self.delete_attributes[index]["name"].setPlaceholderText("name")
+            self.delete_attributes[index]["value"] = QtWidgets.QLineEdit()
+            self.delete_attributes[index]["layout"].addWidget(self.delete_attributes[index]["name"])
+            self.layout_delete_attributes.addWidget(self.delete_attributes[index]["base"])
+        self.btn_add_delete_attributes = QtWidgets.QPushButton("+")
+        self.btn_del_delete_attributes = QtWidgets.QPushButton("-")
+        self.btn_add_delete_attributes.clicked.connect(self.btn_add_delete_attributes_clicked)
+        self.btn_del_delete_attributes.clicked.connect(self.btn_del_delete_attributes_clicked)
+        self.set_visible_delete_attributes()
+        layout_btn_delete_attributes = QtWidgets.QHBoxLayout()
+        layout_btn_delete_attributes.addWidget(self.btn_add_delete_attributes)
+        layout_btn_delete_attributes.addWidget(self.btn_del_delete_attributes)
+        self.layout_delete_attributes.addLayout(layout_btn_delete_attributes)
+
         # add layout
         base_layout.addLayout(layout)
         base_layout.addLayout(self.layout_attributes)
         base_layout.addLayout(self.layout_const)
+        base_layout.addLayout(self.layout_delete_attributes)
 
         # Dialog button
         btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
@@ -129,6 +158,19 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_attributes.setEnabled(True)
             self.btn_del_attributes.setEnabled(True)
+
+    def set_visible_delete_attributes(self):
+        for key, widgets in self.delete_attributes.items():
+            widgets["base"].setVisible(key < self.visible_delete_attributes_count)
+        if self.visible_delete_attributes_count == 1:
+            self.btn_add_delete_attributes.setEnabled(True)
+            self.btn_del_delete_attributes.setEnabled(False)
+        elif self.visible_delete_attributes_count >= self._MAX_DELETE_ATTRIBUTES_COUNT:
+            self.btn_add_delete_attributes.setEnabled(False)
+            self.btn_del_delete_attributes.setEnabled(True)
+        else:
+            self.btn_add_delete_attributes.setEnabled(True)
+            self.btn_del_delete_attributes.setEnabled(True)
 
     def set_visible_const(self):
         for key, widgets in self.edit_const.items():
@@ -159,6 +201,14 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         self.visible_const_count = min(max(0, self.visible_const_count - 1), self._MAX_CONST_COUNT)
         self.set_visible_const()
 
+    def btn_add_delete_attributes_clicked(self, e):
+        self.visible_delete_attributes_count = min(max(0, self.visible_delete_attributes_count + 1), self._MAX_DELETE_ATTRIBUTES_COUNT)
+        self.set_visible_delete_attributes()
+
+    def btn_del_delete_attributes_clicked(self, e):
+        self.visible_delete_attributes_count = min(max(0, self.visible_delete_attributes_count - 1), self._MAX_DELETE_ATTRIBUTES_COUNT)
+        self.set_visible_delete_attributes()
+
     def get_properties(self)->ModifyAttrsProperties:
         opname = self.tb_opname.text()
 
@@ -176,6 +226,14 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         if len(attributes) == 0:
             attributes = None
 
+        delete_attributes = []
+        for i in range(self.visible_delete_attributes_count):
+            name = self.delete_attributes[i]["name"].text()
+            if name:
+                delete_attributes.append(name)
+        if len(delete_attributes) == 0:
+            delete_attributes = None
+
         input_constants = {}
         for i in range(self.visible_const_count):
             name = self.edit_const[i]["name"].text()
@@ -189,10 +247,12 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
                     input_constants[name] = value
         if len(input_constants) == 0:
             input_constants = None
+
         return ModifyAttrsProperties(
             op_name=opname,
             attributes=attributes,
-            input_constants=input_constants
+            input_constants=input_constants,
+            delete_attributes=delete_attributes,
         )
 
     def accept(self) -> None:
