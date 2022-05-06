@@ -22,9 +22,10 @@ ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
 def get_dtype_str(list_or_scalar)->str:
     v0 = None
     if isinstance(list_or_scalar, list):
-        v0 = itertools.chain.from_iterable(list_or_scalar)[0]
+        v0 = np.ravel(list_or_scalar)[0].tolist()
     else:
         v0 = list_or_scalar
+
     if isinstance(v0, int):
         dtype = "int32"
     elif isinstance(v0, float):
@@ -52,6 +53,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         self.setWindowTitle("modify attributes")
         self.graph_dict = graph_dict
         self.initUI()
+        self.updateUI(self.graph_dict)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -62,11 +64,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         layout = QtWidgets.QFormLayout()
         layout.setLabelAlignment(QtCore.Qt.AlignRight)
         self.cmb_opname = QtWidgets.QComboBox()
-        if self.graph_dict:
-            for op_name in self.graph_dict["nodes"].keys():
-                self.cmb_opname.addItem(op_name)
         self.cmb_opname.setEditable(True)
-        self.cmb_opname.setCurrentIndex(-1)
         layout.addRow("opname", self.cmb_opname)
 
         # attributes
@@ -156,6 +154,34 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         layout_btn_delete_attributes.addWidget(self.btn_del_delete_attributes)
         self.layout_delete_attributes.addLayout(layout_btn_delete_attributes)
 
+        # add layout
+        base_layout.addLayout(layout)
+        base_layout.addLayout(self.layout_attributes)
+        base_layout.addLayout(self.layout_const)
+        base_layout.addLayout(self.layout_delete_attributes)
+
+        # Dialog button
+        btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
+                                         QtWidgets.QDialogButtonBox.Cancel)
+        btn.accepted.connect(self.accept)
+        btn.rejected.connect(self.reject)
+        # layout.addWidget(btn)
+        base_layout.addWidget(btn)
+
+        self.set_visible_attributes()
+        self.set_visible_const()
+        self.set_visible_delete_attributes()
+        self.setLayout(base_layout)
+
+    def updateUI(self, graph_dict: Dict[str, Dict[str, Dict[str, object]]]):
+
+        self.cmb_opname.clear()
+        if self.graph_dict:
+            for op_name in self.graph_dict["nodes"].keys():
+                self.cmb_opname.addItem(op_name)
+        self.cmb_opname.setEditable(True)
+        self.cmb_opname.setCurrentIndex(-1)
+
         if self.graph_dict:
             def edit_attributes_name_currentIndexChanged(attr_index, current_index):
                 op_name = self.cmb_opname.currentText()
@@ -213,25 +239,6 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
                     self.delete_attributes[index]["name"].setCurrentIndex(-1)
 
             self.cmb_opname.currentIndexChanged.connect(cmb_opname_currentIndexChanged)
-
-        # add layout
-        base_layout.addLayout(layout)
-        base_layout.addLayout(self.layout_attributes)
-        base_layout.addLayout(self.layout_const)
-        base_layout.addLayout(self.layout_delete_attributes)
-
-        # Dialog button
-        btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
-                                         QtWidgets.QDialogButtonBox.Cancel)
-        btn.accepted.connect(self.accept)
-        btn.rejected.connect(self.reject)
-        # layout.addWidget(btn)
-        base_layout.addWidget(btn)
-
-        self.set_visible_attributes()
-        self.set_visible_const()
-        self.set_visible_delete_attributes()
-        self.setLayout(base_layout)
 
     def set_visible_attributes(self):
         for key, widgets in self.edit_attributes.items():
