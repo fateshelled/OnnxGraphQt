@@ -39,6 +39,7 @@ def get_dtype_str(list_or_scalar)->str:
         dtype = "str"
     return dtype
 
+
 class ModifyAttrsWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 500
     _MAX_ATTRIBUTES_COUNT = 5
@@ -47,7 +48,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
 
     def __init__(self, parent=None, graph_dict: Dict[str, Dict[str, Dict[str, object]]]=None) -> None:
         super().__init__(parent)
-        self.setModal(True)
+        self.setModal(False)
         self.setWindowTitle("modify attributes")
         self.graph_dict = graph_dict
         self.initUI()

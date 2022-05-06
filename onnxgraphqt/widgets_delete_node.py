@@ -13,7 +13,7 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
-        self.setModal(True)
+        self.setModal(False)
         self.setWindowTitle("delete node")
         self.initUI()
 

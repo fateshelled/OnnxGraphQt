@@ -170,9 +170,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_graph(self, graph: ONNXNodeGraph):
 
         t0 = time.time()
-        cursor = self.cursor()
-        cursor.setShape(QtCore.Qt.BusyCursor)
-        self.setCursor(cursor)
+        self.set_cursor_busy()
 
         self.graph_widget.hide()
         self.layout_graph.removeWidget(self.graph_widget)
@@ -196,49 +194,77 @@ class MainWindow(QtWidgets.QMainWindow):
         self.properties_bin = self.create_properties_bin(self.graph)
         self.layout_node_properties.addWidget(self.properties_bin)
 
+        self.set_sidemenu_buttons_enabled(True)
 
-        if self.graph.node_count() > 0:
-            self.btnExportONNX.setEnabled(True)
-
-            # self.btnCombineNetwork.setEnabled(False)
-            # self.btnExtractNetwork.setEnabled(False)
-            self.btnDelNode.setEnabled(True)
-            self.btnConstShrink.setEnabled(True)
-            self.btnModifyAttrConst.setEnabled(True)
-            self.btnChangeOpset.setEnabled(True)
-            self.btnChannelConvert.setEnabled(True)
-            # self.btnInitializeBatchSize.setEnabled(False)
-
-            # self.btnGenerateOperator.setEnabled(False)
-            self.btnAddNode.setEnabled(True)
-        else:
-            self.btnExportONNX.setEnabled(False)
-
-            # self.btnCombineNetwork.setEnabled(False)
-            # self.btnExtractNetwork.setEnabled(False)
-            self.btnDelNode.setEnabled(False)
-            self.btnConstShrink.setEnabled(False)
-            self.btnModifyAttrConst.setEnabled(False)
-            self.btnChangeOpset.setEnabled(False)
-            self.btnChannelConvert.setEnabled(False)
-            # self.btnInitializeBatchSize.setEnabled(False)
-
-            # self.btnGenerateOperator.setEnabled(True)
-            self.btnAddNode.setEnabled(True)
-
-        cursor.setShape(QtCore.Qt.ArrowCursor)
-        self.setCursor(cursor)
+        self.set_cursor_arrow()
         dt0 = time.time() - t0
         print(f"update graph: {dt0}s")
 
+    def set_cursor_busy(self):
+        cursor = self.cursor()
+        cursor.setShape(QtCore.Qt.BusyCursor)
+        self.setCursor(cursor)
+
+    def set_cursor_arrow(self):
+        cursor = self.cursor()
+        cursor.setShape(QtCore.Qt.ArrowCursor)
+        self.setCursor(cursor)
+
+    def set_sidemenu_buttons_enabled(self, enable=True):
+
+        if enable:
+            self.btnOpenONNX.setEnabled(True)
+            self.btnAutoLayout.setEnabled(True)
+
+            if self.graph.node_count() > 0:
+                self.btnExportONNX.setEnabled(True)
+
+                # self.btnCombineNetwork.setEnabled(False)
+                # self.btnExtractNetwork.setEnabled(False)
+                self.btnDelNode.setEnabled(True)
+                self.btnConstShrink.setEnabled(True)
+                self.btnModifyAttrConst.setEnabled(True)
+                self.btnChangeOpset.setEnabled(True)
+                self.btnChannelConvert.setEnabled(True)
+                # self.btnInitializeBatchSize.setEnabled(False)
+
+                # self.btnGenerateOperator.setEnabled(False)
+                self.btnAddNode.setEnabled(True)
+            else:
+                self.btnExportONNX.setEnabled(False)
+
+                # self.btnCombineNetwork.setEnabled(False)
+                # self.btnExtractNetwork.setEnabled(False)
+                self.btnDelNode.setEnabled(False)
+                self.btnConstShrink.setEnabled(False)
+                self.btnModifyAttrConst.setEnabled(False)
+                self.btnChangeOpset.setEnabled(False)
+                self.btnChannelConvert.setEnabled(False)
+                # self.btnInitializeBatchSize.setEnabled(False)
+
+                # self.btnGenerateOperator.setEnabled(True)
+                self.btnAddNode.setEnabled(True)
+            self.properties_bin.setEnabled(True)
+        else:
+                self.btnOpenONNX.setEnabled(False)
+                self.btnAutoLayout.setEnabled(False)
+                self.btnExportONNX.setEnabled(False)
+                self.btnCombineNetwork.setEnabled(False)
+                self.btnExtractNetwork.setEnabled(False)
+                self.btnDelNode.setEnabled(False)
+                self.btnConstShrink.setEnabled(False)
+                self.btnModifyAttrConst.setEnabled(False)
+                self.btnChangeOpset.setEnabled(False)
+                self.btnChannelConvert.setEnabled(False)
+                self.btnInitializeBatchSize.setEnabled(False)
+                self.btnGenerateOperator.setEnabled(False)
+                self.btnAddNode.setEnabled(False)
+                self.properties_bin.setEnabled(False)
 
     def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None)->ONNXNodeGraph:
 
         t0 = time.time()
-        cursor = self.cursor()
-        cur_cursor = cursor.shape()
-        cursor.setShape(QtCore.Qt.BusyCursor)
-        self.setCursor(cursor)
+        self.set_cursor_busy()
 
         if not onnx_model and not onnx_model_path:
             node_graph = ONNXNodeGraph(name="onnx_graph_qt",
@@ -265,8 +291,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         node_graph.load_onnx_graph(onnx_graph)
 
-        cursor.setShape(cur_cursor)
-        self.setCursor(cursor)
+        self.set_cursor_arrow()
         dt0 = time.time() - t0
         print(f"load graph: {dt0}s")
         return node_graph
@@ -319,17 +344,19 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self)
 
     def btnAutoLayout_clicked(self, e:bool):
-        cursor = self.cursor()
-        cursor.setShape(QtCore.Qt.BusyCursor)
-        self.setCursor(cursor)
+        self.set_cursor_busy()
+        self.set_sidemenu_buttons_enabled(False)
 
         self.graph.auto_layout()
 
-        cursor.setShape(QtCore.Qt.ArrowCursor)
-        self.setCursor(cursor)
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_cursor_arrow()
 
     def btnAddNode_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
+
         w = AddNodeWidgets(self)
+        w.show()
         if w.exec_():
             props = w.get_properties()
             onnx_model:onnx.ModelProto = onnx_tools_add(
@@ -344,9 +371,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"complete.",
                 "Add None",
                 parent=self)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnConstShrink_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
+
         w = ConstantShrinkWidgets(parent=self)
+        w.show()
         if w.exec_():
             props = w.get_properties()
             onnx_model:onnx.ModelProto = None
@@ -361,10 +392,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"complete.",
                 "Const Shrink",
                 parent=self)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnChangeOpset_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
+
         w = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
         old_opset = self.graph.opset
+        w.show()
         if w.exec_():
             props = w.get_properties()
             new_opset = int(props.opset)
@@ -373,6 +408,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"opset num is same. not change.",
                     "Change Opset",
                     parent=self)
+                self.set_sidemenu_buttons_enabled(True)
                 return
             onnx_model:onnx.ModelProto = onnx_tools_op_change(
                 opset=new_opset,
@@ -385,9 +421,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"Change opset {old_opset} to {new_opset}.",
                 "Change Opset",
                 parent=self)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnChannelConvert_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
+
         w = ChangeChannelWidgets(parent=self)
+        w.show()
         if w.exec_():
             props = w.get_properties()
             onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
@@ -401,18 +441,28 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"complete.",
                 "Channel Convert",
                 parent=self)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnCombineNetwork_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
         print(sys._getframe().f_code.co_name)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnExtractNetwork_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
         print(sys._getframe().f_code.co_name)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnGenerateOperator_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
         print(sys._getframe().f_code.co_name)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnDelNode_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
+
         w = DeleteNodeWidgets(parent=self)
+        w.show()
         if w.exec_():
             props = w.get_properties()
             onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -426,9 +476,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"complete.",
                 "Delete Node",
                 parent=self)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnModifyAttrConst_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
+
         w = ModifyAttrsWidgets(parent=self, graph_dict=self.graph.to_dict())
+        w.show()
         if w.exec_():
             props = w.get_properties()
             onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -443,12 +497,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 f"complete.",
                 "Modify Attributes and Constants",
                 parent=self)
+        self.set_sidemenu_buttons_enabled(True)
 
     def btnInitializeBatchSize_clicked(self, e:bool):
+        self.set_sidemenu_buttons_enabled(False)
         print(sys._getframe().f_code.co_name)
+        self.set_sidemenu_buttons_enabled(True)
 
     def exit(self):
         self.close()
+        sys.exit(0)
 
 
 if __name__ == "__main__":

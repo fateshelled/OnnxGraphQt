@@ -13,7 +13,7 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
 
     def __init__(self, current_opset, parent=None) -> None:
         super().__init__(parent)
-        self.setModal(True)
+        self.setModal(False)
         self.setWindowTitle("change opset")
         self.current_opset = current_opset
         self.initUI()

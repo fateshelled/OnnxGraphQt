@@ -30,7 +30,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
-        self.setModal(True)
+        self.setModal(False)
         self.setWindowTitle("add node")
         self.initUI()
 
