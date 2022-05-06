@@ -313,8 +313,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.graph.export(file_name)
         print(f"Export: {file_name}.")
-        MessageBox(
-            f"Success. Export to {file_name}.",
+        MessageBox.info(
+            ["Success.", f"Export to {file_name}."],
             "Export ONNX",
             parent=self)
 
@@ -340,7 +340,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
             self.update_graph(graph)
-            MessageBox(
+            MessageBox.info(
                 f"complete.",
                 "Add None",
                 parent=self)
@@ -357,7 +357,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-            MessageBox(
+            MessageBox.info(
                 f"complete.",
                 "Const Shrink",
                 parent=self)
@@ -369,7 +369,7 @@ class MainWindow(QtWidgets.QMainWindow):
             props = w.get_properties()
             new_opset = int(props.opset)
             if old_opset == new_opset:
-                MessageBox(
+                MessageBox.warn(
                     f"opset num is same. not change.",
                     "Change Opset",
                     parent=self)
@@ -381,7 +381,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-            MessageBox(
+            MessageBox.info(
                 f"Change opset {old_opset} to {new_opset}.",
                 "Change Opset",
                 parent=self)
@@ -397,7 +397,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-            MessageBox(
+            MessageBox.info(
                 f"complete.",
                 "Channel Convert",
                 parent=self)
@@ -422,7 +422,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-            MessageBox(
+            MessageBox.info(
                 f"complete.",
                 "Delete Node",
                 parent=self)
@@ -439,7 +439,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             graph = self.load_graph(onnx_model=onnx_model)
             self.update_graph(graph)
-            MessageBox(
+            MessageBox.info(
                 f"complete.",
                 "Modify Attributes and Constants",
                 parent=self)
