@@ -25,6 +25,7 @@ from widgets_change_channel import ChangeChannelWidgets
 from widgets_constant_shrink import ConstantShrinkWidgets
 from widgets_modify_attrs import ModifyAttrsWidgets
 from widgets_delete_node import DeleteNodeWidgets
+from widgets_generate_operator import GenerateOperatorWidgets
 from widgets_message_box import MessageBox
 from onnx_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
@@ -130,7 +131,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnConstShrink.clicked.connect(self.btnConstShrink_clicked)
 
         self.btnGenerateOperator = QtWidgets.QPushButton("Generate Operator (sog4onnx)")
-        self.btnGenerateOperator.setEnabled(False)
         self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
 
         self.btnModifyAttrConst = QtWidgets.QPushButton("Modify Attribute and Constant (sam4onnx)")
@@ -228,7 +228,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChannelConvert.setEnabled(True)
                 # self.btnInitializeBatchSize.setEnabled(False)
 
-                # self.btnGenerateOperator.setEnabled(False)
+                self.btnGenerateOperator.setEnabled(True)
                 self.btnAddNode.setEnabled(True)
             else:
                 self.btnExportONNX.setEnabled(False)
@@ -242,24 +242,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChannelConvert.setEnabled(False)
                 # self.btnInitializeBatchSize.setEnabled(False)
 
-                # self.btnGenerateOperator.setEnabled(True)
+                self.btnGenerateOperator.setEnabled(True)
                 self.btnAddNode.setEnabled(True)
             self.properties_bin.setEnabled(True)
         else:
-                self.btnOpenONNX.setEnabled(False)
-                self.btnAutoLayout.setEnabled(False)
-                self.btnExportONNX.setEnabled(False)
-                self.btnCombineNetwork.setEnabled(False)
-                self.btnExtractNetwork.setEnabled(False)
-                self.btnDelNode.setEnabled(False)
-                self.btnConstShrink.setEnabled(False)
-                self.btnModifyAttrConst.setEnabled(False)
-                self.btnChangeOpset.setEnabled(False)
-                self.btnChannelConvert.setEnabled(False)
-                self.btnInitializeBatchSize.setEnabled(False)
-                self.btnGenerateOperator.setEnabled(False)
-                self.btnAddNode.setEnabled(False)
-                self.properties_bin.setEnabled(False)
+            self.btnOpenONNX.setEnabled(False)
+            self.btnAutoLayout.setEnabled(False)
+            self.btnExportONNX.setEnabled(False)
+            self.btnCombineNetwork.setEnabled(False)
+            self.btnExtractNetwork.setEnabled(False)
+            self.btnDelNode.setEnabled(False)
+            self.btnConstShrink.setEnabled(False)
+            self.btnModifyAttrConst.setEnabled(False)
+            self.btnChangeOpset.setEnabled(False)
+            self.btnChannelConvert.setEnabled(False)
+            self.btnInitializeBatchSize.setEnabled(False)
+            self.btnGenerateOperator.setEnabled(False)
+            self.btnAddNode.setEnabled(False)
+            self.properties_bin.setEnabled(False)
 
     def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None)->ONNXNodeGraph:
 
@@ -455,7 +455,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def btnGenerateOperator_clicked(self, e:bool):
         self.set_sidemenu_buttons_enabled(False)
-        print(sys._getframe().f_code.co_name)
+
+        w = GenerateOperatorWidgets(parent=self)
+        w.show()
+        if w.exec_():
+            props = w.get_properties()
+            onnx_model:onnx.ModelProto = onnx_tools_generate(
+                non_verbose=False,
+                **props._asdict()
+            )
+            graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
+            self.update_graph(graph)
+            MessageBox.info(
+                f"complete.",
+                "Generate Operator",
+                parent=self)
+
         self.set_sidemenu_buttons_enabled(True)
 
     def btnDelNode_clicked(self, e:bool):

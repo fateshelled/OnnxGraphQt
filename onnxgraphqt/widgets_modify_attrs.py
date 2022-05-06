@@ -1,6 +1,5 @@
 from collections import namedtuple
 from typing import List, Dict
-import itertools
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
