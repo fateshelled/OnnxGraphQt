@@ -9,6 +9,8 @@ from sam4onnx.onnx_attr_const_modify import (
     CONSTANT_DTYPES_TO_NUMPY_TYPES
 )
 
+from onnx_graph import OnnxGraph
+
 ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
     [
         "op_name",
@@ -46,13 +48,13 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
     _MAX_DELETE_ATTRIBUTES_COUNT = 5
     _MAX_CONST_COUNT = 4
 
-    def __init__(self, parent=None, graph_dict: Dict[str, Dict[str, Dict[str, object]]]=None) -> None:
+    def __init__(self, parent=None, graph: OnnxGraph=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("modify attributes")
-        self.graph_dict = graph_dict
+        self.graph = graph
         self.initUI()
-        self.updateUI(self.graph_dict)
+        self.updateUI(self.graph)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -131,7 +133,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
 
         # delete_attributes
         self.layout_delete_attributes = QtWidgets.QVBoxLayout()
-        self.layout_delete_attributes.addWidget(QtWidgets.QLabel("delete_attributes [optional]"))
+        self.layout_delete_attributes.addWidget(QtWidgets.QLabel("delete_attributes"))
         self.visible_delete_attributes_count = 3
         self.delete_attributes = {}
         for index in range(self._MAX_DELETE_ATTRIBUTES_COUNT):
@@ -172,20 +174,20 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         self.set_visible_delete_attributes()
         self.setLayout(base_layout)
 
-    def updateUI(self, graph_dict: Dict[str, Dict[str, Dict[str, object]]]):
+    def updateUI(self, graph: OnnxGraph):
 
         self.cmb_opname.clear()
-        if self.graph_dict:
-            for op_name in self.graph_dict["nodes"].keys():
+        if self.graph:
+            for op_name in self.graph.nodes.keys():
                 self.cmb_opname.addItem(op_name)
         self.cmb_opname.setEditable(True)
         self.cmb_opname.setCurrentIndex(-1)
 
-        if self.graph_dict:
+        if self.graph:
             def edit_attributes_name_currentIndexChanged(attr_index, current_index):
                 op_name = self.cmb_opname.currentText()
                 attr_name = self.edit_attributes[attr_index]["name"].currentText()
-                attrs = self.graph_dict["nodes"][op_name]["attrs"]
+                attrs = self.graph.nodes[op_name].attrs
                 if attr_name:
                     value = attrs[attr_name]
                     self.edit_attributes[attr_index]["value"].setText(str(value))
@@ -193,23 +195,20 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
                     self.edit_attributes[attr_index]["dtype"].setCurrentText(dtype)
 
             def edit_const_name_currentIndexChanged(attr_index, current_index):
-                op_name = self.cmb_opname.currentText()
+                # op_name = self.cmb_opname.currentText()
                 input_name = self.edit_const[attr_index]["name"].currentText()
-                if input_name:
-                    for inp in self.graph_dict["nodes"][op_name]["inputs"]:
-                        if inp.name == input_name:
-                            value = inp.values
-                            self.edit_const[attr_index]["value"].setText(str(value))
-                            dtype = get_dtype_str(value)
-                            self.edit_const[attr_index]["dtype"].setCurrentText(dtype)
-                            break
+                node_input = self.graph.node_inputs.get(input_name)
+                if node_input:
+                    self.edit_const[attr_index]["value"].setText(str(node_input.values))
+                    dtype = get_dtype_str(node_input.values)
+                    self.edit_const[attr_index]["dtype"].setCurrentText(dtype)
 
             def cmb_opname_currentIndexChanged(current_index):
                 op_name = self.cmb_opname.currentText()
 
                 for index in range(self._MAX_ATTRIBUTES_COUNT):
                     self.edit_attributes[index]["name"].clear()
-                    for attr_name in self.graph_dict["nodes"][op_name]["attrs"].keys():
+                    for attr_name in self.graph.nodes[op_name].attrs.keys():
                         self.edit_attributes[index]["name"].addItem(attr_name)
                     self.edit_attributes[index]["name"].setCurrentIndex(-1)
                     def on_change(edit_attr_index):
@@ -219,24 +218,23 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
                     self.edit_attributes[index]["name"].currentIndexChanged.connect(on_change(index))
                     self.edit_attributes[index]["value"].setText("")
 
-                for index in range(self._MAX_CONST_COUNT):
-                    self.edit_const[index]["name"].clear()
-                    for input in self.graph_dict["nodes"][op_name]["inputs"]:
-                        self.edit_const[index]["name"].addItem(input.name)
-                    self.edit_const[index]["name"].setCurrentIndex(-1)
-                    def on_change(edit_const_index):
-                        def func(selected_index):
-                            return edit_const_name_currentIndexChanged(edit_const_index, selected_index)
-                        return func
-                    self.edit_const[index]["name"].currentIndexChanged.connect(on_change(index))
-                    self.edit_const[index]["value"].setText("")
-
                 for index in range(self._MAX_DELETE_ATTRIBUTES_COUNT):
                     self.delete_attributes[index]["name"].clear()
-                    for attr_name in self.graph_dict["nodes"][op_name]["attrs"].keys():
+                    for attr_name in self.graph.nodes[op_name].attrs.keys():
                         self.delete_attributes[index]["name"].addItem(attr_name)
                     self.delete_attributes[index]["name"].setCurrentIndex(-1)
 
+            for index in range(self._MAX_CONST_COUNT):
+                self.edit_const[index]["name"].clear()
+                for name, val in self.graph.node_inputs.items():
+                    self.edit_const[index]["name"].addItem(name)
+                self.edit_const[index]["name"].setCurrentIndex(-1)
+                def on_change(edit_const_index):
+                    def func(selected_index):
+                        return edit_const_name_currentIndexChanged(edit_const_index, selected_index)
+                    return func
+                self.edit_const[index]["name"].currentIndexChanged.connect(on_change(index))
+                self.edit_const[index]["value"].setText("")
             self.cmb_opname.currentIndexChanged.connect(cmb_opname_currentIndexChanged)
 
     def set_visible_attributes(self):
@@ -316,16 +314,12 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
                     attributes[name] = np.asarray(value, dtype=dtype)
                 else:
                     attributes[name] = value
-        if len(attributes) == 0:
-            attributes = None
 
         delete_attributes = []
         for i in range(self.visible_delete_attributes_count):
             name = self.delete_attributes[i]["name"].currentText()
             if name:
                 delete_attributes.append(name)
-        if len(delete_attributes) == 0:
-            delete_attributes = None
 
         input_constants = {}
         for i in range(self.visible_const_count):
@@ -334,12 +328,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
             dtype = self.edit_const[i]["dtype"].currentData()
             if name and value:
                 value = literal_eval(value)
-                if isinstance(value, list):
-                    input_constants[name] = np.asarray(value, dtype=dtype)
-                else:
-                    input_constants[name] = value
-        if len(input_constants) == 0:
-            input_constants = None
+                input_constants[name] = np.asarray(value, dtype=dtype)
 
         return ModifyAttrsProperties(
             op_name=opname,
@@ -353,17 +342,20 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
-        edit_attr = (props.op_name) and (len(props.attributes) > 0)
-        edit_const = True
-        if props.input_constants is None:
-            edit_const = False
-        else:
-            edit_const = len(props.input_constants) > 0
+        edit_attr = len(props.attributes) > 0
+        edit_const = len(props.input_constants) > 0
+        delete_attr = len(props.delete_attributes) > 0
         if edit_attr and edit_const:
             print("ERROR: Specify only one of attributes or input_constants.")
             invalid = True
-        if not edit_attr and not edit_const:
-            print("ERROR: Specify attributes or input_constants")
+        if not props.op_name and edit_attr:
+            print("ERROR: Specify op_name.")
+            invalid = True
+        if not props.op_name and delete_attr:
+            print("ERROR: Specify op_name.")
+            invalid = True
+        if not edit_attr and not edit_const and not delete_attr:
+            print("ERROR: Specify attributes or input_constants or delete_attributes")
             invalid = True
 
         if invalid:

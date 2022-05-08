@@ -57,7 +57,7 @@ from utils.dtype import (
 )
 
 @dataclass
-class ONNX_IO:
+class OnnxNodeIO:
     name: str
     dtype: str
     shape: List[int]
@@ -76,11 +76,6 @@ class ONNXNode(BaseNode):
         self.op = ""
         self.onnx_inputs = []
         self.onnx_outputs = []
-
-        # add property for visualize and serialize.
-        self.create_property("op", self.op, widget_type=NODE_PROP_QLABEL)
-        self.create_property("inputs_", self.onnx_inputs, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("outputs_", self.onnx_outputs, widget_type=NODE_PROP_QLINEEDIT)
 
         # create node inputs.
         self.add_input('multi in', multi_input=True)
@@ -101,10 +96,14 @@ class ONNXNode(BaseNode):
 
     def set_op(self, op:str):
         self.op = op
+        if not self.has_property("op"):
+            self.create_property("op", self.op, widget_type=NODE_PROP_QLINEEDIT)
         self.set_property("op", self.op)
 
-    def set_onnx_inputs(self, onnx_inputs:List[ONNX_IO]):
+    def set_onnx_inputs(self, onnx_inputs:List[OnnxNodeIO]):
         self.onnx_inputs = onnx_inputs
+        if not self.has_property("inputs_"):
+            self.create_property("inputs_", self.onnx_inputs, widget_type=NODE_PROP_QLINEEDIT)
         self.set_property("inputs_", [[inp.name, inp.dtype, inp.shape, inp.values] for inp in self.onnx_inputs])
         # for i, (name, dtype, shape, values) in enumerate(self.onnx_inputs):
         #     prop_name = f"inputs_{i}"
@@ -116,8 +115,10 @@ class ONNXNode(BaseNode):
         #     else:
         #         self.create_property(prop_name, name, widget_type=NODE_PROP_QLABEL)
 
-    def set_onnx_outputs(self, onnx_outputs:List[ONNX_IO]):
+    def set_onnx_outputs(self, onnx_outputs:List[OnnxNodeIO]):
         self.onnx_outputs = onnx_outputs
+        if not self.has_property("outputs_"):
+            self.create_property("outputs_",  self.onnx_outputs, widget_type=NODE_PROP_QLINEEDIT)
         self.set_property("outputs_", [[out.name, out.dtype, out.shape, out.values] for out in self.onnx_outputs])
 
     def set_color(self):
@@ -191,6 +192,13 @@ class ONNXOutput(BaseNode):
         self.view.text_color = COLOR_FONT + [255]
         return super().set_color(*INPUT_NODE_COLOR)
 
+NAME = str
+@dataclass
+class OnnxGraph:
+    inputs: Dict[NAME, ONNXInput]
+    outputs: Dict[NAME, ONNXOutput]
+    nodes: Dict[NAME, ONNXNode]
+    node_inputs: Dict[NAME, OnnxNodeIO]
 
 class ONNXNodeGraph(NodeGraph):
     def __init__(self, name:str, opset:int, doc_string:str, parent=None, **kwargs):
@@ -247,43 +255,41 @@ class ONNXNodeGraph(NodeGraph):
     def create_qtnode(self, onnx_node: gs.Node)->NodeObject:
         node_name = onnx_node.name # str
         n = self.create_node("nodes.node.ONNXNode", name=node_name)
-        onnx_inputs:List[ONNX_IO] = []
+        onnx_inputs:List[OnnxNodeIO] = []
         for inp in onnx_node.inputs:
             t = type(inp)
             if t is gs.Tensor:
-                onnx_inputs += [ONNX_IO(inp.name, str(inp.dtype), inp.shape, None)]
+                onnx_inputs += [OnnxNodeIO(inp.name, str(inp.dtype), inp.shape, None)]
             elif t is gs.Constant:
-                onnx_inputs += [ONNX_IO(inp.name, str(inp.values.dtype), inp.shape, inp.values.tolist())]
+                onnx_inputs += [OnnxNodeIO(inp.name, str(inp.values.dtype), inp.shape, inp.values.tolist())]
             elif t is gs.Variable:
                 if inp.dtype is None:
-                    onnx_inputs += [ONNX_IO(inp.name, None, None, None)]
+                    onnx_inputs += [OnnxNodeIO(inp.name, None, None, None)]
                 else:
-                    onnx_inputs += [ONNX_IO(inp.name, str(inp.dtype), inp.shape, None)]
+                    onnx_inputs += [OnnxNodeIO(inp.name, str(inp.dtype), inp.shape, None)]
             else:
-                onnx_inputs += [ONNX_IO(inp.name, None, None, None)]
+                onnx_inputs += [OnnxNodeIO(inp.name, None, None, None)]
         onnx_outputs = []
         for out in onnx_node.outputs:
             t = type(out)
             if t is gs.Tensor:
-                onnx_outputs += [ONNX_IO(out.name, str(out._values.dtype), out.shape, None)]
+                onnx_outputs += [OnnxNodeIO(out.name, str(out._values.dtype), out.shape, None)]
             elif t is gs.Constant:
-                onnx_outputs += [ONNX_IO(out.name, str(out.values.dtype), out.shape, out.values.tolist())]
+                onnx_outputs += [OnnxNodeIO(out.name, str(out.values.dtype), out.shape, out.values.tolist())]
             elif t is gs.Variable:
                 if out.dtype is None:
-                    onnx_outputs += [ONNX_IO(out.name, None, None, None)]
+                    onnx_outputs += [OnnxNodeIO(out.name, None, None, None)]
                 else:
-                    onnx_outputs += [ONNX_IO(out.name, str(out.dtype), out.shape, None)]
+                    onnx_outputs += [OnnxNodeIO(out.name, str(out.dtype), out.shape, None)]
             else:
-                onnx_outputs += [ONNX_IO(out.name, None, None, None)]
+                onnx_outputs += [OnnxNodeIO(out.name, None, None, None)]
         n.set_op(onnx_node.op) # str
-        n.set_onnx_inputs(onnx_inputs)
-        n.set_onnx_outputs(onnx_outputs)
+        if len(onnx_inputs) > 0:
+            n.set_onnx_inputs(onnx_inputs)
+        if len(onnx_outputs) > 0:
+            n.set_onnx_outputs(onnx_outputs)
         if n.op in ['Constant', 'ConstantOfShape']:
             d = {
-                "inputs":onnx_node.attrs["value"].inputs,
-                "name": onnx_node.attrs["value"].name,
-                "outputs": onnx_node.attrs["value"].outputs,
-                "shape": onnx_node.attrs["value"].shape,
                 "dtype": str(onnx_node.attrs["value"].values.dtype),
                 "values": onnx_node.attrs["value"].values.tolist()
             }
@@ -322,38 +328,21 @@ class ONNXNodeGraph(NodeGraph):
                 )
         return ret
 
-    def to_dict(self)->Dict[str, Dict[str, Dict[str, object]]]:
-        ret = {
-            "inputs": {},
-            "outputs": {},
-            "nodes": {},
-        }
+    def to_data(self)->OnnxGraph:
+        inputs = {}
+        outputs = {}
+        nodes = {}
+        node_inputs = {}
         for n in self.all_nodes():
             if isinstance(n, ONNXNode):
-                d = {
-                    "op" : n.op,
-                    # "inputs": {i.name: {"dtype": i.dtype, "shape": i.shape, "values": i.values} for i in n.onnx_inputs},
-                    "inputs": n.onnx_inputs,
-                    "outputs": n.onnx_outputs,
-                    "attrs": n.attrs
-                }
-                ret["nodes"][n.name()] = d
+                nodes[n.name()] = n
+                for inp in n.onnx_inputs:
+                    node_inputs[inp.name] = inp
             elif isinstance(n, ONNXInput):
-                d = {
-                    "shape": n.shape,
-                    "dtype": n.dtype,
-                    "output_names": n.output_names,
-                }
-                ret["inputs"][n.name()] = d
+                inputs[n.name()] = n
             elif isinstance(n, ONNXOutput):
-                d = {
-                    "name": n.name(),
-                    "shape": n.shape,
-                    "dtype": n.dtype,
-                    "output_names": n.input_names,
-                }
-                ret["outputs"][n.name()] = d
-        return ret
+                outputs[n.name()] = n
+        return OnnxGraph(inputs=inputs, outputs=outputs, nodes=nodes, node_inputs=node_inputs)
 
 
     def export(self, file_path:str):
@@ -438,11 +427,11 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
         else:
             # for Constant
             values = np.array(n.attrs["values"], dtype=DTYPES_TO_NUMPY_TYPES[n.attrs["dtype"]])
-            if len(n.attrs["shape"])>0:
-                values = values.reshape(n.attrs["shape"])
+            # if len(n.attrs["shape"])>0:
+            #     values = values.reshape(n.attrs["shape"])
             attrs = OrderedDict(
                 value=gs.Constant(
-                        n.attrs["name"],
+                        n.name(),
                         values=values,
                     )
             )
@@ -477,7 +466,7 @@ def auto_layout_nodes(graph:ONNXNodeGraph):
     if not start_nodes:
         return
     nx_graph = NodeGraphToNetworkX(graph)
-    pos = nx.nx_pydot.pydot_layout(nx_graph, root=start_nodes[0], prog="dot")
+    pos = nx.nx_pydot.pydot_layout(nx_graph, root=None, prog="dot")
     for name, (x, y) in pos.items():
         node = graph.get_node_by_name(name)
         node.set_pos(x*3, -y*1.5)

@@ -358,19 +358,26 @@ class MainWindow(QtWidgets.QMainWindow):
         w = AddNodeWidgets(self)
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            onnx_model:onnx.ModelProto = onnx_tools_add(
-                onnx_graph=self.graph.to_onnx(non_verbose=True),
-                non_verbose=False,
-                **props._asdict(),
-            )
+            try:
+                props = w.get_properties()
+                onnx_model:onnx.ModelProto = onnx_tools_add(
+                    onnx_graph=self.graph.to_onnx(non_verbose=True),
+                    non_verbose=False,
+                    **props._asdict(),
+                )
 
-            graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"complete.",
-                "Add None",
-                parent=self)
+                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Add None",
+                    parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Add None",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnConstShrink_clicked(self, e:bool):
@@ -379,19 +386,26 @@ class MainWindow(QtWidgets.QMainWindow):
         w = ConstantShrinkWidgets(parent=self)
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            onnx_model:onnx.ModelProto = None
-            onnx_model, _ = onnx_tools_shrinking(
-                onnx_graph=self.graph.to_onnx(non_verbose=True),
-                non_verbose=False,
-                **props._asdict()
-            )
-            graph = self.load_graph(onnx_model=onnx_model)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"complete.",
-                "Const Shrink",
-                parent=self)
+            try:
+                props = w.get_properties()
+                onnx_model:onnx.ModelProto = None
+                onnx_model, _ = onnx_tools_shrinking(
+                    onnx_graph=self.graph.to_onnx(non_verbose=True),
+                    non_verbose=False,
+                    **props._asdict()
+                )
+                graph = self.load_graph(onnx_model=onnx_model)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Const Shrink",
+                    parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Const Shrink",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnChangeOpset_clicked(self, e:bool):
@@ -401,26 +415,33 @@ class MainWindow(QtWidgets.QMainWindow):
         old_opset = self.graph.opset
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            new_opset = int(props.opset)
-            if old_opset == new_opset:
-                MessageBox.warn(
-                    f"opset num is same. not change.",
+            try:
+                props = w.get_properties()
+                new_opset = int(props.opset)
+                if old_opset == new_opset:
+                    MessageBox.warn(
+                        f"opset num is same. not change.",
+                        "Change Opset",
+                        parent=self)
+                    self.set_sidemenu_buttons_enabled(True)
+                    return
+                onnx_model:onnx.ModelProto = onnx_tools_op_change(
+                    opset=new_opset,
+                    onnx_graph=self.graph.to_onnx(non_verbose=True),
+                    non_verbose=False,
+                )
+                graph = self.load_graph(onnx_model=onnx_model)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"Change opset {old_opset} to {new_opset}.",
                     "Change Opset",
                     parent=self)
-                self.set_sidemenu_buttons_enabled(True)
-                return
-            onnx_model:onnx.ModelProto = onnx_tools_op_change(
-                opset=new_opset,
-                onnx_graph=self.graph.to_onnx(non_verbose=True),
-                non_verbose=False,
-            )
-            graph = self.load_graph(onnx_model=onnx_model)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"Change opset {old_opset} to {new_opset}.",
-                "Change Opset",
-                parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Change Opset",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnChannelConvert_clicked(self, e:bool):
@@ -429,18 +450,25 @@ class MainWindow(QtWidgets.QMainWindow):
         w = ChangeChannelWidgets(parent=self)
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
-                onnx_graph=self.graph.to_onnx(non_verbose=True),
-                non_verbose=False,
-                **props._asdict()
-            )
-            graph = self.load_graph(onnx_model=onnx_model)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"complete.",
-                "Channel Convert",
-                parent=self)
+            try:
+                props = w.get_properties()
+                onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
+                    onnx_graph=self.graph.to_onnx(non_verbose=True),
+                    non_verbose=False,
+                    **props._asdict()
+                )
+                graph = self.load_graph(onnx_model=onnx_model)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Channel Convert",
+                    parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Channel Convert",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnCombineNetwork_clicked(self, e:bool):
@@ -459,18 +487,24 @@ class MainWindow(QtWidgets.QMainWindow):
         w = GenerateOperatorWidgets(parent=self)
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            onnx_model:onnx.ModelProto = onnx_tools_generate(
-                non_verbose=False,
-                **props._asdict()
-            )
-            graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"complete.",
-                "Generate Operator",
-                parent=self)
-
+            try:
+                props = w.get_properties()
+                onnx_model:onnx.ModelProto = onnx_tools_generate(
+                    non_verbose=False,
+                    **props._asdict()
+                )
+                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Generate Operator",
+                    parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Generate Operator",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnDelNode_clicked(self, e:bool):
@@ -479,39 +513,53 @@ class MainWindow(QtWidgets.QMainWindow):
         w = DeleteNodeWidgets(parent=self)
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            onnx_graph=self.graph.to_onnx(non_verbose=True)
-            onnx_model:onnx.ModelProto = onnx_tools_deletion(
-                onnx_graph=onnx_graph,
-                **props._asdict()
-            )
-            graph = self.load_graph(onnx_model=onnx_model)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"complete.",
-                "Delete Node",
-                parent=self)
+            try:
+                props = w.get_properties()
+                onnx_graph=self.graph.to_onnx(non_verbose=True)
+                onnx_model:onnx.ModelProto = onnx_tools_deletion(
+                    onnx_graph=onnx_graph,
+                    **props._asdict()
+                )
+                graph = self.load_graph(onnx_model=onnx_model)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Delete Node",
+                    parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Delete Node",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnModifyAttrConst_clicked(self, e:bool):
         self.set_sidemenu_buttons_enabled(False)
 
-        w = ModifyAttrsWidgets(parent=self, graph_dict=self.graph.to_dict())
+        w = ModifyAttrsWidgets(parent=self, graph=self.graph.to_data())
         w.show()
         if w.exec_():
-            props = w.get_properties()
-            onnx_graph=self.graph.to_onnx(non_verbose=True)
-            onnx_model:onnx.ModelProto = onnx_tools_modify(
-                onnx_graph=onnx_graph,
-                non_verbose=False,
-                **props._asdict()
-            )
-            graph = self.load_graph(onnx_model=onnx_model)
-            self.update_graph(graph)
-            MessageBox.info(
-                f"complete.",
-                "Modify Attributes and Constants",
-                parent=self)
+            try:
+                props = w.get_properties()
+                onnx_graph=self.graph.to_onnx(non_verbose=True)
+                onnx_model:onnx.ModelProto = onnx_tools_modify(
+                    onnx_graph=onnx_graph,
+                    non_verbose=False,
+                    **props._asdict()
+                )
+                graph = self.load_graph(onnx_model=onnx_model)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Modify Attributes and Constants",
+                    parent=self)
+            except Exception as e:
+                MessageBox.error(
+                    str(e),
+                    "Modify Attributes and Constants",
+                    parent=self
+                )
         self.set_sidemenu_buttons_enabled(True)
 
     def btnInitializeBatchSize_clicked(self, e:bool):

@@ -43,7 +43,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 - [x] Modify Operator Parameter [6. sam4onnx]
 - [x] Change Opset [7. soc4onnx]
 - [x] NCHW and NHWC conversion [8. scc4onnx]
-- [x] Add Node (no tested) [9. sna4onnx]
+- [x] Add Node [9. sna4onnx]
 - [ ] Initialize Batchsize [10. sbi4onnx]
 - [ ] Rename Operator [11. sor4onnx]
 - [ ] Export to JSON [12. onnx2json]
