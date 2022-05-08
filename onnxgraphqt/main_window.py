@@ -27,7 +27,7 @@ from widgets_modify_attrs import ModifyAttrsWidgets
 from widgets_delete_node import DeleteNodeWidgets
 from widgets_generate_operator import GenerateOperatorWidgets
 from widgets_message_box import MessageBox
-from onnx_graph import ONNXNodeGraph
+from onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 
 

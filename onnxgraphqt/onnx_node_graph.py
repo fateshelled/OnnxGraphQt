@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import (
-    Dict, List, Any, Optional
+    Dict, List, Any, Optional, Union
 )
 from collections import OrderedDict
 import copy
@@ -11,6 +11,7 @@ import onnx_graphsurgeon as gs
 # import networkx as nx
 import igraph
 
+from PySide2 import QtCore, QtWidgets
 from NodeGraphQt.constants import (
     NODE_LAYOUT_HORIZONTAL,
     NODE_LAYOUT_VERTICAL,
@@ -43,11 +44,16 @@ pipe.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
 
 from NodeGraphQt import NodeGraph, BaseNode
 from NodeGraphQt.base.node import NodeObject
+from NodeGraphQt.base.factory import NodeFactory
+from NodeGraphQt.base.model import NodeGraphModel
+from NodeGraphQt.widgets.viewer import NodeViewer
 
 from utils.color import (
     COLOR_BG,
     COLOR_FONT,
     COLOR_GRID,
+    COLOR_WHITE,
+    COLOR_GRAY,
     INPUT_NODE_COLOR,
     OUTPUT_NODE_COLOR,
     get_node_color,
@@ -56,142 +62,13 @@ from utils.color import (
 from utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,
 )
-
-@dataclass
-class OnnxNodeIO:
-    name: str
-    dtype: str
-    shape: List[int]
-    values: List
-
-
-class ONNXNode(BaseNode):
-    # unique node identifier.
-    __identifier__ = 'nodes.node'
-    # initial default node name.
-    NODE_NAME = 'onnxnode'
-
-    def __init__(self):
-        super(ONNXNode, self).__init__()
-        self.attrs = OrderedDict()
-        self.op = ""
-        self.onnx_inputs = []
-        self.onnx_outputs = []
-
-        # create node inputs.
-        self.add_input('multi in', multi_input=True)
-        # create node outputs.
-        self.add_output('multi out', multi_output=True)
-
-    def set_attrs(self, attrs:OrderedDict):
-        self.attrs = attrs
-        for key, val in self.attrs.items():
-            if self.has_property(key + "_"):
-                self.set_property(key + "_", val)
-            else:
-                self.create_property(key + "_", val, widget_type=NODE_PROP_QLINEEDIT)
-
-    def get_attrs(self)->OrderedDict:
-        d = [(key, self.get_property(key + "_")) for key in self.attrs.keys()]
-        return OrderedDict(d)
-
-    def set_op(self, op:str):
-        self.op = op
-        if not self.has_property("op"):
-            self.create_property("op", self.op, widget_type=NODE_PROP_QLINEEDIT)
-        self.set_property("op", self.op)
-
-    def set_onnx_inputs(self, onnx_inputs:List[OnnxNodeIO]):
-        self.onnx_inputs = onnx_inputs
-        if not self.has_property("inputs_"):
-            self.create_property("inputs_", self.onnx_inputs, widget_type=NODE_PROP_QLINEEDIT)
-        self.set_property("inputs_", [[inp.name, inp.dtype, inp.shape, inp.values] for inp in self.onnx_inputs])
-        # for i, (name, dtype, shape, values) in enumerate(self.onnx_inputs):
-        #     prop_name = f"inputs_{i}"
-        #     if self.has_property(prop_name):
-        #         if dtype:
-        #             self.set_property(prop_name, name)
-        #         else:
-        #             self.set_property(prop_name, name)
-        #     else:
-        #         self.create_property(prop_name, name, widget_type=NODE_PROP_QLABEL)
-
-    def set_onnx_outputs(self, onnx_outputs:List[OnnxNodeIO]):
-        self.onnx_outputs = onnx_outputs
-        if not self.has_property("outputs_"):
-            self.create_property("outputs_",  self.onnx_outputs, widget_type=NODE_PROP_QLINEEDIT)
-        self.set_property("outputs_", [[out.name, out.dtype, out.shape, out.values] for out in self.onnx_outputs])
-
-    def set_color(self):
-        self.view.text_color = COLOR_FONT + [255]
-        color = get_node_color(self.op)
-        return super().set_color(*color)
-
-class ONNXInput(BaseNode):
-    # unique node identifier.
-    __identifier__ = 'nodes.node'
-    # initial default node name.
-    NODE_NAME = 'input'
-    def __init__(self):
-        super(ONNXInput, self).__init__()
-        self.shape = []
-        self.dtype = ""
-        self.output_names = []
-        self.create_property("shape", self.shape, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("output_names", self.output_names, widget_type=NODE_PROP_QTEXTEDIT)
-        # create node outputs.
-        self.add_output('multi out', multi_output=True)
-        self.set_color()
-
-    def set_shape(self, shape):
-        self.shape = shape
-        self.set_property("shape", self.shape)
-
-    def set_dtype(self, dtype):
-        self.dtype = str(dtype)
-        self.set_property("dtype", self.dtype)
-
-    def set_output_names(self, output_names):
-        self.output_names = output_names
-        self.set_property("output_names", self.output_names)
-
-    def set_color(self):
-        self.view.text_color = COLOR_FONT + [255]
-        return super().set_color(*INPUT_NODE_COLOR)
-
-class ONNXOutput(BaseNode):
-    # unique node identifier.
-    __identifier__ = 'nodes.node'
-    # initial default node name.
-    NODE_NAME = 'output'
-    def __init__(self):
-        super(ONNXOutput, self).__init__()
-        self.shape = []
-        self.dtype:str = ""
-        self.input_names = []
-        self.create_property("shape", self.shape, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("input_names", self.input_names, widget_type=NODE_PROP_QTEXTEDIT)
-        # create node inputs.
-        self.add_input('multi in', multi_input=True)
-        self.set_color()
-
-    def set_shape(self, shape):
-        self.shape = shape
-        self.set_property("shape", self.shape)
-
-    def set_dtype(self, dtype):
-        self.dtype = str(dtype)
-        self.set_property("dtype", self.dtype)
-
-    def set_input_names(self, input_names):
-        self.input_names = input_names
-        self.set_property("input_names", self.input_names)
-
-    def set_color(self):
-        self.view.text_color = COLOR_FONT + [255]
-        return super().set_color(*INPUT_NODE_COLOR)
+from utils.style import set_context_menu_style
+from onnx_node import (
+    ONNXInput,
+    ONNXOutput,
+    ONNXNode,
+    OnnxNodeIO
+)
 
 NAME = str
 @dataclass
@@ -202,8 +79,36 @@ class OnnxGraph:
     node_inputs: Dict[NAME, OnnxNodeIO]
 
 class ONNXNodeGraph(NodeGraph):
+    def __super__init__(self, parent=None, **kwargs):
+        """
+        Args:
+            parent (object): object parent.
+            **kwargs (dict): Used for overriding internal objects at init time.
+        """
+        super(NodeGraph, self).__init__(parent)
+        self.setObjectName('NodeGraph')
+        self._model = (
+            kwargs.get('model') or NodeGraphModel())
+        self._node_factory = (
+            kwargs.get('node_factory') or NodeFactory())
+
+        self._undo_view = None
+        self._undo_stack = (
+            kwargs.get('undo_stack') or QtWidgets.QUndoStack(self))
+
+        self._widget = None
+
+        self._sub_graphs = {}
+
+        self._viewer = (
+            kwargs.get('viewer') or NodeViewer(undo_stack=self._undo_stack))
+
+        # self._build_context_menu()
+        # self._register_builtin_nodes()
+        self._wire_signals()
+
     def __init__(self, name:str, opset:int, doc_string:str, parent=None, **kwargs):
-        super().__init__(parent, **kwargs)
+        self.__super__init__(parent, **kwargs)
         self.name = name
         self.opset = opset
         self.doc_string = doc_string
@@ -215,8 +120,27 @@ class ONNXNodeGraph(NodeGraph):
         self.set_background_color(*COLOR_BG)
         self.set_grid_mode(VIEWER_GRID_DOTS)
         self.set_grid_color(*COLOR_GRID)
+        set_context_menu_style(self, text_color=COLOR_FONT, bg_color=COLOR_WHITE, selected_color=COLOR_GRAY)
         # # Disable right click menu
         # self.disable_context_menu(True)
+
+    def get_node_by_name(self, name)->List[Union[ONNXInput, ONNXOutput, ONNXNode]]:
+        """
+        Returns node that matches the name.
+
+        Args:
+            name (str): name of the node.
+        Returns:
+            NodeGraphQt.NodeObject: node object.
+        """
+        ret = []
+        for node_id, node in self._model.nodes.items():
+            if isinstance(node, ONNXNode):
+                if node.node_name == name:
+                    ret.append(node)
+            if node.name() == name:
+                ret.append(node)
+        return ret
 
     def _serialize(self, nodes)->Dict[str, Any]:
         ret = super()._serialize(nodes)
@@ -284,6 +208,7 @@ class ONNXNodeGraph(NodeGraph):
                     onnx_outputs += [OnnxNodeIO(out.name, str(out.dtype), out.shape, None)]
             else:
                 onnx_outputs += [OnnxNodeIO(out.name, None, None, None)]
+        n.set_node_name(node_name)
         n.set_op(onnx_node.op) # str
         if len(onnx_inputs) > 0:
             n.set_onnx_inputs(onnx_inputs)
@@ -428,7 +353,7 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
         if n.op not in ['Constant', 'ConstantOfShape']:
             # for not Constant
             node = gs.Node(
-                name=n.name(),
+                name=n.node_name,
                 op=n.op,
                 attrs=n.attrs,
                 inputs=input_gs_variables,
@@ -442,12 +367,12 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
             #     values = values.reshape(n.attrs["shape"])
             attrs = OrderedDict(
                 value=gs.Constant(
-                        n.name(),
+                        n.node_name,
                         values=values,
                     )
             )
             node = gs.Node(
-                name=n.name(),
+                name=n.node_name,
                 op=n.op,
                 attrs=attrs,
                 inputs=None,
@@ -498,21 +423,26 @@ def auto_layout_nodes(graph:ONNXNodeGraph):
 
 
 def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
+    qt_io_nodes = {}
+    qt_io_edge = {}
     qt_nodes = {}
     qt_edge = {}
 
     # Create Input/Output Node
     for inp in onnx_graph.inputs:
         qt_n = node_graph.create_qtinput(inp)
-        qt_nodes[inp.name] = qt_n
+        qt_io_nodes[inp.name] = qt_n
+
     for out in onnx_graph.outputs:
         qt_n = node_graph.create_qtoutput(out)
-        qt_nodes[out.name] = qt_n
+        qt_io_nodes[out.name] = qt_n
 
     # Create Node
     for onnx_node in onnx_graph.nodes:
         qt_n = node_graph.create_qtnode(onnx_node)
         qt_nodes[onnx_node.name] = qt_n
+
+    for onnx_node in onnx_graph.nodes:
         for input in onnx_node.inputs:
             if input.name not in qt_edge.keys():
                 qt_edge[input.name] = {
@@ -538,10 +468,10 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
         node_outputs = val["outputs"]
         if key in input_names:
             for inp in node_inputs:
-                qt_nodes[key].set_output(0, qt_nodes[inp].input(0))
+                qt_io_nodes[key].set_output(0, qt_nodes[inp].input(0))
         if key in output_names:
             for out in node_outputs:
-                qt_nodes[out].set_output(0, qt_nodes[key].input(0))
+                qt_nodes[out].set_output(0, qt_io_nodes[key].input(0))
         for inp in node_inputs:
             for out in node_outputs:
                 qt_nodes[out].set_output(0, qt_nodes[inp].input(0))

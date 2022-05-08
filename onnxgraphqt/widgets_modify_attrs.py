@@ -9,7 +9,7 @@ from sam4onnx.onnx_attr_const_modify import (
     CONSTANT_DTYPES_TO_NUMPY_TYPES
 )
 
-from onnx_graph import OnnxGraph
+from onnx_node_graph import OnnxGraph
 
 ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
     [

@@ -1,7 +1,7 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from onnx_graph import OnnxGraph
+from onnx_node_graph import OnnxGraph
 
 DeleteNodeProperties = namedtuple("DeleteNodeProperties",
     [
