@@ -210,7 +210,12 @@ class MainWindow(QtWidgets.QMainWindow):
         cursor.setShape(QtCore.Qt.ArrowCursor)
         self.setCursor(cursor)
 
-    def set_sidemenu_buttons_enabled(self, enable=True):
+    def set_font_bold(self, button: QtWidgets.QPushButton, bold=True):
+        f = button.font()
+        f.setBold(bold)
+        button.setFont(f)
+
+    def set_sidemenu_buttons_enabled(self, enable=True, current_button: QtWidgets.QPushButton=None):
 
         if enable:
             self.btnOpenONNX.setEnabled(True)
@@ -261,6 +266,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.btnAddNode.setEnabled(False)
             self.properties_bin.setEnabled(False)
 
+        self.current_button = current_button
+        if current_button:
+            current_button.setEnabled(True)
+
+    def set_current_process_button(self):
+        pass
+
     def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None)->ONNXNodeGraph:
 
         t0 = time.time()
@@ -302,12 +314,14 @@ class MainWindow(QtWidgets.QMainWindow):
         return properties_bin
 
     def btnOpenONNX_clicked(self, e:bool):
+        self.set_font_bold(self.btnOpenONNX, True)
         file_name, exp = QtWidgets.QFileDialog.getOpenFileName(
                             self,
                             caption="Open ONNX Model File",
                             directory=os.path.abspath(os.curdir),
                             filter="*.onnx")
         if not file_name:
+            self.set_font_bold(self.btnOpenONNX, False)
             return
         print(f"Open: {file_name}")
         graph = self.load_graph(onnx_model_path=file_name)
@@ -315,26 +329,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # self.btnImportONNX.setEnabled(True)
         self.btnExportONNX.setEnabled(True)
+        self.set_font_bold(self.btnOpenONNX, False)
 
-    def btnImportONNX_clicked(self, e: bool):
-        file_name, exp = QtWidgets.QFileDialog.getOpenFileName(
-                            self,
-                            caption="Open ONNX Model File",
-                            directory=os.path.abspath(os.curdir),
-                            filter="*.onnx")
-        if not file_name:
-            return
-        print(f"Import: {file_name}")
-        graph = self.load_graph(onnx_model_path=file_name, graph=self.graph)
-        self.update_graph(graph)
+    # def btnImportONNX_clicked(self, e: bool):
+    #     file_name, exp = QtWidgets.QFileDialog.getOpenFileName(
+    #                         self,
+    #                         caption="Open ONNX Model File",
+    #                         directory=os.path.abspath(os.curdir),
+    #                         filter="*.onnx")
+    #     if not file_name:
+    #         return
+    #     print(f"Import: {file_name}")
+    #     graph = self.load_graph(onnx_model_path=file_name, graph=self.graph)
+    #     self.update_graph(graph)
 
     def btnExportONNX_clicked(self, e:bool):
+        self.set_font_bold(self.btnExportONNX, True)
         file_name, exp = QtWidgets.QFileDialog.getSaveFileName(
                             self,
                             caption="Export ONNX Model File",
                             directory=os.path.abspath(os.curdir),
                             filter="*.onnx")
         if not file_name:
+            self.set_font_bold(self.btnExportONNX, False)
             return
         self.graph.export(file_name)
         print(f"Export: {file_name}.")
@@ -342,8 +359,10 @@ class MainWindow(QtWidgets.QMainWindow):
             ["Success.", f"Export to {file_name}."],
             "Export ONNX",
             parent=self)
+        self.set_font_bold(self.btnExportONNX, False)
 
     def btnAutoLayout_clicked(self, e:bool):
+        self.set_font_bold(self.btnAutoLayout, True)
         self.set_cursor_busy()
         self.set_sidemenu_buttons_enabled(False)
 
@@ -351,15 +370,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_sidemenu_buttons_enabled(True)
         self.set_cursor_arrow()
+        self.set_font_bold(self.btnAutoLayout, False)
 
     def btnAddNode_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnAddNode
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = AddNodeWidgets(self)
-        w.show()
-        if w.exec_():
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = AddNodeWidgets(self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 onnx_model:onnx.ModelProto = onnx_tools_add(
                     onnx_graph=self.graph.to_onnx(non_verbose=True),
                     non_verbose=False,
@@ -378,16 +404,24 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Add None",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnConstShrink_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnConstShrink
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = ConstantShrinkWidgets(parent=self)
-        w.show()
-        if w.exec_():
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = ConstantShrinkWidgets(parent=self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 onnx_model:onnx.ModelProto = None
                 onnx_model, _ = onnx_tools_shrinking(
                     onnx_graph=self.graph.to_onnx(non_verbose=True),
@@ -406,17 +440,25 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Const Shrink",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnChangeOpset_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnChangeOpset
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
         old_opset = self.graph.opset
-        w.show()
-        if w.exec_():
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 new_opset = int(props.opset)
                 if old_opset == new_opset:
                     MessageBox.warn(
@@ -442,16 +484,24 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Change Opset",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnChannelConvert_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnChannelConvert
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = ChangeChannelWidgets(parent=self)
-        w.show()
-        if w.exec_():
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = ChangeChannelWidgets(parent=self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
                     onnx_graph=self.graph.to_onnx(non_verbose=True),
                     non_verbose=False,
@@ -469,7 +519,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Channel Convert",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnCombineNetwork_clicked(self, e:bool):
         self.set_sidemenu_buttons_enabled(False)
@@ -482,13 +534,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(True)
 
     def btnGenerateOperator_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnGenerateOperator
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = GenerateOperatorWidgets(parent=self)
-        w.show()
-        if w.exec_():
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = GenerateOperatorWidgets(parent=self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 onnx_model:onnx.ModelProto = onnx_tools_generate(
                     non_verbose=False,
                     **props._asdict()
@@ -505,16 +563,24 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Generate Operator",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnDelNode_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnDelNode
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = DeleteNodeWidgets(parent=self, graph=self.graph.to_data())
-        w.show()
-        if w.exec_():
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = DeleteNodeWidgets(parent=self, graph=self.graph.to_data())
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 onnx_graph=self.graph.to_onnx(non_verbose=True)
                 print_msg = ""
                 with io.StringIO() as f:
@@ -542,16 +608,24 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Delete Node",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnModifyAttrConst_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
+        btn = self.btnModifyAttrConst
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
 
-        w = ModifyAttrsWidgets(parent=self, graph=self.graph.to_data())
-        w.show()
-        if w.exec_():
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = ModifyAttrsWidgets(parent=self, graph=self.graph.to_data())
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
             try:
-                props = w.get_properties()
+                props = self.current_widgets.get_properties()
                 onnx_graph=self.graph.to_onnx(non_verbose=True)
                 onnx_model:onnx.ModelProto = onnx_tools_modify(
                     onnx_graph=onnx_graph,
@@ -570,7 +644,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     "Modify Attributes and Constants",
                     parent=self
                 )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnInitializeBatchSize_clicked(self, e:bool):
         self.set_sidemenu_buttons_enabled(False)

@@ -22,7 +22,7 @@ class ConstantShrinkWidgets(QtWidgets.QDialog):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
-        self.setWindowTitle("add node")
+        self.setWindowTitle("constant shrink")
         self.initUI()
 
     def initUI(self):
