@@ -48,7 +48,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
     _MAX_DELETE_ATTRIBUTES_COUNT = 5
     _MAX_CONST_COUNT = 4
 
-    def __init__(self, parent=None, graph: OnnxGraph=None) -> None:
+    def __init__(self, graph: OnnxGraph=None, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("modify attributes")

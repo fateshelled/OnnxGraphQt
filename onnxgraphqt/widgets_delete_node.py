@@ -12,7 +12,7 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 400
     _MAX_REMOVE_NODE_NAMES_COUNT = 5
 
-    def __init__(self, parent=None, graph: OnnxGraph=None) -> None:
+    def __init__(self, graph: OnnxGraph=None, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("delete node")

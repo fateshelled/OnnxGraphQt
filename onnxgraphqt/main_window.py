@@ -327,6 +327,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.set_font_bold(self.btnOpenONNX, False)
             return
         print(f"Open: {file_name}")
+        time.sleep(0.01)
         graph = self.load_graph(onnx_model_path=file_name)
         self.update_graph(graph)
 
@@ -500,7 +501,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
 
-        self.current_widgets = ChangeChannelWidgets(parent=self)
+        self.current_widgets = ChangeChannelWidgets(graph=self.graph.to_data(), parent=self)
         self.current_widgets.show()
         if self.current_widgets.exec_():
             try:
@@ -545,7 +546,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
 
-        self.current_widgets = GenerateOperatorWidgets(parent=self)
+        self.current_widgets = GenerateOperatorWidgets(opset=self.graph.opset, parent=self)
         self.current_widgets.show()
         if self.current_widgets.exec_():
             try:

@@ -32,13 +32,13 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
     _MAX_OUTPUT_VARIABLES_COUNT = 5
     _MAX_ATTRIBUTES_COUNT = 5
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, opset=DEFAULT_OPSET, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("generate operator")
-        self.initUI()
+        self.initUI(opset)
 
-    def initUI(self):
+    def initUI(self, opset):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()
@@ -54,7 +54,7 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         layout.addRow("op_type", self.cmb_optype)
 
         self.tb_opset = QtWidgets.QLineEdit()
-        self.tb_opset.setText(str(DEFAULT_OPSET))
+        self.tb_opset.setText(str(opset))
         layout.addRow("opset", self.tb_opset)
 
         self.tb_opname = QtWidgets.QLineEdit()

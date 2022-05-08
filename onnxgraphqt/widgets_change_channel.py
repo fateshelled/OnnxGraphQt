@@ -2,6 +2,7 @@ from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from utils.color import PrintColor
+from onnx_node_graph import OnnxGraph
 from ast import literal_eval
 
 ChangeChannelProperties = namedtuple("ChangeChannelProperties",
@@ -13,14 +14,21 @@ ChangeChannelProperties = namedtuple("ChangeChannelProperties",
 class ChangeChannelWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 300
     _QLINE_EDIT_WIDTH = 170
-    _MAX_CHANGE_ORDER_DIM_INPUTS_COUNT = 4
-    _MAX_CHANNEL_CHANGE_INPUTS_COUNT = 4
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, graph: OnnxGraph=None, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("change channel")
+        self.graph = graph
+
+        if graph:
+            self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT = len(self.graph.inputs)
+            self._MAX_CHANNEL_CHANGE_INPUTS_COUNT = len(self.graph.inputs)
+        else:
+            self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT = 4
+            self._MAX_CHANNEL_CHANGE_INPUTS_COUNT = 4
         self.initUI()
+        self.updateUI(self.graph)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -29,19 +37,14 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
 
         self.layout_order_dims = QtWidgets.QVBoxLayout()
         self.layout_change_channel = QtWidgets.QVBoxLayout()
-        self.visible_change_order_dim_inputs_count = 1
-        self.visible_channel_change_inputs_count = 1
+        self.visible_change_order_dim_inputs_count = self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT
+        self.visible_channel_change_inputs_count = self._MAX_CHANNEL_CHANGE_INPUTS_COUNT
 
         self.input_op_names_and_order_dims = {} # transpose NCHW <-> NHWC
         self.channel_change_inputs = {}         # RGB <-> BGR
         self.create_order_dims_widgets()
         self.create_channel_change_widgets()
 
-        # for i in range(self._MAX_INPUTS_COUNT):
-        #     self.create_variables_widget(i, is_input=True)
-
-
-        # self.layout_order_dims.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
         lbl_channel_change = QtWidgets.QLabel("channel_change_inputs")
         lbl_channel_change.setToolTip('Change the channel order of RGB and BGR.' +
                                       'If the original model is RGB, it is transposed to BGR.' +
@@ -60,7 +63,6 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
         for i in range(self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT):
             self.layout_change_channel.addWidget(self.channel_change_inputs[i]["base"])
 
-        # 
         lbl_order_dims = QtWidgets.QLabel("input_op_names_and_order_dims")
         lbl_order_dims.setToolTip("Specify the name of the input_op to be dimensionally changed and\n" + 
                                   "the order of the dimensions after the change.\n" + 
@@ -104,7 +106,22 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
         base_layout.addWidget(btn)
 
         self.setLayout(base_layout)
+        self.set_visible_order_dims()
+        self.set_visible_channel_change()
 
+    def updateUI(self, graph: OnnxGraph):
+        if graph:
+            for index in range(self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT):
+                self.input_op_names_and_order_dims[index]["name"].clear()
+                for name, input_node in graph.inputs.items():
+                    self.input_op_names_and_order_dims[index]["name"].addItem(name)
+                self.input_op_names_and_order_dims[index]["name"].setCurrentIndex(index)
+
+            for index in range(self._MAX_CHANNEL_CHANGE_INPUTS_COUNT):
+                self.channel_change_inputs[index]["name"].clear()
+                for name, input_node in graph.inputs.items():
+                    self.channel_change_inputs[index]["name"].addItem(name)
+                self.channel_change_inputs[index]["name"].setCurrentIndex(index)
         self.set_visible_order_dims()
         self.set_visible_channel_change()
 
@@ -130,8 +147,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
             self.input_op_names_and_order_dims[index]["base"] = QtWidgets.QWidget()
             self.input_op_names_and_order_dims[index]["layout"] = QtWidgets.QHBoxLayout(self.input_op_names_and_order_dims[index]["base"])
             self.input_op_names_and_order_dims[index]["layout"].setContentsMargins(0, 0, 0, 0)
-            self.input_op_names_and_order_dims[index]["name"] = QtWidgets.QLineEdit()
-            self.input_op_names_and_order_dims[index]["name"].setPlaceholderText("input_op_name")
+            self.input_op_names_and_order_dims[index]["name"] = QtWidgets.QComboBox()
             self.input_op_names_and_order_dims[index]["name"].setFixedWidth(self._QLINE_EDIT_WIDTH)
             self.input_op_names_and_order_dims[index]["value"] = QtWidgets.QLineEdit()
             self.input_op_names_and_order_dims[index]["value"].setPlaceholderText("List of dims.")
@@ -144,8 +160,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
             self.channel_change_inputs[index]["base"] = QtWidgets.QWidget()
             self.channel_change_inputs[index]["layout"] = QtWidgets.QHBoxLayout(self.channel_change_inputs[index]["base"])
             self.channel_change_inputs[index]["layout"].setContentsMargins(0, 0, 0, 0)
-            self.channel_change_inputs[index]["name"] = QtWidgets.QLineEdit()
-            self.channel_change_inputs[index]["name"].setPlaceholderText("input_op_name")
+            self.channel_change_inputs[index]["name"] = QtWidgets.QComboBox()
             self.channel_change_inputs[index]["name"].setFixedWidth(self._QLINE_EDIT_WIDTH)
             self.channel_change_inputs[index]["value"] = QtWidgets.QLineEdit()
             self.channel_change_inputs[index]["value"].setPlaceholderText("dim")
@@ -155,7 +170,10 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
     def set_visible_order_dims(self):
         for key, widgets in self.input_op_names_and_order_dims.items():
             widgets["base"].setVisible(key < self.visible_change_order_dim_inputs_count)
-        if self.visible_change_order_dim_inputs_count == 1:
+        if self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT == 1:
+            self.btn_add_order_dims.setEnabled(False)
+            self.btn_del_order_dims.setEnabled(False)
+        elif self.visible_change_order_dim_inputs_count == 1:
             self.btn_add_order_dims.setEnabled(True)
             self.btn_del_order_dims.setEnabled(False)
         elif self.visible_change_order_dim_inputs_count >= self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT:
@@ -168,7 +186,10 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
     def set_visible_channel_change(self):
         for key, widgets in self.channel_change_inputs.items():
             widgets["base"].setVisible(key < self.visible_channel_change_inputs_count)
-        if self.visible_channel_change_inputs_count == 1:
+        if self._MAX_CHANNEL_CHANGE_INPUTS_COUNT == 1:
+            self.btn_add_channel_change.setEnabled(False)
+            self.btn_del_channel_change.setEnabled(False)
+        elif self.visible_channel_change_inputs_count == 1:
             self.btn_add_channel_change.setEnabled(True)
             self.btn_del_channel_change.setEnabled(False)
         elif self.visible_channel_change_inputs_count >= self._MAX_CHANNEL_CHANGE_INPUTS_COUNT:
