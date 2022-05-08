@@ -5,8 +5,7 @@ ONNX model visualizer with NodeGraphQt.
 ## Requirements
 - [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt)
 - PySide2
-- NetworkX
-- pydot
+- igraph
 - Numpy
 - onnx
 - onnx_graphsurgeon

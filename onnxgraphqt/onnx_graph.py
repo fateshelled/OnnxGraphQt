@@ -8,7 +8,8 @@ import copy
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import networkx as nx
+# import networkx as nx
+import igraph
 
 from NodeGraphQt.constants import (
     NODE_LAYOUT_HORIZONTAL,
@@ -307,8 +308,8 @@ class ONNXNodeGraph(NodeGraph):
     def load_onnx_graph(self, onnx_graph):
         ONNXtoNodeGraph(onnx_graph, self)
 
-    def to_networkx(self)->nx.DiGraph:
-        return NodeGraphToNetworkX(self)
+    # def to_networkx(self)->nx.DiGraph:
+    #     return NodeGraphToNetworkX(self)
 
     def to_onnx_gs(self)->gs.Graph:
         return NodeGraphtoONNX(self)
@@ -359,15 +360,25 @@ class ONNXNodeGraph(NodeGraph):
         auto_layout_nodes(self)
 
 
-def NodeGraphToNetworkX(graph:ONNXNodeGraph)->nx.DiGraph:
-    nx_g = nx.DiGraph()
-    for n in graph.all_nodes():
-        nx_g.add_node(n.name())
-    for n in graph.all_nodes():
+# def NodeGraphToNetworkX(graph:ONNXNodeGraph)->nx.DiGraph:
+#     nx_g = nx.DiGraph()
+#     for n in graph.all_nodes():
+#         nx_g.add_node(n.name())
+#     for n in graph.all_nodes():
+#         for input_nodes in n.connected_input_nodes().values():
+#             for inp in input_nodes:
+#                 nx_g.add_edge(inp.name(), n.name())
+#     return nx_g
+
+def NodeGraphToEdges(graph:ONNXNodeGraph)->List:
+    ret = []
+    node_names = [n.name() for n in graph.all_nodes()]
+    for i, n in enumerate(graph.all_nodes()):
         for input_nodes in n.connected_input_nodes().values():
             for inp in input_nodes:
-                nx_g.add_edge(inp.name(), n.name())
-    return nx_g
+                input_index = node_names.index(inp.name())
+                ret.append([input_index, i])
+    return ret
 
 
 def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
@@ -459,17 +470,29 @@ def auto_layout_nodes(graph:ONNXNodeGraph):
 
     nodes = graph.all_nodes()
     filtered_nodes = [n for n in nodes if not isinstance(n, ONNXInput)]
+    # start_nodes = [
+    #     n for n in filtered_nodes
+    #     if not any(n.connected_output_nodes().values())
+    # ]
     start_nodes = [
-        n for n in filtered_nodes
+        i for i, n in enumerate(filtered_nodes)
         if not any(n.connected_output_nodes().values())
     ]
     if not start_nodes:
         return
-    nx_graph = NodeGraphToNetworkX(graph)
-    pos = nx.nx_pydot.pydot_layout(nx_graph, root=None, prog="dot")
-    for name, (x, y) in pos.items():
-        node = graph.get_node_by_name(name)
-        node.set_pos(x*3, -y*1.5)
+
+    # nx_graph = NodeGraphToNetworkX(graph)
+    # pos = nx.nx_pydot.pydot_layout(nx_graph, root=None, prog="dot")
+    # for name, (x, y) in pos.items():
+    #     node = graph.get_node_by_name(name)
+    #     node.set_pos(x*3, -y*1.5)
+
+    edges = NodeGraphToEdges(graph)
+    ig_graph = igraph.Graph(edges=edges)
+    layout = ig_graph.layout_reingold_tilford(root=start_nodes)
+    for i, node in enumerate(graph.all_nodes()):
+        x, y = layout.coords[i]
+        node.set_pos(x*240, y*120)
 
     graph.end_undo()
 

@@ -1,5 +1,4 @@
-networkx
-pydot
+igraph
 PySide2
 numpy
 onnx
