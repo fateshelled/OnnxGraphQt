@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, io
 import time
 
 from PySide2 import QtCore, QtWidgets, QtGui
@@ -510,16 +510,26 @@ class MainWindow(QtWidgets.QMainWindow):
     def btnDelNode_clicked(self, e:bool):
         self.set_sidemenu_buttons_enabled(False)
 
-        w = DeleteNodeWidgets(parent=self)
+        w = DeleteNodeWidgets(parent=self, graph=self.graph.to_data())
         w.show()
         if w.exec_():
             try:
                 props = w.get_properties()
                 onnx_graph=self.graph.to_onnx(non_verbose=True)
-                onnx_model:onnx.ModelProto = onnx_tools_deletion(
-                    onnx_graph=onnx_graph,
-                    **props._asdict()
-                )
+                print_msg = ""
+                with io.StringIO() as f:
+                    sys.stdout = f
+                    onnx_model:onnx.ModelProto = onnx_tools_deletion(
+                        onnx_graph=onnx_graph,
+                        **props._asdict(),
+                    )
+                    sys.stdout = sys.__stdout__
+                    print_msg = f.getvalue()
+                if print_msg:
+                    MessageBox.warn(
+                        print_msg,
+                        "Delete Node",
+                        parent=self)
                 graph = self.load_graph(onnx_model=onnx_model)
                 self.update_graph(graph)
                 MessageBox.info(

@@ -1,6 +1,7 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
+from onnx_graph import OnnxGraph
 
 DeleteNodeProperties = namedtuple("DeleteNodeProperties",
     [
@@ -11,11 +12,13 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 400
     _MAX_REMOVE_NODE_NAMES_COUNT = 5
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, graph: OnnxGraph=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("delete node")
+        self.graph = graph
         self.initUI()
+        self.updateUI(self.graph)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -32,8 +35,8 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
             self.remove_node_names[index]["base"] = QtWidgets.QWidget()
             self.remove_node_names[index]["layout"] = QtWidgets.QHBoxLayout(self.remove_node_names[index]["base"])
             self.remove_node_names[index]["layout"].setContentsMargins(0, 0, 0, 0)
-            self.remove_node_names[index]["name"] = QtWidgets.QLineEdit()
-            self.remove_node_names[index]["name"].setPlaceholderText("name")
+            self.remove_node_names[index]["name"] = QtWidgets.QComboBox()
+            self.remove_node_names[index]["name"].setEditable(True)
             self.remove_node_names[index]["layout"].addWidget(self.remove_node_names[index]["name"])
             self.layout.addWidget(self.remove_node_names[index]["base"])
         self.btn_add = QtWidgets.QPushButton("+")
@@ -58,6 +61,14 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
         base_layout.addWidget(btn)
 
         self.setLayout(base_layout)
+
+    def updateUI(self, graph: OnnxGraph=None):
+        if graph:
+            for index in range(self._MAX_REMOVE_NODE_NAMES_COUNT):
+                self.remove_node_names[index]["name"].clear()
+                for name, node in graph.nodes.items():
+                    self.remove_node_names[index]["name"].addItem(name)
+                self.remove_node_names[index]["name"].setCurrentIndex(-1)
 
     def set_visible(self):
         for key, widgets in self.remove_node_names.items():
@@ -85,7 +96,7 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
 
         remove_node_names = []
         for i in range(self.visible_remove_node_names_count):
-            name = self.remove_node_names[i]["name"].text()
+            name = self.remove_node_names[i]["name"].currentText()
             if str.strip(name):
                 remove_node_names.append(name)
 
