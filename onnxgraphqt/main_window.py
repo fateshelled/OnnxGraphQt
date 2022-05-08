@@ -183,7 +183,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graph = graph
         self.graph_widget = graph.widget
         self.layout_graph.addWidget(graph.widget)
-        self.graph.auto_layout()
+        self.graph.auto_layout(push_undo=False)
         self.graph.fit_to_selection()
 
         self.lbl_graph_opset.setText(f"opset: {self.graph.opset}")
@@ -369,7 +369,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_cursor_busy()
         self.set_sidemenu_buttons_enabled(False)
 
-        self.graph.auto_layout()
+        self.graph.auto_layout(push_undo=True)
 
         self.set_sidemenu_buttons_enabled(True)
         self.set_cursor_arrow()
@@ -663,7 +663,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     import signal
-    import os
+    import os, time
+    from splash_screen import create_screen, create_screen_progressbar
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -675,7 +676,33 @@ if __name__ == "__main__":
     # onnx_file = os.path.join(base_dir, "data", "mobilenetv2-12-int8.onnx")
     onnx_file = os.path.join(base_dir, "data", "mobilenetv2-7.onnx")
 
+    USE_SPLASH_SCREEN = False
+    if USE_SPLASH_SCREEN:
+        splash = create_screen()
+        splash.show()
+        time.sleep(0.05)
+        msg = ""
+        msg_align = QtCore.Qt.AlignBottom
+        msg_color = QtGui.QColor.fromRgb(255, 255, 255)
+        if onnx_file:
+            msg = f"loading [{os.path.basename(onnx_file)}]"
+        else:
+            msg = "loading..."
+        splash.showMessage(msg, alignment=msg_align, color=msg_color)
+        print(msg)
+
+        app.processEvents()
+
     main_window = MainWindow(onnx_model_path=onnx_file)
+
+    if USE_SPLASH_SCREEN:
+        msg = "load complete."
+        splash.showMessage(msg, alignment=msg_align, color=msg_color)
+        print(msg)
+        time.sleep(0.1)
+        app.processEvents()
+        splash.finish(main_window)
+
     main_window.show()
 
     app.exec_()

@@ -161,7 +161,7 @@ class ONNXNodeGraph(NodeGraph):
 
     def create_qtinput(self, input: gs.Tensor)->ONNXInput:
         node_name = input.name
-        n = self.create_node("nodes.node.ONNXInput", node_name)
+        n = self.create_node("nodes.node.ONNXInput", node_name, push_undo=False)
         n.set_shape(copy.deepcopy(input.shape))
         n.set_dtype(input.dtype)
         n.set_output_names([o.name for o in input.outputs])
@@ -170,7 +170,7 @@ class ONNXNodeGraph(NodeGraph):
 
     def create_qtoutput(self, output: gs.Tensor)->ONNXOutput:
         node_name = output.name
-        n = self.create_node("nodes.node.ONNXOutput", node_name)
+        n = self.create_node("nodes.node.ONNXOutput", node_name, push_undo=False)
         n.set_shape(copy.deepcopy(output.shape))
         n.set_dtype(output.dtype)
         n.set_input_names([i.name for i in output.inputs])
@@ -179,7 +179,7 @@ class ONNXNodeGraph(NodeGraph):
 
     def create_qtnode(self, onnx_node: gs.Node)->NodeObject:
         node_name = onnx_node.name # str
-        n = self.create_node("nodes.node.ONNXNode", name=node_name)
+        n = self.create_node("nodes.node.ONNXNode", name=node_name, push_undo=False)
         onnx_inputs:List[OnnxNodeIO] = []
         for inp in onnx_node.inputs:
             t = type(inp)
@@ -281,8 +281,8 @@ class ONNXNodeGraph(NodeGraph):
         except Exception as e:
             raise e
 
-    def auto_layout(self):
-        auto_layout_nodes(self)
+    def auto_layout(self, push_undo=True):
+        auto_layout_nodes(self, push_undo=push_undo)
 
 
 # def NodeGraphToNetworkX(graph:ONNXNodeGraph)->nx.DiGraph:
@@ -390,8 +390,9 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
     )
     return onnx_graph
 
-def auto_layout_nodes(graph:ONNXNodeGraph):
-    graph.begin_undo('Auto Layout Nodes')
+def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
+    if push_undo:
+        graph.begin_undo('Auto Layout Nodes')
 
     nodes = graph.all_nodes()
     filtered_nodes = [n for n in nodes if not isinstance(n, ONNXInput)]
@@ -417,9 +418,11 @@ def auto_layout_nodes(graph:ONNXNodeGraph):
     layout = ig_graph.layout_reingold_tilford(root=start_nodes)
     for i, node in enumerate(graph.all_nodes()):
         x, y = layout.coords[i]
-        node.set_pos(x*240, y*120)
+        # node.set_pos(x*240, y*120)
+        node.set_property('pos', [float(x*240), float(y*120)], push_undo=push_undo)
 
-    graph.end_undo()
+    if push_undo:
+        graph.end_undo()
 
 
 def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
@@ -468,13 +471,19 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
         node_outputs = val["outputs"]
         if key in input_names:
             for inp in node_inputs:
-                qt_io_nodes[key].set_output(0, qt_nodes[inp].input(0))
+                # qt_io_nodes[key].set_output(0, qt_nodes[inp].input(0))
+                src_port = qt_io_nodes[key].output(0)
+                src_port.connect_to(qt_nodes[inp].input(0), push_undo=False)
         if key in output_names:
             for out in node_outputs:
-                qt_nodes[out].set_output(0, qt_io_nodes[key].input(0))
+                # qt_nodes[out].set_output(0, qt_io_nodes[key].input(0))
+                src_port = qt_nodes[out].output(0)
+                src_port.connect_to(qt_io_nodes[key].input(0), push_undo=False)
         for inp in node_inputs:
             for out in node_outputs:
-                qt_nodes[out].set_output(0, qt_nodes[inp].input(0))
+                # qt_nodes[out].set_output(0, qt_nodes[inp].input(0))
+                src_port = qt_nodes[out].output(0)
+                src_port.connect_to(qt_nodes[inp].input(0), push_undo=False)
     # Lock Node and Port
     for n in node_graph.all_nodes():
         for ip in n.input_ports():
