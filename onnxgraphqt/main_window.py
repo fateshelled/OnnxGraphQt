@@ -12,11 +12,14 @@ from snc4onnx import combine as onnx_tools_combine       #
 from sne4onnx import extraction as onnx_tools_extraction #
 from snd4onnx import remove as onnx_tools_deletion       # done
 from scs4onnx import shrinking as onnx_tools_shrinking   # done.
-from sog4onnx import generate as onnx_tools_generate     #
+from sog4onnx import generate as onnx_tools_generate     # done.
 from sam4onnx import modify as onnx_tools_modify         # done
 from soc4onnx import change as onnx_tools_op_change      # done.
 from scc4onnx import order_conversion as onnx_tools_order_conversion # done.
-from sna4onnx import add as onnx_tools_add               # done. (no tested)
+from sna4onnx import add as onnx_tools_add               # done.
+from sbi4onnx import initialize as onnx_tools_batchsize_initialize #
+from onnx2json.onnx2json import convert as onnx_tools_onnx2json    #
+from json2onnx.json2onnx import convert as onnx_tools_json2onnx    #
 
 from widgets_menubar import MenuBarWidget
 from widgets_add_node import AddNodeWidgets
@@ -398,7 +401,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"complete.",
                     "Add None",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Add None",
@@ -434,7 +437,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"complete.",
                     "Const Shrink",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Const Shrink",
@@ -478,7 +481,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"Change opset {old_opset} to {new_opset}.",
                     "Change Opset",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Change Opset",
@@ -513,7 +516,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"complete.",
                     "Channel Convert",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Channel Convert",
@@ -557,7 +560,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"complete.",
                     "Generate Operator",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Generate Operator",
@@ -602,7 +605,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"complete.",
                     "Delete Node",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Delete Node",
@@ -638,7 +641,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f"complete.",
                     "Modify Attributes and Constants",
                     parent=self)
-            except Exception as e:
+            except BaseException as e:
                 MessageBox.error(
                     str(e),
                     "Modify Attributes and Constants",
