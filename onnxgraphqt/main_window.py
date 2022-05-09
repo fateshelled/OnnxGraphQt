@@ -22,6 +22,8 @@ from onnx2json.onnx2json import convert as onnx_tools_onnx2json    #
 from json2onnx.json2onnx import convert as onnx_tools_json2onnx    #
 
 from widgets_menubar import MenuBarWidget
+from widgets_message_box import MessageBox
+from widgets_extra_network import ExtraNetworkWidgets
 from widgets_add_node import AddNodeWidgets
 from widgets_change_opset import ChangeOpsetWidget
 from widgets_change_channel import ChangeChannelWidgets
@@ -29,7 +31,7 @@ from widgets_constant_shrink import ConstantShrinkWidgets
 from widgets_modify_attrs import ModifyAttrsWidgets
 from widgets_delete_node import DeleteNodeWidgets
 from widgets_generate_operator import GenerateOperatorWidgets
-from widgets_message_box import MessageBox
+
 from onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 
@@ -124,7 +126,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnCombineNetwork.clicked.connect(self.btnCombineNetwork_clicked)
 
         self.btnExtractNetwork = QtWidgets.QPushButton("Extract Network (sne4onnx)")
-        self.btnExtractNetwork.setEnabled(False)
         self.btnExtractNetwork.clicked.connect(self.btnExtractNetwork_clicked)
 
         self.btnDelNode = QtWidgets.QPushButton("Delete Node (snd4onnx)")
@@ -228,7 +229,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnExportONNX.setEnabled(True)
 
                 # self.btnCombineNetwork.setEnabled(False)
-                # self.btnExtractNetwork.setEnabled(False)
+                self.btnExtractNetwork.setEnabled(True)
                 self.btnDelNode.setEnabled(True)
                 self.btnConstShrink.setEnabled(True)
                 self.btnModifyAttrConst.setEnabled(True)
@@ -242,7 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnExportONNX.setEnabled(False)
 
                 # self.btnCombineNetwork.setEnabled(False)
-                # self.btnExtractNetwork.setEnabled(False)
+                self.btnExtractNetwork.setEnabled(False)
                 self.btnDelNode.setEnabled(False)
                 self.btnConstShrink.setEnabled(False)
                 self.btnModifyAttrConst.setEnabled(False)
@@ -533,9 +534,50 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(True)
 
     def btnExtractNetwork_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
-        print(sys._getframe().f_code.co_name)
+        btn = self.btnExtractNetwork
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = ExtraNetworkWidgets(graph=self.graph.to_data(), parent=self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
+            try:
+                props = self.current_widgets.get_properties()
+                onnx_graph=self.graph.to_onnx(non_verbose=True)
+                print_msg = ""
+                with io.StringIO() as f:
+                    sys.stdout = f
+                    onnx_model:onnx.ModelProto = onnx_tools_extraction(
+                        onnx_graph=onnx_graph,
+                        non_verbose=False,
+                        **props._asdict(),
+                    )
+                    sys.stdout = sys.__stdout__
+                    print_msg = f.getvalue()
+                if print_msg:
+                    MessageBox.warn(
+                        print_msg,
+                        "Extra Network",
+                        parent=self)
+                graph = self.load_graph(onnx_model=onnx_model)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Extra Network",
+                    parent=self)
+            except BaseException as e:
+                MessageBox.error(
+                    str(e),
+                    "Extra Network",
+                    parent=self
+                )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnGenerateOperator_clicked(self, e:bool):
         btn = self.btnGenerateOperator

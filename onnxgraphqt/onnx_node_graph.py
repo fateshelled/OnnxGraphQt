@@ -214,7 +214,7 @@ class ONNXNodeGraph(NodeGraph):
             n.set_onnx_inputs(onnx_inputs)
         if len(onnx_outputs) > 0:
             n.set_onnx_outputs(onnx_outputs)
-        if n.op in ['Constant', 'ConstantOfShape']:
+        if n.op in ['Constant']:
             d = {
                 "dtype": str(onnx_node.attrs["value"].values.dtype),
                 "values": onnx_node.attrs["value"].values.tolist()
@@ -224,7 +224,7 @@ class ONNXNodeGraph(NodeGraph):
             n.set_attrs(copy.deepcopy(onnx_node.attrs)) # OrderedDict
 
         n.set_color()
-        if n.op in ['Constant', 'ConstantOfShape']:
+        if n.op in ['Constant']:
             n.set_port_deletion_allowed(True)
             n.delete_input(0)
             n.set_port_deletion_allowed(False)
@@ -350,7 +350,7 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
                 output_gs_variables.append(gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape)))
 
         node = None
-        if n.op not in ['Constant', 'ConstantOfShape']:
+        if n.op not in ['Constant']:
             # for not Constant
             node = gs.Node(
                 name=n.node_name,

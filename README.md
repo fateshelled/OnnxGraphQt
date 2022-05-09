@@ -35,7 +35,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 - [x] Visualize Model
 - [x] Export Model
 - [ ] Combine Network [1. snc4onnx]
-- [ ] Extract Network [2. sne4onnx]
+- [x] Extract Network [2. sne4onnx]
 - [x] Delete Node [3. snd4onnx]
 - [x] Constant Value Shrink [4. scs4onnx]
 - [x] Generate Operation [5. sog4onnx]
@@ -47,6 +47,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 - [ ] Rename Operator [11. sor4onnx]
 - [ ] Export to JSON [12. onnx2json]
 - [ ] Import from JSON [13. json2onnx]
+- [ ] Update auto layout algorithm
 
 ## References
 - https://github.com/jchanvfx/NodeGraphQt
