@@ -3,5 +3,5 @@ PySide2
 numpy
 onnx
 onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
-git+https://github.com/jchanvfx/NodeGraphQt.git@0.1.8#egg=NodeGraphQt
+git+https://github.com/jchanvfx/NodeGraphQt.git@4df3653a4935ba166f584783fe266ae523518fbc#egg=NodeGraphQt
 simple-onnx-processing-tools

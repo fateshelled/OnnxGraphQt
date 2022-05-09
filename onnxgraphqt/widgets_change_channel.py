@@ -148,6 +148,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
             self.input_op_names_and_order_dims[index]["layout"] = QtWidgets.QHBoxLayout(self.input_op_names_and_order_dims[index]["base"])
             self.input_op_names_and_order_dims[index]["layout"].setContentsMargins(0, 0, 0, 0)
             self.input_op_names_and_order_dims[index]["name"] = QtWidgets.QComboBox()
+            self.input_op_names_and_order_dims[index]["name"].setEditable(True)
             self.input_op_names_and_order_dims[index]["name"].setFixedWidth(self._QLINE_EDIT_WIDTH)
             self.input_op_names_and_order_dims[index]["value"] = QtWidgets.QLineEdit()
             self.input_op_names_and_order_dims[index]["value"].setPlaceholderText("List of dims.")
@@ -161,6 +162,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
             self.channel_change_inputs[index]["layout"] = QtWidgets.QHBoxLayout(self.channel_change_inputs[index]["base"])
             self.channel_change_inputs[index]["layout"].setContentsMargins(0, 0, 0, 0)
             self.channel_change_inputs[index]["name"] = QtWidgets.QComboBox()
+            self.channel_change_inputs[index]["name"].setEditable(True)
             self.channel_change_inputs[index]["name"].setFixedWidth(self._QLINE_EDIT_WIDTH)
             self.channel_change_inputs[index]["value"] = QtWidgets.QLineEdit()
             self.channel_change_inputs[index]["value"].setPlaceholderText("dim")
@@ -203,13 +205,13 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
     def get_properties(self)->ChangeChannelProperties:
         input_op_names_and_order_dims = {}
         for i in range(self.visible_change_order_dim_inputs_count):
-            name = self.input_op_names_and_order_dims[i]["name"].text()
+            name = self.input_op_names_and_order_dims[i]["name"].currentText()
             value = self.input_op_names_and_order_dims[i]["value"].text()
             if name and value:
                 input_op_names_and_order_dims[name] = literal_eval(value)
         channel_change_inputs = {}
         for i in range(self.visible_channel_change_inputs_count):
-            name = self.channel_change_inputs[i]["name"].text()
+            name = self.channel_change_inputs[i]["name"].currentText()
             value = self.channel_change_inputs[i]["value"].text()
             if name and value:
                 channel_change_inputs[name] = literal_eval(value)
