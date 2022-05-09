@@ -26,6 +26,8 @@ if __name__ == "__main__":
         msg = "loading..."
     splash.showMessage(msg, alignment=msg_align, color=msg_color)
     print(msg)
+    if not onnx_model_path:
+        time.sleep(1.0)
 
     app.processEvents()
 

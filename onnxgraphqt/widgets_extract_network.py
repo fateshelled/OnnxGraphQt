@@ -3,13 +3,13 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from onnx_node_graph import OnnxGraph
 
-ExtraNetworkProperties = namedtuple("ExtraNetworkProperties",
+ExtractNetworkProperties = namedtuple("ExtractNetworkProperties",
     [
         "input_op_names",
         "output_op_names",
     ])
 
-class ExtraNetworkWidgets(QtWidgets.QDialog):
+class ExtractNetworkWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 400
     _MAX_INPUT_OP_NAMES_COUNT = 5
     _MAX_OUTPUT_OP_NAMES_COUNT = 5
@@ -17,7 +17,7 @@ class ExtraNetworkWidgets(QtWidgets.QDialog):
     def __init__(self, graph: OnnxGraph=None, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
-        self.setWindowTitle("extra network")
+        self.setWindowTitle("extract network")
         self.graph = graph
         self.initUI()
         self.updateUI(self.graph)
@@ -148,7 +148,7 @@ class ExtraNetworkWidgets(QtWidgets.QDialog):
         self.set_btn_visible()
 
 
-    def get_properties(self)->ExtraNetworkProperties:
+    def get_properties(self)->ExtractNetworkProperties:
 
         inputs_op_names = []
         for i in range(self.visible_input_op_names_count):
@@ -162,7 +162,7 @@ class ExtraNetworkWidgets(QtWidgets.QDialog):
             if str.strip(name):
                 outputs_op_names.append(name)
 
-        return ExtraNetworkProperties(
+        return ExtractNetworkProperties(
             input_op_names=inputs_op_names,
             output_op_names=outputs_op_names
         )
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication([])
-    window = ExtraNetworkWidgets()
+    window = ExtractNetworkWidgets()
     window.show()
 
     app.exec_()

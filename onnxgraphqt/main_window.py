@@ -23,7 +23,7 @@ from json2onnx.json2onnx import convert as onnx_tools_json2onnx    #
 
 from widgets_menubar import MenuBarWidget
 from widgets_message_box import MessageBox
-from widgets_extra_network import ExtraNetworkWidgets
+from widgets_extract_network import ExtractNetworkWidgets
 from widgets_add_node import AddNodeWidgets
 from widgets_change_opset import ChangeOpsetWidget
 from widgets_change_channel import ChangeChannelWidgets
@@ -542,7 +542,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
 
-        self.current_widgets = ExtraNetworkWidgets(graph=self.graph.to_data(), parent=self)
+        self.current_widgets = ExtractNetworkWidgets(graph=self.graph.to_data(), parent=self)
         self.current_widgets.show()
         if self.current_widgets.exec_():
             try:
@@ -561,18 +561,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 if print_msg:
                     MessageBox.warn(
                         print_msg,
-                        "Extra Network",
+                        "Extract Network",
                         parent=self)
                 graph = self.load_graph(onnx_model=onnx_model)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
-                    "Extra Network",
+                    "Extract Network",
                     parent=self)
             except BaseException as e:
                 MessageBox.error(
                     str(e),
-                    "Extra Network",
+                    "Extract Network",
                     parent=self
                 )
         self.current_widgets = None
