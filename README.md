@@ -45,8 +45,8 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 - [x] Add Node [9. [sna4onnx](https://github.com/PINTO0309/sna4onnx)]
 - [ ] Initialize Batchsize [10. [sbi4onnx](https://github.com/PINTO0309/sbi4onnx)]
 - [ ] Rename Operator [11. [sor4onnx](https://github.com/PINTO0309/sor4onnx)]
-- [ ] Export to JSON [12. [onnx2json](https://github.com/PINTO0309/onnx2json)]
-- [ ] Import from JSON [13. [json2onnx](https://github.com/PINTO0309/json2onnx)]
+- [x] Export to JSON [12. [onnx2json](https://github.com/PINTO0309/onnx2json)]
+- [x] Import from JSON [13. [json2onnx](https://github.com/PINTO0309/json2onnx)]
 - [ ] Update auto layout algorithm
 
 ## References

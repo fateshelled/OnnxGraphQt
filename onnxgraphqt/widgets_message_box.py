@@ -14,9 +14,9 @@ class MessageBox(QtWidgets.QMessageBox):
         else:
             self.setText(text)
         self.setWindowTitle(title)
-        self.setDefaultButton(default_button)
+        self.setStandardButtons(default_button)
+        # self.setDefaultButton(default_button)
         self.setIcon(icon)
-        self.exec_()
         return
 
     @classmethod
@@ -25,7 +25,15 @@ class MessageBox(QtWidgets.QMessageBox):
              title:str,
              default_button=QtWidgets.QMessageBox.Ok,
              parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Information, parent=parent)
+        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Information, parent=parent).exec_()
+
+    @classmethod
+    def question(cls,
+                 text:Union[str, List[str]],
+                 title:str,
+                 default_button=QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No,
+                 parent=None):
+        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Question, parent=parent).exec_()
 
     @classmethod
     def warn(cls,
@@ -33,7 +41,7 @@ class MessageBox(QtWidgets.QMessageBox):
              title:str,
              default_button=QtWidgets.QMessageBox.Ok,
              parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Warning, parent=parent)
+        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Warning, parent=parent).exec_()
 
     @classmethod
     def error(cls,
@@ -41,4 +49,4 @@ class MessageBox(QtWidgets.QMessageBox):
               title:str,
               default_button=QtWidgets.QMessageBox.Ok,
               parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Critical, parent=parent)
+        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Critical, parent=parent).exec_()

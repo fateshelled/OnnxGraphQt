@@ -8,18 +8,19 @@ from NodeGraphQt.widgets.node_graph import NodeGraphWidget
 import onnx
 import onnx_graphsurgeon as gs
 
-from snc4onnx import combine as onnx_tools_combine       #
-from sne4onnx import extraction as onnx_tools_extraction #
-from snd4onnx import remove as onnx_tools_deletion       # done
-from scs4onnx import shrinking as onnx_tools_shrinking   # done.
-from sog4onnx import generate as onnx_tools_generate     # done.
-from sam4onnx import modify as onnx_tools_modify         # done
-from soc4onnx import change as onnx_tools_op_change      # done.
-from scc4onnx import order_conversion as onnx_tools_order_conversion # done.
-from sna4onnx import add as onnx_tools_add               # done.
-from sbi4onnx import initialize as onnx_tools_batchsize_initialize #
-from onnx2json.onnx2json import convert as onnx_tools_onnx2json    #
-from json2onnx.json2onnx import convert as onnx_tools_json2onnx    #
+from snc4onnx import combine as onnx_tools_combine
+from sne4onnx import extraction as onnx_tools_extraction
+from snd4onnx import remove as onnx_tools_deletion
+from scs4onnx import shrinking as onnx_tools_shrinking
+from sog4onnx import generate as onnx_tools_generate
+from sam4onnx import modify as onnx_tools_modify
+from soc4onnx import change as onnx_tools_op_change
+from scc4onnx import order_conversion as onnx_tools_order_conversion
+from sna4onnx import add as onnx_tools_add
+from sbi4onnx import initialize as onnx_tools_batchsize_initialize
+from sor4onnx import rename as onnx_tools_rename
+from onnx2json.onnx2json import convert as onnx_tools_onnx2json
+from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 
 from widgets_menubar import MenuBarWidget
 from widgets_message_box import MessageBox
@@ -44,7 +45,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, onnx_model_path="", parent=None):
         super(MainWindow, self).__init__(parent)
 
-        self.graph = self.load_graph(onnx_model_path=onnx_model_path)
+        ext = os.path.splitext(onnx_model_path)[-1]
+        if ext == ".onnx":
+            self.graph = self.load_graph(onnx_model_path=onnx_model_path)
+        elif ext == ".json":
+            onnx_graph = onnx_tools_json2onnx(input_json_path=onnx_model_path)
+            self.graph = self.load_graph(onnx_model=onnx_graph)
+        else:
+            self.graph = self.load_graph()
+
         self.graph_widget = self.graph.widget
         self.properties_bin: PropertiesBinWidget = None
 
@@ -277,7 +286,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_current_process_button(self):
         pass
 
-    def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None)->ONNXNodeGraph:
+    def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None, model_name:str=None)->ONNXNodeGraph:
 
         t0 = time.time()
         self.set_cursor_busy()
@@ -293,8 +302,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if onnx_model:
             onnx_graph = gs.import_onnx(onnx_model)
         elif onnx_model_path:
-            self.setWindowTitle(os.path.basename(onnx_model_path))
             onnx_graph = gs.import_onnx(onnx.load(onnx_model_path))
+
+        if model_name is None:
+            if onnx_model_path:
+                model_name = os.path.basename(onnx_model_path)
+            else:
+                model_name = "new graph"
+        self.setWindowTitle(model_name)
 
         # create graph controller.
         if graph is None:
@@ -319,19 +334,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def btnOpenONNX_clicked(self, e:bool):
         self.set_font_bold(self.btnOpenONNX, True)
-        file_name, exp = QtWidgets.QFileDialog.getOpenFileName(
+        file_name, filter = QtWidgets.QFileDialog.getOpenFileName(
                             self,
                             caption="Open ONNX Model File",
                             directory=os.path.abspath(os.curdir),
-                            filter="*.onnx")
+                            filter="*.onnx *.json")
         if not file_name:
             self.set_font_bold(self.btnOpenONNX, False)
             return
         print(f"Open: {file_name}")
         time.sleep(0.01)
-        graph = self.load_graph(onnx_model_path=file_name)
-        self.update_graph(graph)
-
+        ext = os.path.splitext(file_name)[-1]
+        model_name = os.path.basename(file_name)
+        if ext == ".onnx":
+            graph = self.load_graph(onnx_model_path=file_name, model_name=model_name)
+            self.update_graph(graph)
+        elif ext == ".json":
+            onnx_graph = onnx_tools_json2onnx(input_json_path=file_name)
+            graph = self.load_graph(onnx_model=onnx_graph, model_name=model_name)
+            self.update_graph(graph)
+        else:
+            MessageBox.warn("no supported format", title="open")
         # self.btnImportONNX.setEnabled(True)
         self.btnExportONNX.setEnabled(True)
         self.set_font_bold(self.btnOpenONNX, False)
@@ -348,17 +371,33 @@ class MainWindow(QtWidgets.QMainWindow):
     #     graph = self.load_graph(onnx_model_path=file_name, graph=self.graph)
     #     self.update_graph(graph)
 
+
     def btnExportONNX_clicked(self, e:bool):
         self.set_font_bold(self.btnExportONNX, True)
-        file_name, exp = QtWidgets.QFileDialog.getSaveFileName(
+        file_name, filter = QtWidgets.QFileDialog.getSaveFileName(
                             self,
                             caption="Export ONNX Model File",
                             directory=os.path.abspath(os.curdir),
-                            filter="*.onnx")
+                            filter="*.onnx;;*.json")
         if not file_name:
             self.set_font_bold(self.btnExportONNX, False)
             return
-        self.graph.export(file_name)
+        ext = os.path.splitext(file_name)[-1]
+        if filter == "*.onnx":
+            if ext != ".onnx":
+                file_name += ".onnx"
+                if os.path.exists(file_name):
+                    ret = MessageBox.question([f"{file_name} is already exist.", "overwrite?"], "export")
+                    if ret == MessageBox.No:
+                        self.set_font_bold(self.btnExportONNX, False)
+                        return
+            self.graph.export(file_name)
+        elif filter == "*.json":
+            if ext != ".json":
+                file_name += ".json"
+            onnx_tools_onnx2json(onnx_graph=self.graph.to_onnx(),
+                                 output_json_path=file_name,
+                                 json_indent=2)
         print(f"Export: {file_name}.")
         MessageBox.info(
             ["Success.", f"Export to {file_name}."],
@@ -396,8 +435,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     non_verbose=False,
                     **props._asdict(),
                 )
-
-                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
@@ -433,7 +472,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     non_verbose=False,
                     **props._asdict()
                 )
-                graph = self.load_graph(onnx_model=onnx_model)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
@@ -477,7 +517,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     onnx_graph=self.graph.to_onnx(non_verbose=True),
                     non_verbose=False,
                 )
-                graph = self.load_graph(onnx_model=onnx_model)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"Change opset {old_opset} to {new_opset}.",
@@ -512,7 +553,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     non_verbose=False,
                     **props._asdict()
                 )
-                graph = self.load_graph(onnx_model=onnx_model)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
@@ -563,7 +605,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg,
                         "Extract Network",
                         parent=self)
-                graph = self.load_graph(onnx_model=onnx_model)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
@@ -597,7 +640,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     non_verbose=False,
                     **props._asdict()
                 )
-                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
@@ -642,7 +686,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg,
                         "Delete Node",
                         parent=self)
-                graph = self.load_graph(onnx_model=onnx_model)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
@@ -678,7 +723,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     non_verbose=False,
                     **props._asdict()
                 )
-                graph = self.load_graph(onnx_model=onnx_model)
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
