@@ -32,6 +32,7 @@ from widgets_constant_shrink import ConstantShrinkWidgets
 from widgets_modify_attrs import ModifyAttrsWidgets
 from widgets_delete_node import DeleteNodeWidgets
 from widgets_generate_operator import GenerateOperatorWidgets
+from widgets_rename_op import RenameOpWidget
 
 from onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
@@ -162,6 +163,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnInitializeBatchSize.setEnabled(False)
         self.btnInitializeBatchSize.clicked.connect(self.btnInitializeBatchSize_clicked)
 
+        self.btnRenameOp = QtWidgets.QPushButton("Rename op (sor4onnx)")
+        self.btnRenameOp.clicked.connect(self.btnRenameOp_clicked)
+
         layout_operator_btn.addWidget(self.btnCombineNetwork)
         layout_operator_btn.addWidget(self.btnExtractNetwork)
         layout_operator_btn.addWidget(self.btnDelNode)
@@ -172,6 +176,7 @@ class MainWindow(QtWidgets.QMainWindow):
         layout_operator_btn.addWidget(self.btnChannelConvert)
         layout_operator_btn.addWidget(self.btnAddNode)
         layout_operator_btn.addWidget(self.btnInitializeBatchSize)
+        layout_operator_btn.addWidget(self.btnRenameOp)
 
         self.layout_main_properties.addSpacerItem(QtWidgets.QSpacerItem(self._sidemenu_width, 10))
         self.layout_main_properties.addLayout(layout_operator_btn)
@@ -245,6 +250,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChangeOpset.setEnabled(True)
                 self.btnChannelConvert.setEnabled(True)
                 # self.btnInitializeBatchSize.setEnabled(False)
+                self.btnRenameOp.setEnabled(True)
 
                 self.btnGenerateOperator.setEnabled(True)
                 self.btnAddNode.setEnabled(True)
@@ -259,6 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChangeOpset.setEnabled(False)
                 self.btnChannelConvert.setEnabled(False)
                 # self.btnInitializeBatchSize.setEnabled(False)
+                self.btnRenameOp.setEnabled(False)
 
                 self.btnGenerateOperator.setEnabled(True)
                 self.btnAddNode.setEnabled(True)
@@ -275,6 +282,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.btnChangeOpset.setEnabled(False)
             self.btnChannelConvert.setEnabled(False)
             self.btnInitializeBatchSize.setEnabled(False)
+            self.btnRenameOp.setEnabled(False)
             self.btnGenerateOperator.setEnabled(False)
             self.btnAddNode.setEnabled(False)
             self.properties_bin.setEnabled(False)
@@ -744,6 +752,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(False)
         print(sys._getframe().f_code.co_name)
         self.set_sidemenu_buttons_enabled(True)
+
+    def btnRenameOp_clicked(self, e:bool):
+        btn = self.btnRenameOp
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        self.current_widgets = RenameOpWidget(parent=self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
+            try:
+                props = self.current_widgets.get_properties()
+                onnx_graph=self.graph.to_onnx(non_verbose=True)
+                onnx_model:onnx.ModelProto = onnx_tools_rename(
+                    onnx_graph=onnx_graph,
+                    non_verbose=False,
+                    **props._asdict()
+                )
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Rename Op",
+                    parent=self)
+            except BaseException as e:
+                MessageBox.error(
+                    str(e),
+                    "Rename Op",
+                    parent=self
+                )
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def exit(self):
         self.close()
