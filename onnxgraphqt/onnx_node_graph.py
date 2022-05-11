@@ -70,6 +70,13 @@ from onnx_node import (
     OnnxNodeIO
 )
 
+NUMPY_TYPES_TO_ONNX_DTYPES = {
+    np.dtype('float32'): onnx.TensorProto.FLOAT,
+    np.dtype('float64'): onnx.TensorProto.DOUBLE,
+    np.dtype('int32'): onnx.TensorProto.INT32,
+    np.dtype('int64'): onnx.TensorProto.INT64,
+}
+
 NAME = str
 @dataclass
 class OnnxGraph:
@@ -243,7 +250,12 @@ class ONNXNodeGraph(NodeGraph):
         graph = self.to_onnx_gs()
         ret = None
         try:
-            ret = onnx.shape_inference.infer_shapes(gs.export_onnx(graph, do_type_check=True))
+            ret = gs.export_onnx(graph, do_type_check=True)
+            onnx.checker.check_model(
+                model=ret,
+                full_check=False
+            )
+            # ret = onnx.shape_inference.infer_shapes(ret)
         except BaseException as e:
             # ret = gs.export_onnx(graph)
             # if not non_verbose:
@@ -345,9 +357,6 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
             else:
                 v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
                 gs_variables_all[name] = v
-            # else:
-            #     v = gs.Variable(name=name, dtype=None, shape=None)
-            #     gs_variables_all[name] = v
             input_gs_variables.append(v)
 
         for out in n.onnx_outputs:
@@ -363,41 +372,74 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
             else:
                 v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
                 gs_variables_all[name] = v
-            # else:
-            #     v = gs.Variable(name=name, dtype=None, shape=None)
-            #     gs_variables_all[name] = v
             output_gs_variables.append(v)
 
+        # 2. Node Generation
         node = None
-        if n.op not in ['Constant']:
-            # for not Constant
+        value_info = None
+        if n.op not in ['Constant', 'ConstantOfShape']:
+            # non constant
             node = gs.Node(
-                name=n.node_name,
                 op=n.op,
+                name=n.node_name,
                 attrs=n.attrs,
                 inputs=input_gs_variables,
-                outputs=output_gs_variables,
+                outputs=output_gs_variables
             )
-            nodes.append(node)
         else:
-            # for Constant
-            values = np.array(n.attrs["values"], dtype=DTYPES_TO_NUMPY_TYPES[n.attrs["dtype"]])
-            # if len(n.attrs["shape"])>0:
-            #     values = values.reshape(n.attrs["shape"])
-            attrs = OrderedDict(
-                value=gs.Constant(
-                        n.node_name,
-                        values=values,
-                    )
+            # constant
+            dtype = n.attrs["dtype"]
+            dtype = NUMPY_TYPES_TO_ONNX_DTYPES[np.dtype(dtype)]
+            attr_values = n.attrs["values"]
+            if isinstance(attr_values, list):
+                shape = [len(attr_values)]
+            elif isinstance(attr_values, np.ndarray):
+                shape = attr_values.shape
+            else:
+                shape = [1]
+                attr_values = [attr_values]
+
+            constant_name = [i.name for i in output_gs_variables][0]
+            value_info = onnx.helper.make_tensor_value_info(
+                constant_name,
+                dtype,
+                shape
             )
-            node = gs.Node(
+            node = onnx.helper.make_node(
+                n.op,
+                inputs=[],
+                outputs=[constant_name],
                 name=n.node_name,
-                op=n.op,
-                attrs=attrs,
-                inputs=None,
-                outputs=output_gs_variables,
+                value=onnx.helper.make_tensor(
+                    name='value',
+                    data_type=dtype,
+                    dims=shape,
+                    vals=attr_values,
+                ),
             )
-            nodes.append(node)
+
+        # 3. Graph Generation
+        single_op_graph = None
+        if n.op not in ['Constant', 'ConstantOfShape']:
+            g = gs.Graph(
+                nodes=[node],
+                inputs=input_gs_variables,
+                outputs=output_gs_variables,
+                opset=n.op,
+            )
+            node = g.nodes[0]
+        else:
+            graph_def = onnx.helper.make_graph(
+                nodes=[node],
+                name=n.op,
+                inputs=[],
+                outputs=[value_info],
+            )
+            single_op_graph = onnx.helper.make_model(graph_def)
+            gs_graph = gs.import_onnx(single_op_graph)
+            node = gs_graph.nodes[0]
+
+        nodes.append(node)
 
     onnx_graph = gs.Graph(
         nodes=nodes,
