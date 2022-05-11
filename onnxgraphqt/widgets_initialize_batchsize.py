@@ -1,20 +1,22 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
+from utils.opset import DEFAULT_OPSET
 
-RenameOpProperties = namedtuple("RenameOpProperties",
+InitializeBatchsizeProperties = namedtuple("InitializeBatchsizeProperties",
     [
-        "old_new",
+        "initialization_character_string",
     ])
 
-class RenameOpWidget(QtWidgets.QDialog):
-    _DEFAULT_WINDOW_WIDTH = 350
+class InitializeBatchsizeWidget(QtWidgets.QDialog):
+    _DEFAULT_WINDOW_WIDTH = 300
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, current_batchsize="-1", parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
-        self.setWindowTitle("rename op")
+        self.setWindowTitle("initialize batchsize")
         self.initUI()
+        self.updateUI(current_batchsize)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -23,20 +25,15 @@ class RenameOpWidget(QtWidgets.QDialog):
 
         # layout
         layout = QtWidgets.QVBoxLayout()
-        self.lbl_name = QtWidgets.QLabel("Replace substring 'old' in opname with 'new'.")
+        self.lbl_name = QtWidgets.QLabel("Input string to initialize batch size.")
+        self.ledit_character = QtWidgets.QLineEdit()
+        self.ledit_character.setText("-1")
+        self.ledit_character.setPlaceholderText("initialization_character_string")
         layout.addWidget(self.lbl_name)
-
-        layout_ledit = QtWidgets.QHBoxLayout()
-        self.ledit_old = QtWidgets.QLineEdit()
-        self.ledit_old.setPlaceholderText("old. e.g. 'onnx::'")
-        self.ledit_new = QtWidgets.QLineEdit()
-        self.ledit_new.setPlaceholderText("new. e.g. ''")
-        layout_ledit.addWidget(self.ledit_old)
-        layout_ledit.addWidget(self.ledit_new)
+        layout.addWidget(self.ledit_character)
 
         # add layout
         base_layout.addLayout(layout)
-        base_layout.addLayout(layout_ledit)
 
         # Dialog button
         btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
@@ -48,11 +45,13 @@ class RenameOpWidget(QtWidgets.QDialog):
 
         self.setLayout(base_layout)
 
-    def get_properties(self)->RenameOpProperties:
-        old = self.ledit_old.text().strip()
-        new = self.ledit_new.text().strip()
-        return RenameOpProperties(
-            old_new=[old, new]
+    def updateUI(self, current_batchsize):
+        self.ledit_character.setText(str(current_batchsize))
+
+    def get_properties(self)->InitializeBatchsizeProperties:
+        character = self.ledit_character.text().strip()
+        return InitializeBatchsizeProperties(
+            initialization_character_string=character
         )
 
     def accept(self) -> None:
@@ -60,8 +59,8 @@ class RenameOpWidget(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
-        if props.old_new[0] == "":
-            print("ERROR: old")
+        if props.initialization_character_string == "":
+            print("ERROR: initialization_character_string")
             invalid = True
         if invalid:
             return
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication([])
-    window = RenameOpWidget()
+    window = InitializeBatchsizeWidget()
     window.show()
 
     app.exec_()

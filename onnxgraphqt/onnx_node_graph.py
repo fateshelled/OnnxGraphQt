@@ -243,15 +243,17 @@ class ONNXNodeGraph(NodeGraph):
         graph = self.to_onnx_gs()
         ret = None
         try:
-            ret = onnx.shape_inference.infer_shapes(gs.export_onnx(graph))
-        except:
-            ret = gs.export_onnx(graph)
+            ret = onnx.shape_inference.infer_shapes(gs.export_onnx(graph, do_type_check=True))
+        except BaseException as e:
+            # ret = gs.export_onnx(graph)
+            # if not non_verbose:
+            #     print(
+            #         f'{PrintColor.YELLOW}WARNING:{PrintColor.RESET} '+
+            #         'The input shape of the next OP does not match the output shape. '+
+            #         'Be sure to open the .onnx file to verify the certainty of the geometry.'
+            #     )
             if not non_verbose:
-                print(
-                    f'{PrintColor.YELLOW}WARNING:{PrintColor.RESET} '+
-                    'The input shape of the next OP does not match the output shape. '+
-                    'Be sure to open the .onnx file to verify the certainty of the geometry.'
-                )
+                print(e)
         return ret
 
     def to_data(self)->OnnxGraph:
@@ -307,47 +309,64 @@ def NodeGraphToEdges(graph:ONNXNodeGraph)->List:
 
 
 def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
-    nodes = []
     input_names = []
     output_names = []
     input_variables = []
     output_variables = []
-    for n in graph.get_nodes_by_type("nodes.node.ONNXInput"):
-        input_variables.append(gs.Variable(name=n.name(), dtype=n.dtype, shape=n.shape))
-        input_names.append(n.name())
-    for n in graph.get_nodes_by_type("nodes.node.ONNXOutput"):
-        output_variables.append(gs.Variable(name=n.name(), dtype=n.dtype, shape=n.shape))
-        output_names.append(n.name())
+    gs_variables_all = {}
 
+    for n in graph.get_nodes_by_type("nodes.node.ONNXInput"):
+        v = gs.Variable(name=n.name(), dtype=n.dtype, shape=n.shape)
+        input_variables.append(v)
+        input_names.append(n.name())
+        gs_variables_all[n.name()] = v
+
+    for n in graph.get_nodes_by_type("nodes.node.ONNXOutput"):
+        v = gs.Variable(name=n.name(), dtype=n.dtype, shape=n.shape)
+        output_variables.append(v)
+        output_names.append(n.name())
+        gs_variables_all[n.name()] = v
+
+    nodes = []
     for n in graph.get_nodes_by_type("nodes.node.ONNXNode"):
         input_gs_variables = []
         output_gs_variables = []
 
         for inp in n.onnx_inputs:
             name, dtype, shape, val = inp.name, inp.dtype, inp.shape, inp.values
-            if name in input_names:
-                for inp_v in input_variables:
-                    if name == inp_v.name:
-                        input_gs_variables.append(inp_v)
+            if name in gs_variables_all.keys():
+                v = gs_variables_all[name]
             elif dtype is None:
-                input_gs_variables.append(gs.Variable(name=name, dtype=None, shape=None))
+                v = gs.Variable(name=name, dtype=None, shape=None)
+                gs_variables_all[name] = v
             elif val == -1 or val is None:
-                input_gs_variables.append(gs.Variable(name=name, dtype=dtype, shape=shape))
+                v = gs.Variable(name=name, dtype=dtype, shape=shape)
+                gs_variables_all[name] = v
             else:
-                input_gs_variables.append(gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape)))
+                v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
+                gs_variables_all[name] = v
+            # else:
+            #     v = gs.Variable(name=name, dtype=None, shape=None)
+            #     gs_variables_all[name] = v
+            input_gs_variables.append(v)
 
         for out in n.onnx_outputs:
             name, dtype, shape, val = out.name, out.dtype, out.shape, out.values
-            if name in output_names:
-                for out_v in output_variables:
-                    if name == out_v.name:
-                        output_gs_variables.append(out_v)
+            if name in gs_variables_all.keys():
+                v = gs_variables_all[name]
             elif dtype is None:
-                output_gs_variables.append(gs.Variable(name=name, dtype=None, shape=None))
+                v = gs.Variable(name=name, dtype=None, shape=None)
+                gs_variables_all[name] = v
             elif val == -1 or val is None:
-                output_gs_variables.append(gs.Variable(name=name, dtype=dtype, shape=shape))
+                v = gs.Variable(name=name, dtype=dtype, shape=shape)
+                gs_variables_all[name] = v
             else:
-                output_gs_variables.append(gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape)))
+                v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
+                gs_variables_all[name] = v
+            # else:
+            #     v = gs.Variable(name=name, dtype=None, shape=None)
+            #     gs_variables_all[name] = v
+            output_gs_variables.append(v)
 
         node = None
         if n.op not in ['Constant']:

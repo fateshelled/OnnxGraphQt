@@ -32,6 +32,7 @@ from widgets_constant_shrink import ConstantShrinkWidgets
 from widgets_modify_attrs import ModifyAttrsWidgets
 from widgets_delete_node import DeleteNodeWidgets
 from widgets_generate_operator import GenerateOperatorWidgets
+from widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets_rename_op import RenameOpWidget
 
 from onnx_node_graph import ONNXNodeGraph
@@ -160,7 +161,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnAddNode.clicked.connect(self.btnAddNode_clicked)
 
         self.btnInitializeBatchSize = QtWidgets.QPushButton("Initialize Batchsize (sbi4onnx)")
-        self.btnInitializeBatchSize.setEnabled(False)
         self.btnInitializeBatchSize.clicked.connect(self.btnInitializeBatchSize_clicked)
 
         self.btnRenameOp = QtWidgets.QPushButton("Rename op (sor4onnx)")
@@ -249,7 +249,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnModifyAttrConst.setEnabled(True)
                 self.btnChangeOpset.setEnabled(True)
                 self.btnChannelConvert.setEnabled(True)
-                # self.btnInitializeBatchSize.setEnabled(False)
+                self.btnInitializeBatchSize.setEnabled(True)
                 self.btnRenameOp.setEnabled(True)
 
                 self.btnGenerateOperator.setEnabled(True)
@@ -264,7 +264,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnModifyAttrConst.setEnabled(False)
                 self.btnChangeOpset.setEnabled(False)
                 self.btnChannelConvert.setEnabled(False)
-                # self.btnInitializeBatchSize.setEnabled(False)
+                self.btnInitializeBatchSize.setEnabled(False)
                 self.btnRenameOp.setEnabled(False)
 
                 self.btnGenerateOperator.setEnabled(True)
@@ -749,9 +749,48 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_font_bold(btn, False)
 
     def btnInitializeBatchSize_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
-        print(sys._getframe().f_code.co_name)
+        btn = self.btnInitializeBatchSize
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+
+        d = self.graph.to_data()
+        current_batchsize = "-1"
+        for key, inp in d.inputs.items():
+            current_batchsize = inp.shape[0]
+            break
+        self.current_widgets = InitializeBatchsizeWidget(
+                                    current_batchsize=current_batchsize,
+                                    parent=self)
+        self.current_widgets.show()
+        if self.current_widgets.exec_():
+            try:
+                props = self.current_widgets.get_properties()
+                onnx_graph=self.graph.to_onnx(non_verbose=True)
+                onnx_model:onnx.ModelProto = onnx_tools_batchsize_initialize(
+                    onnx_graph=onnx_graph,
+                    non_verbose=False,
+                    **props._asdict()
+                )
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Initialize Batchsize",
+                    parent=self)
+            except BaseException as e:
+                MessageBox.error(
+                    str(e),
+                    "Initialize Batchsize",
+                    parent=self
+                )
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnRenameOp_clicked(self, e:bool):
         btn = self.btnRenameOp
