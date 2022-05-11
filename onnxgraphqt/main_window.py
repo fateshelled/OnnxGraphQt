@@ -390,6 +390,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not file_name:
             self.set_font_bold(self.btnExportONNX, False)
             return
+        time.sleep(0.01)
         ext = os.path.splitext(file_name)[-1]
         if filter == "*.onnx":
             if ext != ".onnx":
