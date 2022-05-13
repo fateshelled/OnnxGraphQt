@@ -425,159 +425,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_cursor_arrow()
         self.set_font_bold(self.btnAutoLayout, False)
 
-    def btnAddNode_clicked(self, e:bool):
-        btn = self.btnAddNode
-        if self.current_button is btn:
-            self.current_widgets.close()
-            return
-
-        self.set_font_bold(btn, True)
-        self.set_sidemenu_buttons_enabled(False, btn)
-
-        self.current_widgets = AddNodeWidgets(self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                onnx_model:onnx.ModelProto = onnx_tools_add(
-                    onnx_graph=self.graph.to_onnx(non_verbose=True),
-                    non_verbose=False,
-                    **props._asdict(),
-                )
-                model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
-                self.update_graph(graph)
-                MessageBox.info(
-                    f"complete.",
-                    "Add None",
-                    parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Add None",
-                    parent=self
-                )
-        self.current_widgets = None
-        self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(btn, False)
-
-    def btnConstShrink_clicked(self, e:bool):
-        btn = self.btnConstShrink
-        if self.current_button is btn:
-            self.current_widgets.close()
-            return
-
-        self.set_font_bold(btn, True)
-        self.set_sidemenu_buttons_enabled(False, btn)
-
-        self.current_widgets = ConstantShrinkWidgets(parent=self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                onnx_model:onnx.ModelProto = None
-                onnx_model, _ = onnx_tools_shrinking(
-                    onnx_graph=self.graph.to_onnx(non_verbose=True),
-                    non_verbose=False,
-                    **props._asdict()
-                )
-                model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
-                MessageBox.info(
-                    f"complete.",
-                    "Const Shrink",
-                    parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Const Shrink",
-                    parent=self
-                )
-        self.current_widgets = None
-        self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(btn, False)
-
-    def btnChangeOpset_clicked(self, e:bool):
-        btn = self.btnChangeOpset
-        if self.current_button is btn:
-            self.current_widgets.close()
-            return
-
-        self.set_font_bold(btn, True)
-        self.set_sidemenu_buttons_enabled(False, btn)
-
-        self.current_widgets = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
-        old_opset = self.graph.opset
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                new_opset = int(props.opset)
-                if old_opset == new_opset:
-                    MessageBox.warn(
-                        f"opset num is same. not change.",
-                        "Change Opset",
-                        parent=self)
-                    self.set_sidemenu_buttons_enabled(True)
-                    return
-                onnx_model:onnx.ModelProto = onnx_tools_op_change(
-                    opset=new_opset,
-                    onnx_graph=self.graph.to_onnx(non_verbose=True),
-                    non_verbose=False,
-                )
-                model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
-                MessageBox.info(
-                    f"Change opset {old_opset} to {new_opset}.",
-                    "Change Opset",
-                    parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Change Opset",
-                    parent=self
-                )
-        self.current_widgets = None
-        self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(btn, False)
-
-    def btnChannelConvert_clicked(self, e:bool):
-        btn = self.btnChannelConvert
-        if self.current_button is btn:
-            self.current_widgets.close()
-            return
-
-        self.set_font_bold(btn, True)
-        self.set_sidemenu_buttons_enabled(False, btn)
-
-        self.current_widgets = ChangeChannelWidgets(graph=self.graph.to_data(), parent=self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
-                    onnx_graph=self.graph.to_onnx(non_verbose=True),
-                    non_verbose=False,
-                    **props._asdict()
-                )
-                model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
-                MessageBox.info(
-                    f"complete.",
-                    "Channel Convert",
-                    parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Channel Convert",
-                    parent=self
-                )
-        self.current_widgets = None
-        self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(btn, False)
 
     def btnCombineNetwork_clicked(self, e:bool):
         self.set_sidemenu_buttons_enabled(False)
@@ -592,76 +439,62 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Extract Network"
 
         self.current_widgets = ExtractNetworkWidgets(graph=self.graph.to_data(), parent=self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                onnx_graph=self.graph.to_onnx(non_verbose=True)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
                 print_msg = ""
-                with io.StringIO() as f:
-                    sys.stdout = f
-                    onnx_model:onnx.ModelProto = onnx_tools_extraction(
-                        onnx_graph=onnx_graph,
-                        non_verbose=False,
-                        **props._asdict(),
-                    )
-                    sys.stdout = sys.__stdout__
-                    print_msg = f.getvalue()
-                if print_msg:
+
+                props = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_extraction(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict(),
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
                     MessageBox.warn(
                         print_msg,
-                        "Extract Network",
+                        msg_title,
                         parent=self)
+
                 model_name = self.windowTitle()
                 graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
-                    "Extract Network",
+                    msg_title,
                     parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Extract Network",
-                    parent=self
-                )
-        self.current_widgets = None
-        self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(btn, False)
-
-    def btnGenerateOperator_clicked(self, e:bool):
-        btn = self.btnGenerateOperator
-        if self.current_button is btn:
-            self.current_widgets.close()
-            return
-
-        self.set_font_bold(btn, True)
-        self.set_sidemenu_buttons_enabled(False, btn)
-
-        self.current_widgets = GenerateOperatorWidgets(opset=self.graph.opset, parent=self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                onnx_model:onnx.ModelProto = onnx_tools_generate(
-                    non_verbose=False,
-                    **props._asdict()
-                )
-                model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
-                self.update_graph(graph)
-                MessageBox.info(
-                    f"complete.",
-                    "Generate Operator",
-                    parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Generate Operator",
-                    parent=self
-                )
+                break
+            else:
+                break
         self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(btn, False)
@@ -674,40 +507,192 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Delete Node"
 
         self.current_widgets = DeleteNodeWidgets(parent=self, graph=self.graph.to_data())
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
-                props = self.current_widgets.get_properties()
-                onnx_graph=self.graph.to_onnx(non_verbose=True)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
                 print_msg = ""
-                with io.StringIO() as f:
-                    sys.stdout = f
-                    onnx_model:onnx.ModelProto = onnx_tools_deletion(
-                        onnx_graph=onnx_graph,
-                        **props._asdict(),
-                    )
-                    sys.stdout = sys.__stdout__
-                    print_msg = f.getvalue()
-                if print_msg:
+
+                props = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_deletion(
+                            onnx_graph=onnx_graph,
+                            **props._asdict(),
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
                     MessageBox.warn(
                         print_msg,
-                        "Delete Node",
+                        msg_title,
                         parent=self)
+
                 model_name = self.windowTitle()
                 graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
-                    "Delete Node",
+                    msg_title,
                     parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Delete Node",
-                    parent=self
-                )
+                break
+            else:
+                break
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
+
+    def btnConstShrink_clicked(self, e:bool):
+        btn = self.btnConstShrink
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Const Shrink"
+
+        self.current_widgets = ConstantShrinkWidgets(parent=self)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                props = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model, _ = onnx_tools_shrinking(
+                            onnx_graph=self.graph.to_onnx(non_verbose=True),
+                            non_verbose=False,
+                            **props._asdict()
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    "Const Shrink",
+                    parent=self)
+                break
+            else:
+                break
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
+
+    def btnGenerateOperator_clicked(self, e:bool):
+        btn = self.btnGenerateOperator
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Generate Operator"
+
+        self.current_widgets = GenerateOperatorWidgets(opset=self.graph.opset, parent=self)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                props = self.current_widgets.get_properties()
+                try:
+                    f = io.StringIO()
+                    sys.stdout = f
+                    onnx_model:onnx.ModelProto = onnx_tools_generate(
+                        non_verbose=False,
+                        **props._asdict()
+                    )
+                except BaseException as e:
+                    onnx_tool_error = True
+                    pass
+                finally:
+                    sys.stdout = sys.__stdout__
+                    print_msg = f.getvalue()
+                    print(print_msg)
+                    print_msg = print_msg[:1000]
+                    f.close()
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    msg_title,
+                    parent=self)
+                break
+            else:
+                break
         self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(btn, False)
@@ -720,31 +705,276 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Modify Attributes and Constants"
 
         self.current_widgets = ModifyAttrsWidgets(parent=self, graph=self.graph.to_data())
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
                 props = self.current_widgets.get_properties()
-                onnx_graph=self.graph.to_onnx(non_verbose=True)
-                onnx_model:onnx.ModelProto = onnx_tools_modify(
-                    onnx_graph=onnx_graph,
-                    non_verbose=False,
-                    **props._asdict()
-                )
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_modify(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict()
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
                 model_name = self.windowTitle()
                 graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
-                    "Modify Attributes and Constants",
+                    msg_title,
                     parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Modify Attributes and Constants",
-                    parent=self
-                )
+                break
+            else:
+                break
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
+
+    def btnChangeOpset_clicked(self, e:bool):
+        btn = self.btnChangeOpset
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Change Opset"
+
+        self.current_widgets = ChangeOpsetWidget(parent=self, current_opset=self.graph.opset)
+        old_opset = self.graph.opset
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                props = self.current_widgets.get_properties()
+                try:
+                    new_opset = int(props.opset)
+                    if old_opset == new_opset:
+                        MessageBox.warn(
+                            f"opset num is same. not change.",
+                            msg_title,
+                            parent=self)
+                        self.set_sidemenu_buttons_enabled(True)
+                        continue
+
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_op_change(
+                            opset=new_opset,
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"Change opset {old_opset} to {new_opset}.",
+                    msg_title,
+                    parent=self)
+                break
+            else:
+                break
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
+
+    def btnChannelConvert_clicked(self, e:bool):
+        btn = self.btnChannelConvert
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Channel Convert"
+
+        self.current_widgets = ChangeChannelWidgets(graph=self.graph.to_data(), parent=self)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                props = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_order_conversion(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict()
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    msg_title,
+                    parent=self)
+                break
+            else:
+                break
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
+
+    def btnAddNode_clicked(self, e:bool):
+        btn = self.btnAddNode
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Add Node"
+
+        self.current_widgets = AddNodeWidgets(self)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                props = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    f = io.StringIO()
+                    sys.stdout = f
+                    try:
+                        onnx_model:onnx.ModelProto = onnx_tools_add(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict(),
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    msg_title,
+                    parent=self)
+                break
+            else:
+                break
         self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(btn, False)
@@ -757,6 +987,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Initialize Batchsize"
 
         d = self.graph.to_data()
         current_batchsize = "-1"
@@ -766,29 +997,59 @@ class MainWindow(QtWidgets.QMainWindow):
         self.current_widgets = InitializeBatchsizeWidget(
                                     current_batchsize=current_batchsize,
                                     parent=self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
                 props = self.current_widgets.get_properties()
-                onnx_graph=self.graph.to_onnx(non_verbose=True)
-                onnx_model:onnx.ModelProto = onnx_tools_batchsize_initialize(
-                    onnx_graph=onnx_graph,
-                    non_verbose=False,
-                    **props._asdict()
-                )
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_batchsize_initialize(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict()
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
                 model_name = self.windowTitle()
                 graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
-                    "Initialize Batchsize",
+                    msg_title,
                     parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Initialize Batchsize",
-                    parent=self
-                )
+                break
+            else:
+                break
         self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(btn, False)
@@ -801,31 +1062,62 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_font_bold(btn, True)
         self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Rename Op"
 
         self.current_widgets = RenameOpWidget(parent=self)
-        self.current_widgets.show()
-        if self.current_widgets.exec_():
-            try:
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
                 props = self.current_widgets.get_properties()
-                onnx_graph=self.graph.to_onnx(non_verbose=True)
-                onnx_model:onnx.ModelProto = onnx_tools_rename(
-                    onnx_graph=onnx_graph,
-                    non_verbose=False,
-                    **props._asdict()
-                )
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_rename(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict()
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
                 model_name = self.windowTitle()
                 graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
                 self.update_graph(graph)
                 MessageBox.info(
                     f"complete.",
-                    "Rename Op",
+                    msg_title,
                     parent=self)
-            except BaseException as e:
-                MessageBox.error(
-                    str(e),
-                    "Rename Op",
-                    parent=self
-                )
+                break
+            else:
+                break
         self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(btn, False)

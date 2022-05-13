@@ -53,7 +53,7 @@ class ExtractNetworkWidgets(QtWidgets.QDialog):
 
         # outputs
         self.layout_outputs = QtWidgets.QVBoxLayout()
-        self.layout_outputs.addWidget(QtWidgets.QLabel("input_op_names"))
+        self.layout_outputs.addWidget(QtWidgets.QLabel("output_op_names"))
         self.visible_output_op_names_count = 1
         self.widgets_outputs = {}
         for index in range(self._MAX_OUTPUT_OP_NAMES_COUNT):

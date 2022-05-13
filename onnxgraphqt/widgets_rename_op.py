@@ -28,9 +28,9 @@ class RenameOpWidget(QtWidgets.QDialog):
 
         layout_ledit = QtWidgets.QHBoxLayout()
         self.ledit_old = QtWidgets.QLineEdit()
-        self.ledit_old.setPlaceholderText("old. e.g. 'onnx::'")
+        self.ledit_old.setPlaceholderText('old. e.g. "onnx::"')
         self.ledit_new = QtWidgets.QLineEdit()
-        self.ledit_new.setPlaceholderText("new. e.g. ''")
+        self.ledit_new.setPlaceholderText('new. e.g. "" ')
         layout_ledit.addWidget(self.ledit_old)
         layout_ledit.addWidget(self.ledit_new)
 

@@ -309,11 +309,14 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
             value = self.edit_attributes[i]["value"].text()
             dtype = self.edit_attributes[i]["dtype"].currentData()
             if name and value:
-                value = literal_eval(value)
-                if isinstance(value, list):
-                    attributes[name] = np.asarray(value, dtype=dtype)
-                else:
+                if dtype == np.str_:
                     attributes[name] = value
+                else:
+                    value = literal_eval(value)
+                    if isinstance(value, list):
+                        attributes[name] = np.asarray(value, dtype=dtype)
+                    else:
+                        attributes[name] = value
 
         delete_attributes = []
         for i in range(self.visible_delete_attributes_count):
