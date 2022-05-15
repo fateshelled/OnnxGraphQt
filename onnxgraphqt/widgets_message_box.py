@@ -24,29 +24,33 @@ class MessageBox(QtWidgets.QMessageBox):
              text:Union[str, List[str]],
              title:str,
              default_button=QtWidgets.QMessageBox.Ok,
+             use_title_prefix=True,
              parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Information, parent=parent).exec_()
+        return MessageBox(text, "[INFO]" + title, default_button, icon=MessageBox.Icon.Information, parent=parent).exec_()
 
     @classmethod
     def question(cls,
                  text:Union[str, List[str]],
                  title:str,
                  default_button=QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No,
+                 use_title_prefix=True,
                  parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Question, parent=parent).exec_()
+        return MessageBox(text, "[QUESTION]" + title, default_button, icon=MessageBox.Icon.Question, parent=parent).exec_()
 
     @classmethod
     def warn(cls,
              text:Union[str, List[str]],
              title:str,
              default_button=QtWidgets.QMessageBox.Ok,
+             use_title_prefix=True,
              parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Warning, parent=parent).exec_()
+        return MessageBox(text, "[WARN]" + title, default_button, icon=MessageBox.Icon.Warning, parent=parent).exec_()
 
     @classmethod
     def error(cls,
               text:Union[str, List[str]],
               title:str,
               default_button=QtWidgets.QMessageBox.Ok,
+              use_title_prefix=True,
               parent=None):
-        return MessageBox(text, title, default_button, icon=MessageBox.Icon.Critical, parent=parent).exec_()
+        return MessageBox(text, "[ERROR]" + title, default_button, icon=MessageBox.Icon.Critical, parent=parent).exec_()

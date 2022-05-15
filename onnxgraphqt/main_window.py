@@ -24,6 +24,7 @@ from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 
 from widgets_menubar import MenuBarWidget
 from widgets_message_box import MessageBox
+from widgets_combine_network import CombineNetworkWidgets
 from widgets_extract_network import ExtractNetworkWidgets
 from widgets_add_node import AddNodeWidgets
 from widgets_change_opset import ChangeOpsetWidget
@@ -133,7 +134,6 @@ class MainWindow(QtWidgets.QMainWindow):
         layout_operator_btn = QtWidgets.QVBoxLayout()
 
         self.btnCombineNetwork = QtWidgets.QPushButton("Combine Network (snc4onnx)")
-        self.btnCombineNetwork.setEnabled(False)
         self.btnCombineNetwork.clicked.connect(self.btnCombineNetwork_clicked)
 
         self.btnExtractNetwork = QtWidgets.QPushButton("Extract Network (sne4onnx)")
@@ -242,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.graph.node_count() > 0:
                 self.btnExportONNX.setEnabled(True)
 
-                # self.btnCombineNetwork.setEnabled(False)
+                self.btnCombineNetwork.setEnabled(True)
                 self.btnExtractNetwork.setEnabled(True)
                 self.btnDelNode.setEnabled(True)
                 self.btnConstShrink.setEnabled(True)
@@ -257,7 +257,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 self.btnExportONNX.setEnabled(False)
 
-                # self.btnCombineNetwork.setEnabled(False)
+                self.btnCombineNetwork.setEnabled(False)
                 self.btnExtractNetwork.setEnabled(False)
                 self.btnDelNode.setEnabled(False)
                 self.btnConstShrink.setEnabled(False)
@@ -345,7 +345,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_name, filter = QtWidgets.QFileDialog.getOpenFileName(
                             self,
                             caption="Open ONNX Model File",
-                            directory=os.path.abspath(os.curdir),
+                            # directory=os.path.abspath(os.curdir),
                             filter="*.onnx *.json")
         if not file_name:
             self.set_font_bold(self.btnOpenONNX, False)
@@ -427,9 +427,82 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def btnCombineNetwork_clicked(self, e:bool):
-        self.set_sidemenu_buttons_enabled(False)
-        print(sys._getframe().f_code.co_name)
+        btn = self.btnCombineNetwork
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "Combine Network"
+
+        self.current_widgets = CombineNetworkWidgets(graph=self.graph.to_data(), parent=self)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                props = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    onnx_graphs = []
+                    if props.combine_with_current_graph:
+                        onnx_graphs.append(onnx_graph)
+                    for onnx_file in props.input_onnx_file_paths:
+                        graph = onnx.load(onnx_file)
+                        onnx_graphs.append(graph)
+
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_combine(
+                            srcop_destop=props.srcop_destop,
+                            op_prefixes_after_merging=props.op_prefixes_after_merging,
+                            input_onnx_file_paths=[],
+                            onnx_graphs=onnx_graphs,
+                            output_of_onnx_file_in_the_process_of_fusion=props.output_of_onnx_file_in_the_process_of_fusion,
+                            non_verbose=False,
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph(graph)
+                MessageBox.info(
+                    f"complete.",
+                    msg_title,
+                    parent=self)
+                break
+            else:
+                break
+        self.current_widgets = None
         self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
 
     def btnExtractNetwork_clicked(self, e:bool):
         btn = self.btnExtractNetwork
