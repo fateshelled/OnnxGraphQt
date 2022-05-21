@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import List
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from onnx_node_graph import OnnxGraph
@@ -12,13 +13,14 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 400
     _MAX_REMOVE_NODE_NAMES_COUNT = 5
 
-    def __init__(self, graph: OnnxGraph=None, parent=None) -> None:
+    def __init__(self, graph: OnnxGraph=None, selected_nodes:List[str]=[], parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("delete node")
         self.graph = graph
+        self.selected_nodes = selected_nodes
         self.initUI()
-        self.updateUI(self.graph)
+        self.updateUI(self.graph, selected_nodes)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -62,13 +64,25 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
 
         self.setLayout(base_layout)
 
-    def updateUI(self, graph: OnnxGraph=None):
+    def updateUI(self, graph: OnnxGraph=None, selected_nodes:List[str]=[]):
         if graph:
             for index in range(self._MAX_REMOVE_NODE_NAMES_COUNT):
                 self.remove_node_names[index]["name"].clear()
                 for name, node in graph.nodes.items():
                     self.remove_node_names[index]["name"].addItem(name)
                 self.remove_node_names[index]["name"].setCurrentIndex(-1)
+
+            index = 0
+            visible_count = 0
+            for index in range(self._MAX_REMOVE_NODE_NAMES_COUNT):
+                if len(selected_nodes) < visible_count + 1:
+                    break
+                node = selected_nodes[index]
+                if node in graph.nodes.keys():
+                    self.remove_node_names[visible_count]["name"].setCurrentText(node)
+                    visible_count += 1
+            self.visible_remove_node_names_count = min(visible_count + 1, self._MAX_REMOVE_NODE_NAMES_COUNT)
+        self.set_visible()
 
     def set_visible(self):
         for key, widgets in self.remove_node_names.items():

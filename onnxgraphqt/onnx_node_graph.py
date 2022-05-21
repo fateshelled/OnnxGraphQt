@@ -131,6 +131,9 @@ class ONNXNodeGraph(NodeGraph):
         # # Disable right click menu
         # self.disable_context_menu(True)
 
+    def get_selected_node_names(self)->List[str]:
+        return [node.name() for node in self.all_nodes() if node.selected()]
+
     def get_node_by_name(self, name)->List[Union[ONNXInput, ONNXOutput, ONNXNode]]:
         """
         Returns node that matches the name.

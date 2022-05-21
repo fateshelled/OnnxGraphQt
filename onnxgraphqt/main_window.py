@@ -582,7 +582,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(False, btn)
         msg_title = "Delete Node"
 
-        self.current_widgets = DeleteNodeWidgets(parent=self, graph=self.graph.to_data())
+        selected_nodes = self.graph.get_selected_node_names()
+        self.current_widgets = DeleteNodeWidgets(parent=self, graph=self.graph.to_data(), selected_nodes=selected_nodes)
         while True:
             self.current_widgets.show()
             if self.current_widgets.exec_():
