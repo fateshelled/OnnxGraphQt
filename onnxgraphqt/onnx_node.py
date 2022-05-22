@@ -163,17 +163,17 @@ class ONNXOutput(BaseNode):
         self.add_input('multi in', multi_input=True)
         self.set_color()
 
-    def set_shape(self, shape):
+    def set_shape(self, shape, push_undo=False):
         self.shape = shape
-        self.set_property("shape", self.shape)
+        self.set_property("shape", self.shape, push_undo)
 
-    def set_dtype(self, dtype):
+    def set_dtype(self, dtype, push_undo=False):
         self.dtype = str(dtype)
-        self.set_property("dtype", self.dtype)
+        self.set_property("dtype", self.dtype, push_undo)
 
-    def set_input_names(self, input_names):
+    def set_input_names(self, input_names, push_undo=False):
         self.input_names = input_names
-        self.set_property("input_names", self.input_names)
+        self.set_property("input_names", self.input_names, push_undo)
 
     def set_color(self):
         self.view.text_color = COLOR_FONT + [255]

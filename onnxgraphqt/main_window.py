@@ -49,13 +49,16 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(parent)
 
         ext = os.path.splitext(onnx_model_path)[-1]
+
+        self.graph: ONNXNodeGraph = None
+
         if ext == ".onnx":
-            self.graph = self.load_graph(onnx_model_path=onnx_model_path)
+            self.load_graph(onnx_model_path=onnx_model_path)
         elif ext == ".json":
             onnx_graph = onnx_tools_json2onnx(input_json_path=onnx_model_path)
-            self.graph = self.load_graph(onnx_model=onnx_graph)
+            self.load_graph(onnx_model=onnx_graph)
         else:
-            self.graph = self.load_graph()
+            self.load_graph()
 
         self.graph_widget = self.graph.widget
         self.properties_bin: PropertiesBinWidget = None
@@ -78,6 +81,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Main Layout
         # Fixed side menu size.
         self.layout_graph = QtWidgets.QStackedLayout()
+        self.layout_graph.addWidget(self.graph.widget)
+
         self.layout_base = QtWidgets.QHBoxLayout()
 
         self.widget_sidemenu = QtWidgets.QWidget()
@@ -182,22 +187,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout_main_properties.addLayout(layout_operator_btn)
 
         # ONNXNodeGraph
-        self.update_graph(self.graph)
+        self.update_graph()
 
 
-    def update_graph(self, graph: ONNXNodeGraph):
+    def update_graph(self):
 
         t0 = time.time()
         self.set_cursor_busy()
 
-        self.graph_widget.hide()
-        self.layout_graph.removeWidget(self.graph_widget)
-        del self.graph_widget
-        del self.graph
-
-        self.graph = graph
-        self.graph_widget = graph.widget
-        self.layout_graph.addWidget(graph.widget)
         self.graph.auto_layout(push_undo=False)
         self.graph.fit_to_selection()
 
@@ -228,10 +225,10 @@ class MainWindow(QtWidgets.QMainWindow):
         cursor.setShape(QtCore.Qt.ArrowCursor)
         self.setCursor(cursor)
 
-    def set_font_bold(self, button: QtWidgets.QPushButton, bold=True):
-        f = button.font()
+    def set_font_bold(self, widget: QtWidgets.QWidget, bold=True):
+        f = widget.font()
         f.setBold(bold)
-        button.setFont(f)
+        widget.setFont(f)
 
     def set_sidemenu_buttons_enabled(self, enable=True, current_button: QtWidgets.QPushButton=None):
 
@@ -291,26 +288,25 @@ class MainWindow(QtWidgets.QMainWindow):
         if current_button:
             current_button.setEnabled(True)
 
-    def set_current_process_button(self):
-        pass
-
-    def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, graph:ONNXNodeGraph=None, model_name:str=None)->ONNXNodeGraph:
+    def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, model_name:str=None):
 
         t0 = time.time()
         self.set_cursor_busy()
 
         if not onnx_model and not onnx_model_path:
-            node_graph = ONNXNodeGraph(name="onnx_graph_qt",
-                                       opset=DEFAULT_OPSET,
-                                       doc_string=None,
-                                       import_domains=None)
-            return node_graph
+            if self.graph is None:
+                self.graph = ONNXNodeGraph(name="onnx_graph_qt",
+                                           opset=DEFAULT_OPSET,
+                                           doc_string=None,
+                                           import_domains=None)
+            return
 
         onnx_graph = None
         if onnx_model:
             onnx_graph = gs.import_onnx(onnx_model)
         elif onnx_model_path:
-            onnx_graph = gs.import_onnx(onnx.load(onnx_model_path))
+            onnx_model = onnx.load(onnx_model_path)
+            onnx_graph = gs.import_onnx(onnx_model)
 
         if model_name is None:
             if onnx_model_path:
@@ -320,20 +316,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(model_name)
 
         # create graph controller.
-        if graph is None:
-            node_graph = ONNXNodeGraph(name=onnx_graph.name,
+        if self.graph is None:
+            self.graph = ONNXNodeGraph(name=onnx_graph.name,
                                        opset=onnx_graph.opset,
                                        doc_string=onnx_graph.doc_string,
                                        import_domains=onnx_graph.import_domains)
         else:
-            node_graph = graph
+            self.graph.name = onnx_graph.name
+            self.graph.opset = onnx_graph.opset
+            self.graph.doc_string = onnx_graph.doc_string
+            self.graph.import_domains = onnx_graph.import_domains
 
-        node_graph.load_onnx_graph(onnx_graph)
+        self.graph.remove_all_nodes()
+
+        self.graph.load_onnx_graph(onnx_graph)
 
         self.set_cursor_arrow()
         dt0 = time.time() - t0
         print(f"load graph: {dt0}s")
-        return node_graph
 
     def create_properties_bin(self, graph: ONNXNodeGraph):
         properties_bin = PropertiesBinWidget(node_graph=graph)
@@ -355,12 +355,12 @@ class MainWindow(QtWidgets.QMainWindow):
         ext = os.path.splitext(file_name)[-1]
         model_name = os.path.basename(file_name)
         if ext == ".onnx":
-            graph = self.load_graph(onnx_model_path=file_name, model_name=model_name)
-            self.update_graph(graph)
+            self.load_graph(onnx_model_path=file_name, model_name=model_name)
+            self.update_graph()
         elif ext == ".json":
             onnx_graph = onnx_tools_json2onnx(input_json_path=file_name)
-            graph = self.load_graph(onnx_model=onnx_graph, model_name=model_name)
-            self.update_graph(graph)
+            self.load_graph(onnx_model=onnx_graph, model_name=model_name)
+            self.update_graph()
         else:
             MessageBox.warn("no supported format", title="open")
         # self.btnImportONNX.setEnabled(True)
@@ -376,8 +376,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #     if not file_name:
     #         return
     #     print(f"Import: {file_name}")
-    #     graph = self.load_graph(onnx_model_path=file_name, graph=self.graph)
-    #     self.update_graph(graph)
+    #     self.load_graph(onnx_model_path=file_name, graph=self.graph)
+    #     self.update_graph()
 
 
     def btnExportONNX_clicked(self, e:bool):
@@ -491,8 +491,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -559,8 +559,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -627,8 +627,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -664,7 +664,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         f = io.StringIO()
                         sys.stdout = f
                         onnx_model, _ = onnx_tools_shrinking(
-                            onnx_graph=self.graph.to_onnx(non_verbose=True),
+                            onnx_graph=onnx_graph,
                             non_verbose=False,
                             **props._asdict()
                         )
@@ -695,8 +695,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     "Const Shrink",
@@ -758,8 +758,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -826,8 +826,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -904,8 +904,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"Change opset {old_opset} to {new_opset}.",
                     msg_title,
@@ -972,8 +972,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -1040,8 +1040,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -1115,8 +1115,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -1183,8 +1183,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                graph = self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph(graph)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.update_graph()
                 MessageBox.info(
                     f"complete.",
                     msg_title,

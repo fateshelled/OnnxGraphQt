@@ -114,11 +114,12 @@ class ONNXNodeGraph(NodeGraph):
         # self._register_builtin_nodes()
         self._wire_signals()
 
-    def __init__(self, name:str, opset:int, doc_string:str, parent=None, **kwargs):
+    def __init__(self, name:str, opset:int, doc_string:str, import_domains:str, parent=None, **kwargs):
         self.__super__init__(parent, **kwargs)
         self.name = name
         self.opset = opset
         self.doc_string = doc_string
+        self.import_domains = import_domains
         self.register_nodes([
             ONNXNode,
             ONNXInput,
@@ -151,6 +152,20 @@ class ONNXNodeGraph(NodeGraph):
             if node.name() == name:
                 ret.append(node)
         return ret
+
+    def remove_all_nodes(self):
+        for node in self.all_nodes():
+            for p in node.input_ports():
+                p.set_locked(state=False, push_undo=False)
+            for p in node.input_ports():
+                p.clear_connections(push_undo=False)
+
+            for p in node.output_ports():
+                p.set_locked(state=False, push_undo=False)
+            for p in node.output_ports():
+                p.clear_connections(push_undo=False)
+
+            self.remove_node(node, push_undo=False)
 
     def _serialize(self, nodes)->Dict[str, Any]:
         ret = super()._serialize(nodes)
@@ -451,6 +466,7 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
         inputs=input_variables,
         outputs=output_variables,
         doc_string=graph.doc_string,
+        import_domains=graph.import_domains,
     )
     return onnx_graph
 
