@@ -1,0 +1,3257 @@
+{
+    "Abs": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Acos": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Acosh": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Add": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"],
+          "consumed_inputs": ["int64", ""]
+        }
+      }
+    },
+    "And": {
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "ArgMax": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"],
+          "select_last_index": ["int64", "0"]
+        }
+      },
+      "12": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"],
+          "select_last_index": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ArgMin": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"],
+          "select_last_index": ["int64", "0"]
+        }
+      },
+      "12": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"],
+          "select_last_index": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "Asin": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Asinh": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Atan": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Atanh": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "AveragePool": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "ceil_mode": ["int64", "0"],
+          "count_include_pad": ["int64", "0"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "10": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "ceil_mode": ["int64", "0"],
+          "count_include_pad": ["int64", "0"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "count_include_pad": ["int64", "0"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "BatchNormalization": {
+      "15": {
+        "inputs": "5",
+        "outputs": "3",
+        "attrs": {
+          "epsilon": ["float32", "1.00E-05"],
+          "momentum": ["float32", "0.9"],
+          "training_mode": ["int64", "0"]
+        }
+      },
+      "14": {
+        "inputs": "5",
+        "outputs": "3",
+        "attrs": {
+          "epsilon": ["float32", "1.00E-05"],
+          "momentum": ["float32", "0.9"],
+          "training_mode": ["int64", "0"]
+        }
+      },
+      "9": {
+        "inputs": "5",
+        "outputs": "5",
+        "attrs": {
+          "epsilon": ["float32", "1.00E-05"],
+          "momentum": ["float32", "0.9"]
+        }
+      },
+      "7": {
+        "inputs": "5",
+        "outputs": "5",
+        "attrs": {
+          "epsilon": ["float32", "1.00E-05"],
+          "momentum": ["float32", "0.9"],
+          "spatial": ["int64", "1"]
+        }
+      },
+      "6": {
+        "inputs": "5",
+        "outputs": "5",
+        "attrs": {
+          "epsilon": ["float32", "1.00E-05"],
+          "is_test": ["int64", "0"],
+          "momentum": ["float32", "0.9"],
+          "spatial": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "5",
+        "outputs": "5",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""],
+          "epsilon": ["float32", "1.00E-05"],
+          "is_test": ["int64", "0"],
+          "momentum": ["float32", "0.9"],
+          "spatial": ["int64", "1"]
+        }
+      }
+    },
+    "BitShift": {
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "direction": ["str", ""]
+        }
+      }
+    },
+    "Cast": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "to": ["int64", ""]
+        }
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "to": ["int64", ""]
+        }
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "to": ["int64", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "to": ["str", ""]
+        }
+      }
+    },
+    "Ceil": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Clip": {
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "12": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "max": ["float32", "3.40E+38"],
+          "min": ["float32", "-3.40E+38"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""],
+          "max": ["float32", ""],
+          "min": ["float32", ""]
+        }
+      }
+    },
+    "Compress": {
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""]
+        }
+      },
+      "9": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""]
+        }
+      }
+    },
+    "Concat": {
+      "13": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""]
+        }
+      },
+      "11": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""]
+        }
+      },
+      "4": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""]
+        }
+      },
+      "1": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""]
+        }
+      }
+    },
+    "ConcatFromSequence": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "new_axis": ["int64", "0"]
+        }
+      }
+    },
+    "Constant": {
+      "13": {
+        "inputs": "0",
+        "outputs": "1",
+        "attrs": {
+          "sparse_value": ["", ""],
+          "value": ["", ""],
+          "value_float": ["float32", ""],
+          "value_floats": ["float32[]", ""],
+          "value_int": ["int64", ""],
+          "value_ints": ["int64[]", ""],
+          "value_string": ["str", ""],
+          "value_strings": ["str[]", ""]
+        }
+      },
+      "12": {
+        "inputs": "0",
+        "outputs": "1",
+        "attrs": {
+          "sparse_value": ["", ""],
+          "value": ["", ""],
+          "value_float": ["float32", ""],
+          "value_floats": ["float32[]", ""],
+          "value_int": ["int64", ""],
+          "value_ints": ["int64[]", ""],
+          "value_string": ["str", ""],
+          "value_strings": ["str[]", ""]
+        }
+      },
+      "11": {
+        "inputs": "0",
+        "outputs": "1",
+        "attrs": {
+          "sparse_value": ["", ""],
+          "value": ["", ""]
+        }
+      },
+      "9": {
+        "inputs": "0",
+        "outputs": "1",
+        "attrs": {
+          "value": ["", ""]
+        }
+      },
+      "1": {
+        "inputs": "0",
+        "outputs": "1",
+        "attrs": {
+          "value": ["", ""]
+        }
+      }
+    },
+    "ConstantOfShape": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "value": ["", ""]
+        }
+      }
+    },
+    "Conv": {
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "dilations": ["int64[]", ""],
+          "group": ["int64", "1"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "dilations": ["int64[]", ""],
+          "group": ["int64", "1"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "ConvInteger": {
+      "10": {
+        "inputs": "4",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "dilations": ["int64[]", ""],
+          "group": ["int64", "1"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "ConvTranspose": {
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "dilations": ["int64[]", ""],
+          "group": ["int64", "1"],
+          "kernel_shape": ["int64[]", ""],
+          "output_padding": ["int64[]", ""],
+          "output_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", ""],
+          "dilations": ["int64[]", ""],
+          "group": ["int64", "1"],
+          "kernel_shape": ["int64[]", ""],
+          "output_padding": ["int64[]", ""],
+          "output_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "Cos": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Cosh": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "CumSum": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "exclusive": ["int64", "0"],
+          "reverse": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "exclusive": ["int64", "0"],
+          "reverse": ["int64", "0"]
+        }
+      }
+    },
+    "DepthToSpace": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "blocksize": ["int64", "0"],
+          "mode": ["str", "DCR"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "blocksize": ["int64", "0"],
+          "mode": ["str", "DCR"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "blocksize": ["int64", "0"]
+        }
+      }
+    },
+    "DequantizeLinear": {
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "10": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Det": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Div": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"],
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Dropout": {
+      "13": {
+        "inputs": "3",
+        "outputs": "2",
+        "attrs": {
+          "seed": ["int64", ""]
+        }
+      },
+      "12": {
+        "inputs": "3",
+        "outputs": "2",
+        "attrs": {
+          "seed": ["int64", ""]
+        }
+      },
+      "10": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "ratio": ["float32", "0.5"]
+        }
+      },
+      "7": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "ratio": ["float32", "0.5"]
+        }
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "is_test": ["int64", "0"],
+          "ratio": ["float32", "0.5"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""],
+          "is_test": ["int64", "0"],
+          "ratio": ["float32", "0.5"]
+        }
+      }
+    },
+    "Einsum": {
+      "12": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "equation": ["str", ""]
+        }
+      }
+    },
+    "Elu": {
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Equal": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "Erf": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Exp": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Expand": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "8": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "EyeLike": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "dtype": ["int64", ""],
+          "k": ["int64", "0"]
+        }
+      }
+    },
+    "Flatten": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      }
+    },
+    "Floor": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "GRU": {
+      "14": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "foward"],
+          "hidden_size": ["int64", ""],
+          "layout": ["int64", "0"],
+          "linear_before_reset": ["int64", "0"]
+        }
+      },
+      "7": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "foward"],
+          "hidden_size": ["int64", ""],
+          "linear_before_reset": ["int64", "0"]
+        }
+      },
+      "3": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "foward"],
+          "hidden_size": ["int64", ""],
+          "linear_before_reset": ["int64", "0"],
+          "output_sequence": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "foward"],
+          "hidden_size": ["int64", ""],
+          "output_sequence": ["int64", "0"]
+        }
+      }
+    },
+    "Gather": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      }
+    },
+    "GatherElements": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      }
+    },
+    "GatherND": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "batch_dims": ["int64", "0"]
+        }
+      },
+      "12": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "batch_dims": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Gemm": {
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "beta": ["float32", "1"],
+          "transA": ["int64", "0"],
+          "transB": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "beta": ["float32", "1"],
+          "transA": ["int64", "0"],
+          "transB": ["int64", "0"]
+        }
+      },
+      "9": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "beta": ["float32", "1"],
+          "transA": ["int64", "0"],
+          "transB": ["int64", "0"]
+        }
+      },
+      "7": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "beta": ["float32", "1"],
+          "transA": ["int64", "0"],
+          "transB": ["int64", "0"]
+        }
+      },
+      "6": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "beta": ["float32", "1"],
+          "broadcast": ["int64", "0"],
+          "transA": ["int64", "0"],
+          "transB": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"],
+          "beta": ["float32", "1"],
+          "broadcast": ["int64", "0"],
+          "transA": ["int64", "0"],
+          "transB": ["int64", "0"]
+        }
+      }
+    },
+    "GlobalAveragePool": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "GlobalLpPool": {
+      "2": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "p": ["float32", "2"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "p": ["float32", "2"]
+        }
+      }
+    },
+    "GlobalMaxPool": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Greater": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "GridSample": {
+      "16": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "align_corners": ["int64", "0"],
+          "mode": ["str", "bilinear"],
+          "padding_mode": ["str", "zeros"]
+        }
+      }
+    },
+    "HardSigmoid": {
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.2"],
+          "beta": ["float32", "0.5"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.2"],
+          "beta": ["float32", "0.5"],
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Hardmax": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      }
+    },
+    "Identity": {
+      "16": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "14": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "If": {
+      "16": {
+        "inputs": "1",
+        "outputs": "inf",
+        "attrs": {
+          "else_branch": ["graph", ""],
+          "then_branch": ["graph", ""]
+        }
+      },
+      "13": {
+        "inputs": "1",
+        "outputs": "inf",
+        "attrs": {
+          "else_branch": ["graph", ""],
+          "then_branch": ["graph", ""]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "inf",
+        "attrs": {
+          "else_branch": ["graph", ""],
+          "then_branch": ["graph", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "inf",
+        "attrs": {
+          "else_branch": ["graph", ""],
+          "then_branch": ["graph", ""]
+        }
+      }
+    },
+    "InstanceNormalization": {
+      "6": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "epsilon": ["float32", "1.00E-05"]
+        }
+      },
+      "1": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""],
+          "epsilon": ["float32", "1.00E-05"]
+        }
+      }
+    },
+    "IsInf": {
+      "10": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "detect_negative": ["int64", "1"],
+          "detect_positive": ["int64", "1"]
+        }
+      }
+    },
+    "IsNaN": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "LRN": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.0001"],
+          "beta": ["float32", "0.75"],
+          "bias": ["float32", "1"],
+          "size": ["int64", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.0001"],
+          "beta": ["float32", "0.75"],
+          "bias": ["float32", "1"],
+          "size": ["int64", ""]
+        }
+      }
+    },
+    "LSTM": {
+      "14": {
+        "inputs": "8",
+        "outputs": "3",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "forward"],
+          "hidden_size": ["int64", ""],
+          "input_forget": ["int64", "0"],
+          "layout": ["int64", "0"]
+        }
+      },
+      "7": {
+        "inputs": "8",
+        "outputs": "3",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "forward"],
+          "hidden_size": ["int64", ""],
+          "input_forget": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "8",
+        "outputs": "3",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", ""],
+          "clip": ["float32", ""],
+          "direction": ["str", "forward"],
+          "hidden_size": ["int64", ""],
+          "input_forget": ["int64", "0"],
+          "output_sequence": ["int64", "0"]
+        }
+      }
+    },
+    "LeakyRelu": {
+      "16": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.01"]
+        }
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.01"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "0.01"],
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Less": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "Log": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Loop": {
+      "16": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""]
+        }
+      },
+      "13": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""]
+        }
+      },
+      "11": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""]
+        }
+      },
+      "1": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""]
+        }
+      }
+    },
+    "LpNormalization": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "-1"],
+          "p": ["int64", "2"]
+        }
+      }
+    },
+    "LpPool": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "kernel_shape": ["int64[]", ""],
+          "p": ["float32", "2"],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "2": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "kernel_shape": ["int64[]", ""],
+          "p": ["float32", "2"],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "kernel_shape": ["int64[]", ""],
+          "p": ["float32", "2"],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "MatMul": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "MatMulInteger": {
+      "10": {
+        "inputs": "4",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Max": {
+      "13": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "12": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "8": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "MaxPool": {
+      "12": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "ceil_mode": ["int64", "0"],
+          "dilations": ["int64[]", ""],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "storage_order": ["int64", "0"],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "ceil_mode": ["int64", "0"],
+          "dilations": ["int64[]", ""],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "storage_order": ["int64", "0"],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "10": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "ceil_mode": ["int64", "0"],
+          "dilations": ["int64[]", ""],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "storage_order": ["int64", "0"],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "8": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "storage_order": ["int64", "0"],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "MaxRoiPool": {
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "pooled_shape": ["int64[]", ""],
+          "spatial_scale": ["float32", "1"]
+        }
+      }
+    },
+    "MaxUnpool": {
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      },
+      "9": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "Mean": {
+      "13": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "8": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Min": {
+      "13": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "12": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "8": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Mod": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "fmod": ["int64", "0"]
+        }
+      },
+      "10": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "fmod": ["int64", "0"]
+        }
+      }
+    },
+    "Mul": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"],
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Multinomial": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "dtype": ["int64", "6"],
+          "sample_size": ["int64", "1"],
+          "seed": ["float32", ""]
+        }
+      }
+    },
+    "Neg": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "NonMaxSuppression": {
+      "11": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {
+          "center_point_box": ["int64", "0"]
+        }
+      },
+      "10": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {
+          "center_point_box": ["int64", "0"]
+        }
+      }
+    },
+    "NonZero": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Not": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "OneHot": {
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "-1"]
+        }
+      },
+      "9": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "-1"]
+        }
+      }
+    },
+    "Optional": {
+      "15": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "type": ["type_proto", ""]
+        }
+      }
+    },
+    "OptionalGetElement": {
+      "15": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "OptionalHasElement": {
+      "15": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Or": {
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "PRelu": {
+      "16": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Pad": {
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "mode": ["str", "constant"]
+        }
+      },
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "mode": ["str", "constant"]
+        }
+      },
+      "2": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "mode": ["str", "constant"],
+          "paddings": ["int64[]", ""],
+          "value": ["float32", "0"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "mode": ["str", "constant"],
+          "paddings": ["int64[]", ""],
+          "value": ["float32", "0"]
+        }
+      }
+    },
+    "Pow": {
+      "15": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "12": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "QLinearConv": {
+      "10": {
+        "inputs": "9",
+        "outputs": "1",
+        "attrs": {
+          "auto_pad": ["str", "NOTSET"],
+          "dilations": ["int64[]", ""],
+          "group": ["int64", "1"],
+          "kernel_shape": ["int64[]", ""],
+          "pads": ["int64[]", ""],
+          "strides": ["int64[]", ""]
+        }
+      }
+    },
+    "QLinearMatMul": {
+      "10": {
+        "inputs": "8",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "QuantizeLinear": {
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "10": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "RNN": {
+      "14": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", "['Tanh', 'Tanh']"],
+          "clip": ["float32", ""],
+          "direction": ["str", "forward"],
+          "hidden_size": ["int64", ""],
+          "output_sequence": ["int64", "0"],
+          "layout": ["int64", "0"]
+        }
+      },
+      "7": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", "['Tanh', 'Tanh']"],
+          "clip": ["float32", ""],
+          "direction": ["str", "forward"],
+          "hidden_size": ["int64", ""],
+          "output_sequence": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "6",
+        "outputs": "2",
+        "attrs": {
+          "activation_alpha": ["float32[]", ""],
+          "activation_beta": ["float32[]", ""],
+          "activations": ["str[]", "['Tanh', 'Tanh']"],
+          "clip": ["float32", ""],
+          "direction": ["str", "forward"],
+          "hidden_size": ["int64", ""],
+          "output_sequence": ["int64", "0"]
+        }
+      }
+    },
+    "RandomNormal": {
+      "1": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "RandomNormalLike": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "dtype": ["int64", ""],
+          "mean": ["float32", "0"],
+          "scale": ["float32", "1"],
+          "seed": ["float32", ""]
+        }
+      }
+    },
+    "RandomUniform": {
+      "1": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "RandomUniformLike": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "dtype": ["int64", ""],
+          "high": ["float32", "1"],
+          "low": ["float32", "0"],
+          "seed": ["float32", ""]
+        }
+      }
+    },
+    "Reciprocal": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "ReduceL1": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceL2": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceLogSum": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceLogSumExp": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceMax": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "12": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceMean": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceMin": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "12": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceProd": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceSum": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "ReduceSumSquare": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "Relu": {
+      "14": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Reshape": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "allowzero": ["int64", "0"]
+        }
+      },
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "5": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""],
+          "shape": ["int64[]", ""]
+        }
+      }
+    },
+    "Resize": {
+      "13": {
+        "inputs": "4",
+        "outputs": "1",
+        "attrs": {
+          "coordinate_transformation_mode": ["str", "half_pixel"],
+          "cubic_coeff_a": ["float32", "-0.75"],
+          "exclude_outside": ["int64", "0"],
+          "extrapolation_value": ["float32", "0"],
+          "mode": ["str", "nearest"],
+          "nearest_mode": ["str", "round_prefer_floor"]
+        }
+      },
+      "11": {
+        "inputs": "4",
+        "outputs": "1",
+        "attrs": {
+          "coordinate_transformation_mode": ["str", "half_pixel"],
+          "cubic_coeff_a": ["float32", "-0.75"],
+          "exclude_outside": ["int64", "0"],
+          "extrapolation_value": ["float32", "0"],
+          "mode": ["str", "nearest"],
+          "nearest_mode": ["str", "round_prefer_floor"]
+        }
+      },
+      "10": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "mode": ["str", "nearest"]
+        }
+      }
+    },
+    "ReverseSequence": {
+      "10": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "batch_axis": ["int64", "1"],
+          "time_axis": ["int64", "0"]
+        }
+      }
+    },
+    "RoiAlign": {
+      "16": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "coordinate_transformation_mode": ["str", "half_pixel"],
+          "mode": ["str", "avg"],
+          "output_height": ["int64", "1"],
+          "output_width": ["int64", "1"],
+          "sampling_ratio": ["int64", "0"],
+          "spatial_scale": ["float32", "1"]
+        }
+      },
+      "10": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "mode": ["str", "avg"],
+          "output_height": ["int64", "1"],
+          "output_width": ["int64", "1"],
+          "sampling_ratio": ["int64", "0"],
+          "spatial_scale": ["float32", "1"]
+        }
+      }
+    },
+    "Round": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Scan": {
+      "16": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""],
+          "num_scan_inputs": ["int64", ""],
+          "scan_input_axes": ["int64[]", ""],
+          "scan_input_directions": ["int64[]", ""],
+          "scan_output_axes": ["int64[]", ""],
+          "scan_output_directions": ["int64[]", ""]
+        }
+      },
+      "11": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""],
+          "num_scan_inputs": ["int64", ""],
+          "scan_input_axes": ["int64[]", ""],
+          "scan_input_directions": ["int64[]", ""],
+          "scan_output_axes": ["int64[]", ""],
+          "scan_output_directions": ["int64[]", ""]
+        }
+      },
+      "9": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""],
+          "num_scan_inputs": ["int64", ""],
+          "scan_input_axes": ["int64[]", ""],
+          "scan_input_directions": ["int64[]", ""],
+          "scan_output_axes": ["int64[]", ""],
+          "scan_output_directions": ["int64[]", ""]
+        }
+      },
+      "8": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""],
+          "directions": ["int64[]", ""],
+          "num_scan_inputs": ["int64", ""]
+        }
+      }
+    },
+    "ScatterElements": {
+      "16": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "reduction": ["str", "none"]
+        }
+      },
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      }
+    },
+    "ScatterND": {
+      "16": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "reduction": ["str", "none"]
+        }
+      },
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Selu": {
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1.6732"],
+          "gamma": ["float32", "1.0507"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1.6732"],
+          "consumed_inputs": ["int64[]", ""],
+          "gamma": ["float32", "1.0507"]
+        }
+      }
+    },
+    "SequenceAt": {
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SequenceConstruct": {
+      "11": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SequenceEmpty": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SequenceErase": {
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SequenceInsert": {
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SequenceLength": {
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Shape": {
+      "15": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "end": ["int64", ""],
+          "start": ["int64", "0"]
+        }
+      },
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Shrink": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "bias": ["float32", "0"],
+          "lambd": ["float32", "0.5"]
+        }
+      }
+    },
+    "Sigmoid": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Sign": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Sin": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Sinh": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Size": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Slice": {
+      "13": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "11": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "10": {
+        "inputs": "5",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""],
+          "ends": ["int64[]", ""],
+          "starts": ["int64[]", ""]
+        }
+      }
+    },
+    "Softplus": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Softsign": {
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SpaceToDepth": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "blocksize": ["int64", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "blocksize": ["int64", ""]
+        }
+      }
+    },
+    "Split": {
+      "13": {
+        "inputs": "2",
+        "outputs": "inf",
+        "attrs": {
+          "axis": ["int64", "0"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "inf",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "split": ["int64[]", ""]
+        }
+      },
+      "2": {
+        "inputs": "1",
+        "outputs": "inf",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "split": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "split": ["int64[]", ""]
+        }
+      }
+    },
+    "SplitToSequence": {
+      "11": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "0"],
+          "keepdims": ["int64", "1"]
+        }
+      }
+    },
+    "Sqrt": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Squeeze": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""]
+        }
+      }
+    },
+    "StringNormalizer": {
+      "10": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "case_change_action": ["str", "NONE"],
+          "is_case_sensitive": ["int64", "0"],
+          "locale": ["str", ""],
+          "stopwords": ["str[]", ""]
+        }
+      }
+    },
+    "Sub": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"],
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Sum": {
+      "13": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "8": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "inf",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "Tan": {
+      "7": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Tanh": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "consumed_inputs": ["int64[]", ""]
+        }
+      }
+    },
+    "TfIdfVectorizer": {
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "max_gram_length": ["int64", ""],
+          "max_skip_count": ["int64", ""],
+          "min_gram_length": ["int64", ""],
+          "mode": ["str", ""],
+          "ngram_counts": ["int64[]", ""],
+          "ngram_indexes": ["int64[]", ""],
+          "pool_int64s": ["int64[]", ""],
+          "pool_strings": ["str[]", ""],
+          "weights": ["float32[]", ""]
+        }
+      }
+    },
+    "ThresholdedRelu": {
+      "10": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"]
+        }
+      }
+    },
+    "Tile": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "6": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "TopK": {
+      "11": {
+        "inputs": "2",
+        "outputs": "2",
+        "attrs": {
+          "axis": ["int64", "-1"],
+          "largest": ["int64", "1"],
+          "sorted": ["int64", "1"]
+        }
+      },
+      "10": {
+        "inputs": "2",
+        "outputs": "2",
+        "attrs": {
+          "axis": ["int64", "-1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "2",
+        "attrs": {
+          "axis": ["int64", "-1"],
+          "k": ["int64", ""]
+        }
+      }
+    },
+    "Transpose": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "perm": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "perm": ["int64[]", ""]
+        }
+      }
+    },
+    "Trilu": {
+      "14": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "upper": ["int64", "1"]
+        }
+      }
+    },
+    "Unique": {
+      "11": {
+        "inputs": "1",
+        "outputs": "4",
+        "attrs": {
+          "axis": ["int64", ""],
+          "sorted": ["int64", "1"]
+        }
+      }
+    },
+    "Unsqueeze": {
+      "13": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", ""]
+        }
+      }
+    },
+    "Where": {
+      "16": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "9": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Xor": {
+      "7": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "1": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", ""],
+          "broadcast": ["int64", "0"]
+        }
+      }
+    },
+    "Bernoulli": {
+      "15": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "dtype": ["int64", ""],
+          "seed": ["float32", ""]
+        }
+      }
+    },
+    "CastLike": {
+      "15": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "Celu": {
+      "12": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "alpha": ["float32", "1"]
+        }
+      }
+    },
+    "DynamicQuantizeLinear": {
+      "11": {
+        "inputs": "1",
+        "outputs": "3",
+        "attrs": {}
+      }
+    },
+    "GreaterOrEqual": {
+      "16": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "12": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "HardSwish": {
+      "14": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "LayerNormalization": {
+      "17": {
+        "inputs": "3",
+        "outputs": "3",
+        "attrs": {
+          "axis": ["int64", "-1"],
+          "epsilon": ["float32", "1.00E-05"],
+          "stash_type": ["int64", "1"]
+        }
+      }
+    },
+    "LessOrEqual": {
+      "16": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      },
+      "12": {
+        "inputs": "2",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "LogSoftmax": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "-1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      }
+    },
+    "MeanVarianceNormalization": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", "['0', '2', '3']"]
+        }
+      },
+      "9": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axes": ["int64[]", "['0', '2', '3']"]
+        }
+      }
+    },
+    "NegativeLogLikelihoodLoss": {
+      "13": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "ignore_index": ["int64", ""],
+          "reduction": ["str", "mean"]
+        }
+      },
+      "12": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {
+          "ignore_index": ["int64", ""],
+          "reduction": ["str", "mean"]
+        }
+      }
+    },
+    "Range": {
+      "11": {
+        "inputs": "3",
+        "outputs": "1",
+        "attrs": {}
+      }
+    },
+    "SequenceMap": {
+      "17": {
+        "inputs": "inf",
+        "outputs": "inf",
+        "attrs": {
+          "body": ["graph", ""]
+        }
+      }
+    },
+    "Softmax": {
+      "13": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "-1"]
+        }
+      },
+      "11": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      },
+      "1": {
+        "inputs": "1",
+        "outputs": "1",
+        "attrs": {
+          "axis": ["int64", "1"]
+        }
+      }
+    },
+    "SoftmaxCrossEntropyLoss": {
+      "13": {
+        "inputs": "3",
+        "outputs": "2",
+        "attrs": {
+          "ignore_index": ["int64", ""],
+          "reduction": ["str", "mean"]
+        }
+      },
+      "12": {
+        "inputs": "3",
+        "outputs": "2",
+        "attrs": {
+          "ignore_index": ["int64", ""],
+          "reduction": ["str", "mean"]
+        }
+      }
+    }
+  }
