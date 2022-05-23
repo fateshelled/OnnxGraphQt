@@ -42,12 +42,14 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
         lbl_src_dst = QtWidgets.QLabel("srcop_destop")
         setFont(lbl_src_dst, font_size=14, bold=True)
         self.src_op_dst_op = QtWidgets.QTextEdit()
-        self.src_op_dst_op.setMinimumHeight(20*5)
+        self.src_op_dst_op.setMinimumHeight(20*7)
         self.src_op_dst_op.setPlaceholderText(
             'e.g. '+ '\n' + \
             '    [' + '\n' + \
-            '         ["model1_out1_opname","model2_in1_opname"],' + '\n' + \
-            '         ["model1_out2_opname","model2_in2_opname"],' + '\n' + \
+            '        [' + '\n' + \
+            '            "model1_out1_opname","model2_in1_opname",' + '\n' + \
+            '            "model1_out2_opname","model2_in2_opname",' + '\n' + \
+            '        ],' + '\n' + \
             '    ]'
         )
         layout_src_dst.addRow(lbl_src_dst, self.src_op_dst_op)
@@ -104,7 +106,7 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
         layout_op_prefixes_base.addLayout(layout_op_prefixes)
 
 
-        # 
+        #
         layout_output_in_process = QtWidgets.QVBoxLayout()
         self.output_in_process = QtWidgets.QCheckBox("output_of_onnx_file_in_the_process_of_fusion")
         self.output_in_process.setChecked(False)
