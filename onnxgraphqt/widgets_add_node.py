@@ -1,7 +1,7 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from utils.operators import onnx_opsets, opnames
+from utils.operators import onnx_opsets, opnames, OperatorVersion
 from ast import literal_eval
 
 AVAILABLE_DTYPES = [
@@ -26,12 +26,13 @@ AddNodeProperties = namedtuple("AddNodeProperties",
 class AddNodeWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 500
     _MAX_VARIABLES_COUNT = 5
-    _MAX_ATTRIBUTES_COUNT = 5
+    _MAX_ATTRIBUTES_COUNT = 10
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, current_opset:int, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("add node")
+        self.current_opset = current_opset
         self.initUI()
 
     def initUI(self):
@@ -48,8 +49,10 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.dst_input_name.setPlaceholderText("e.g. `Sub_451 onnx::Pow_603 dummy_mul inp1`")
         self.add_op_type = QtWidgets.QComboBox()
         for op in onnx_opsets:
-            self.add_op_type.addItem(op.name)
+            if op.latest_version <= self.current_opset:
+                self.add_op_type.addItem(op.name, op.versions[0])
         self.add_op_type.setEditable(True)
+        self.add_op_type.currentIndexChanged.connect(self.add_op_type_currentIndexChanged)
         self.add_op_name = QtWidgets.QLineEdit()
         self.add_op_name.setPlaceholderText("Name of op to be added")
 
@@ -141,6 +144,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         base_layout.addWidget(btn)
 
         self.setLayout(base_layout)
+        self.add_op_type_currentIndexChanged(self.add_op_type.currentIndex())
 
     def create_variables_widget(self, index:int, is_input=True)->QtWidgets.QBoxLayout:
         if is_input:
@@ -182,7 +186,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
     def set_visible_input_valiables(self):
         for key, widgets in self.add_input_valiables.items():
             widgets["base"].setVisible(key < self.visible_input_valiables_count)
-        if self.visible_input_valiables_count == 1:
+        if self.visible_input_valiables_count == 0:
             self.btn_add_input_valiables.setEnabled(True)
             self.btn_del_input_valiables.setEnabled(False)
         elif self.visible_input_valiables_count >= self._MAX_VARIABLES_COUNT:
@@ -191,11 +195,12 @@ class AddNodeWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_input_valiables.setEnabled(True)
             self.btn_del_input_valiables.setEnabled(True)
+        self.resize(self.sizeHint())
 
     def set_visible_output_valiables(self):
         for key, widgets in self.add_output_valiables.items():
             widgets["base"].setVisible(key < self.visible_output_valiables_count)
-        if self.visible_output_valiables_count == 1:
+        if self.visible_output_valiables_count == 0:
             self.btn_add_output_valiables.setEnabled(True)
             self.btn_del_output_valiables.setEnabled(False)
         elif self.visible_output_valiables_count >= self._MAX_VARIABLES_COUNT:
@@ -204,11 +209,12 @@ class AddNodeWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_output_valiables.setEnabled(True)
             self.btn_del_output_valiables.setEnabled(True)
+        self.resize(self.sizeHint())
 
     def set_visible_add_op_attributes(self):
         for key, widgets in self.add_op_attributes.items():
             widgets["base"].setVisible(key < self.visible_add_attributes_count)
-        if self.visible_add_attributes_count == 1:
+        if self.visible_add_attributes_count == 0:
             self.btn_add_op_attributes.setEnabled(True)
             self.btn_del_op_attributes.setEnabled(False)
         elif self.visible_add_attributes_count >= self._MAX_ATTRIBUTES_COUNT:
@@ -217,6 +223,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_op_attributes.setEnabled(True)
             self.btn_del_op_attributes.setEnabled(True)
+        self.resize(self.sizeHint())
 
     def btn_add_input_valiables_clicked(self, e):
         self.visible_input_valiables_count = min(max(0, self.visible_input_valiables_count + 1), self._MAX_VARIABLES_COUNT)
@@ -240,6 +247,23 @@ class AddNodeWidgets(QtWidgets.QDialog):
 
     def btn_del_op_attributes_clicked(self, e):
         self.visible_add_attributes_count = min(max(0, self.visible_add_attributes_count - 1), self._MAX_ATTRIBUTES_COUNT)
+        self.set_visible_add_op_attributes()
+
+    def add_op_type_currentIndexChanged(self, selected_index:int):
+        selected_operator: OperatorVersion = self.add_op_type.currentData()
+        self.visible_input_valiables_count = selected_operator.inputs
+        self.visible_output_valiables_count = selected_operator.outputs
+        self.visible_add_attributes_count = min(max(1, len(selected_operator.attrs)), self._MAX_ATTRIBUTES_COUNT)
+
+        i = 0
+        for i, att in enumerate(selected_operator.attrs):
+            self.add_op_attributes[i]["name"].setText(att.name)
+            self.add_op_attributes[i]["value"].setText(att.default_value)
+        for j in range(i+1, self._MAX_ATTRIBUTES_COUNT):
+            self.add_op_attributes[j]["name"].setText("")
+            self.add_op_attributes[j]["value"].setText("")
+        self.set_visible_input_valiables()
+        self.set_visible_output_valiables()
         self.set_visible_add_op_attributes()
 
     def get_properties(self)->AddNodeProperties:
@@ -268,7 +292,12 @@ class AddNodeWidgets(QtWidgets.QDialog):
             name = self.add_op_attributes[i]["name"].text()
             value = self.add_op_attributes[i]["value"].text()
             if name and value:
-                add_op_attributes[name] = literal_eval(value)
+                try:
+                    # For literal
+                    add_op_attributes[name] = literal_eval(value)
+                except BaseException as e:
+                    # For str
+                    add_op_attributes[name] = value
         if len(add_op_attributes) == 0:
             add_op_attributes = None
 
@@ -326,7 +355,7 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication([])
-    window = AddNodeWidgets()
+    window = AddNodeWidgets(current_opset=16)
     window.show()
 
     app.exec_()
