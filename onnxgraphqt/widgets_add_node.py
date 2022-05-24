@@ -49,8 +49,10 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.dst_input_name.setPlaceholderText("e.g. `Sub_451 onnx::Pow_603 dummy_mul inp1`")
         self.add_op_type = QtWidgets.QComboBox()
         for op in onnx_opsets:
-            if op.latest_version <= self.current_opset:
-                self.add_op_type.addItem(op.name, op.versions[0])
+            for version in op.versions:
+                if version.since_opset <= self.current_opset:
+                    self.add_op_type.addItem(op.name, op.versions[0])
+                    break
         self.add_op_type.setEditable(True)
         self.add_op_type.currentIndexChanged.connect(self.add_op_type_currentIndexChanged)
         self.add_op_name = QtWidgets.QLineEdit()

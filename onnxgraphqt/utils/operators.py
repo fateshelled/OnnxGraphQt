@@ -20,7 +20,6 @@ class OperatorVersion:
 @dataclass
 class Operator:
     name: str
-    latest_version: int
     versions: List[OperatorVersion]
 
 _DEFAULT_ONNX_OPSETS_JSON_PATH = os.path.join(os.path.dirname(__file__),
@@ -36,7 +35,6 @@ def _load_json(json_path=_DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
     ret = []
     for op_name, v1 in json_dict.items():
         versions = []
-        latest_version = 1
         for since_opset, v2 in v1.items():
             since_opset = int(since_opset)
             inputs = v2["inputs"]
@@ -57,8 +55,6 @@ def _load_json(json_path=_DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
                                       value_type=attr_value_type,
                                       default_value=defalut_value)
                 )
-            if latest_version < since_opset:
-                latest_version = since_opset
             versions.append(
                 OperatorVersion(
                     since_opset=since_opset,
@@ -68,7 +64,6 @@ def _load_json(json_path=_DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
         ret.append(
             Operator(
                 name=op_name,
-                latest_version=latest_version,
                 versions=versions)
         )
     return ret
@@ -80,7 +75,6 @@ if __name__ == "__main__":
     print(_DEFAULT_ONNX_OPSETS_JSON_PATH)
     for op in onnx_opsets:
         print(op.name)
-        print(op.latest_version)
         for v in op.versions:
             print(v)
         print()

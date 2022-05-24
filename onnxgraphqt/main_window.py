@@ -995,7 +995,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(False, btn)
         msg_title = "Add Node"
 
-        self.current_widgets = AddNodeWidgets(self)
+        self.current_widgets = AddNodeWidgets(current_opset=self.graph.opset, parent=self)
         while True:
             self.current_widgets.show()
             if self.current_widgets.exec_():
