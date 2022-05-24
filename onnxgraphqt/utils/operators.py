@@ -22,10 +22,10 @@ class Operator:
     name: str
     versions: List[OperatorVersion]
 
-DEFAULT_ONNX_OPSETS_JSON_PATH = os.path.join(os.path.dirname(__file__),
+_DEFAULT_ONNX_OPSETS_JSON_PATH = os.path.join(os.path.dirname(__file__),
                                              '..',
                                             'data', 'onnx_opsets.json')
-def load_json(json_path=DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
+def _load_json(json_path=_DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
     json_str = ''
     with open(json_path, mode='r') as f:
         json_str = f.read()
@@ -64,9 +64,13 @@ def load_json(json_path=DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
         ret.append(Operator(name=op_name, versions=versions))
     return ret
 
-onnx_opsets = load_json()
+onnx_opsets = _load_json()
+opnames = [op.name for op in onnx_opsets]
 
 if __name__ == "__main__":
-    print(DEFAULT_ONNX_OPSETS_JSON_PATH)
+    print(_DEFAULT_ONNX_OPSETS_JSON_PATH)
     for op in onnx_opsets:
-        print(op)
+        print(op.name)
+        for v in op.versions:
+            print(v)
+        print()

@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 import numpy as np
 from utils.opset import DEFAULT_OPSET
-from utils.op_names import OP_NAMES
+from utils.operators import onnx_opsets, opnames
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -47,8 +47,8 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         layout = QtWidgets.QFormLayout()
         layout.setLabelAlignment(QtCore.Qt.AlignRight)
         self.cmb_optype = QtWidgets.QComboBox()
-        for op_type in OP_NAMES:
-            self.cmb_optype.addItem(op_type)
+        for op in onnx_opsets:
+            self.cmb_optype.addItem(op.name)
         self.cmb_optype.setEditable(True)
         self.cmb_optype.setCurrentIndex(-1)
         layout.addRow("op_type", self.cmb_optype)

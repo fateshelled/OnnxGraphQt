@@ -1,7 +1,7 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from utils.op_names import OP_NAMES
+from utils.operators import onnx_opsets, opnames
 from ast import literal_eval
 
 AVAILABLE_DTYPES = [
@@ -47,8 +47,8 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.dst_input_name = QtWidgets.QLineEdit()
         self.dst_input_name.setPlaceholderText("e.g. `Sub_451 onnx::Pow_603 dummy_mul inp1`")
         self.add_op_type = QtWidgets.QComboBox()
-        for op in OP_NAMES:
-            self.add_op_type.addItem(op)
+        for op in onnx_opsets:
+            self.add_op_type.addItem(op.name)
         self.add_op_type.setEditable(True)
         self.add_op_name = QtWidgets.QLineEdit()
         self.add_op_name.setPlaceholderText("Name of op to be added")
@@ -308,7 +308,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         if not props.add_op_name:
             print("ERROR: add_op_name")
             invalid = True
-        if not props.add_op_type in OP_NAMES:
+        if not props.add_op_type in opnames:
             print("ERROR: add_op_type")
             invalid = True
         if invalid:
