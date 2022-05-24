@@ -68,8 +68,17 @@ def _load_json(json_path=_DEFAULT_ONNX_OPSETS_JSON_PATH)->List[Operator]:
         )
     return ret
 
+def _get_latest_opset_version(opsets:List[Operator])->int:
+    opset = 1
+    for op in opsets:
+        for v in op.versions:
+            if opset < v.since_opset:
+                opset = v.since_opset
+    return opset
+
 onnx_opsets = _load_json()
 opnames = [op.name for op in onnx_opsets]
+latest_opset = _get_latest_opset_version(onnx_opsets)
 
 if __name__ == "__main__":
     print(_DEFAULT_ONNX_OPSETS_JSON_PATH)

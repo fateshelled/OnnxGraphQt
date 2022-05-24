@@ -255,13 +255,12 @@ class AddNodeWidgets(QtWidgets.QDialog):
         selected_operator: OperatorVersion = self.add_op_type.currentData()
         self.visible_input_valiables_count = selected_operator.inputs
         self.visible_output_valiables_count = selected_operator.outputs
-        self.visible_add_attributes_count = min(max(1, len(selected_operator.attrs)), self._MAX_ATTRIBUTES_COUNT)
+        self.visible_add_attributes_count = min(max(0, len(selected_operator.attrs)), self._MAX_ATTRIBUTES_COUNT)
 
-        i = 0
         for i, att in enumerate(selected_operator.attrs):
             self.add_op_attributes[i]["name"].setText(att.name)
             self.add_op_attributes[i]["value"].setText(att.default_value)
-        for j in range(i+1, self._MAX_ATTRIBUTES_COUNT):
+        for j in range(len(selected_operator.attrs), self._MAX_ATTRIBUTES_COUNT):
             self.add_op_attributes[j]["name"].setText("")
             self.add_op_attributes[j]["value"].setText("")
         self.set_visible_input_valiables()

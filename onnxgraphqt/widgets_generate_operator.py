@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 import numpy as np
 from utils.opset import DEFAULT_OPSET
-from utils.operators import onnx_opsets, opnames
+from utils.operators import onnx_opsets, OperatorVersion, latest_opset
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -30,7 +30,7 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 500
     _MAX_INPUT_VARIABLES_COUNT = 5
     _MAX_OUTPUT_VARIABLES_COUNT = 5
-    _MAX_ATTRIBUTES_COUNT = 5
+    _MAX_ATTRIBUTES_COUNT = 10
 
     def __init__(self, opset=DEFAULT_OPSET, parent=None) -> None:
         super().__init__(parent)
@@ -47,15 +47,14 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         layout = QtWidgets.QFormLayout()
         layout.setLabelAlignment(QtCore.Qt.AlignRight)
         self.cmb_optype = QtWidgets.QComboBox()
-        for op in onnx_opsets:
-            self.cmb_optype.addItem(op.name)
         self.cmb_optype.setEditable(True)
-        self.cmb_optype.setCurrentIndex(-1)
         layout.addRow("op_type", self.cmb_optype)
 
-        self.tb_opset = QtWidgets.QLineEdit()
-        self.tb_opset.setText(str(opset))
-        layout.addRow("opset", self.tb_opset)
+        self.cmb_opset = QtWidgets.QComboBox()
+        self.cmb_opset.setEditable(True)
+        for i in range(1,latest_opset + 1):
+            self.cmb_opset.addItem(str(i), i)
+        layout.addRow("opset", self.cmb_opset)
 
         self.tb_opname = QtWidgets.QLineEdit()
         self.tb_opname.setText("")
@@ -145,6 +144,10 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
 
         self.setLayout(base_layout)
 
+        self.cmb_optype.currentIndexChanged.connect(self.cmb_optype_currentIndexChanged)
+        self.cmb_opset.currentIndexChanged.connect(self.cmb_opset_currentIndexChanged)
+        self.cmb_opset.setCurrentIndex(opset)
+
     def create_variables_widget(self, index:int, is_input=True)->QtWidgets.QBoxLayout:
         if is_input:
             self.add_input_valiables[index] = {}
@@ -185,7 +188,7 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
     def set_visible_input_valiables(self):
         for key, widgets in self.add_input_valiables.items():
             widgets["base"].setVisible(key < self.visible_input_valiables_count)
-        if self.visible_input_valiables_count == 1:
+        if self.visible_input_valiables_count == 0:
             self.btn_add_input_valiables.setEnabled(True)
             self.btn_del_input_valiables.setEnabled(False)
         elif self.visible_input_valiables_count >= self._MAX_INPUT_VARIABLES_COUNT:
@@ -194,11 +197,12 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_input_valiables.setEnabled(True)
             self.btn_del_input_valiables.setEnabled(True)
+        self.resize(self.sizeHint())
 
     def set_visible_output_valiables(self):
         for key, widgets in self.add_output_valiables.items():
             widgets["base"].setVisible(key < self.visible_output_valiables_count)
-        if self.visible_output_valiables_count == 1:
+        if self.visible_output_valiables_count == 0:
             self.btn_add_output_valiables.setEnabled(True)
             self.btn_del_output_valiables.setEnabled(False)
         elif self.visible_output_valiables_count >= self._MAX_OUTPUT_VARIABLES_COUNT:
@@ -207,11 +211,12 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_output_valiables.setEnabled(True)
             self.btn_del_output_valiables.setEnabled(True)
+        self.resize(self.sizeHint())
 
     def set_visible_add_op_attributes(self):
         for key, widgets in self.attributes.items():
             widgets["base"].setVisible(key < self.visible_attributes_count)
-        if self.visible_attributes_count == 1:
+        if self.visible_attributes_count == 0:
             self.btn_add_attributes.setEnabled(True)
             self.btn_del_attributes.setEnabled(False)
         elif self.visible_attributes_count >= self._MAX_ATTRIBUTES_COUNT:
@@ -220,6 +225,7 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_attributes.setEnabled(True)
             self.btn_del_attributes.setEnabled(True)
+        self.resize(self.sizeHint())
 
     def btn_add_input_valiables_clicked(self, e):
         self.visible_input_valiables_count = min(max(0, self.visible_input_valiables_count + 1), self._MAX_INPUT_VARIABLES_COUNT)
@@ -245,10 +251,41 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.visible_attributes_count = min(max(0, self.visible_attributes_count - 1), self._MAX_ATTRIBUTES_COUNT)
         self.set_visible_add_op_attributes()
 
+    def cmb_optype_currentIndexChanged(self, selected_index:int):
+        selected_operator: OperatorVersion = self.cmb_optype.currentData()
+        if selected_operator:
+            self.visible_input_valiables_count = selected_operator.inputs
+            self.visible_output_valiables_count = selected_operator.outputs
+            self.visible_attributes_count = min(max(0, len(selected_operator.attrs)), self._MAX_ATTRIBUTES_COUNT)
+
+            for i, att in enumerate(selected_operator.attrs):
+                self.attributes[i]["name"].setText(att.name)
+                self.attributes[i]["value"].setText(att.default_value)
+            for j in range(len(selected_operator.attrs), self._MAX_ATTRIBUTES_COUNT):
+                self.attributes[j]["name"].setText("")
+                self.attributes[j]["value"].setText("")
+        self.set_visible_input_valiables()
+        self.set_visible_output_valiables()
+        self.set_visible_add_op_attributes()
+
+    def cmb_opset_currentIndexChanged(self, selected_index:int):
+        current_opset:int = self.cmb_opset.currentData()
+        current_optype = self.cmb_optype.currentText()
+        current_optype_index = 0
+        self.cmb_optype.clear()
+        for i, op in enumerate(onnx_opsets):
+            for v in op.versions:
+                if v.since_opset <= current_opset:
+                    if op.name == current_optype:
+                        current_optype_index = self.cmb_optype.count()
+                    self.cmb_optype.addItem(op.name, v)
+                    break
+        self.cmb_optype.setCurrentIndex(current_optype_index)
+
     def get_properties(self)->GenerateOperatorProperties:
 
         op_type = self.cmb_optype.currentText()
-        opset = self.tb_opset.text()
+        opset = self.cmb_opset.currentText()
         if opset:
             opset = literal_eval(opset)
         if not isinstance(opset, int):
@@ -283,7 +320,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
                 attributes[name] = literal_eval(value)
         if len(attributes) == 0:
             attributes = None
-
 
         return GenerateOperatorProperties(
             op_type=op_type,
