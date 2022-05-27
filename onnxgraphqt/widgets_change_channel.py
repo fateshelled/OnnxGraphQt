@@ -34,6 +34,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()
+        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         self.layout_order_dims = QtWidgets.QVBoxLayout()
         self.layout_change_channel = QtWidgets.QVBoxLayout()

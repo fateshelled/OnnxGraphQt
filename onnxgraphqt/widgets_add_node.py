@@ -39,6 +39,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()
+        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # Form layout
         layout = QtWidgets.QFormLayout()
@@ -197,7 +198,6 @@ class AddNodeWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_input_valiables.setEnabled(True)
             self.btn_del_input_valiables.setEnabled(True)
-        self.resize(self.sizeHint())
 
     def set_visible_output_valiables(self):
         for key, widgets in self.add_output_valiables.items():
@@ -211,7 +211,6 @@ class AddNodeWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_output_valiables.setEnabled(True)
             self.btn_del_output_valiables.setEnabled(True)
-        self.resize(self.sizeHint())
 
     def set_visible_add_op_attributes(self):
         for key, widgets in self.add_op_attributes.items():
@@ -225,7 +224,6 @@ class AddNodeWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_op_attributes.setEnabled(True)
             self.btn_del_op_attributes.setEnabled(True)
-        self.resize(self.sizeHint())
 
     def btn_add_input_valiables_clicked(self, e):
         self.visible_input_valiables_count = min(max(0, self.visible_input_valiables_count + 1), self._MAX_VARIABLES_COUNT)

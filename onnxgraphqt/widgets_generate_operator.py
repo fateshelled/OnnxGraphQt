@@ -38,10 +38,11 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.setWindowTitle("generate operator")
         self.initUI(opset)
 
-    def initUI(self, opset):
+    def initUI(self, opset:int):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()
+        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # Form layout
         layout = QtWidgets.QFormLayout()
@@ -85,7 +86,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.layout_valiables.addWidget(QtWidgets.QLabel("input valiables [optional]"))
         for key, widgets in self.add_input_valiables.items():
             self.layout_valiables.addWidget(widgets["base"])
-        self.set_visible_input_valiables()
         layout_btn_input = QtWidgets.QHBoxLayout()
         layout_btn_input.addWidget(self.btn_add_input_valiables)
         layout_btn_input.addWidget(self.btn_del_input_valiables)
@@ -95,7 +95,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.layout_valiables.addWidget(QtWidgets.QLabel("output valiables [optional]"))
         for key, widgets in self.add_output_valiables.items():
             self.layout_valiables.addWidget(widgets["base"])
-        self.set_visible_output_valiables()
         layout_btn_output = QtWidgets.QHBoxLayout()
         layout_btn_output.addWidget(self.btn_add_output_valiables)
         layout_btn_output.addWidget(self.btn_del_output_valiables)
@@ -123,7 +122,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.btn_del_attributes = QtWidgets.QPushButton("-")
         self.btn_add_attributes.clicked.connect(self.btn_add_attributes_clicked)
         self.btn_del_attributes.clicked.connect(self.btn_del_attributes_clicked)
-        self.set_visible_add_op_attributes()
         layout_btn_attributes = QtWidgets.QHBoxLayout()
         layout_btn_attributes.addWidget(self.btn_add_attributes)
         layout_btn_attributes.addWidget(self.btn_del_attributes)
@@ -139,14 +137,13 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
                                          QtWidgets.QDialogButtonBox.Cancel)
         btn.accepted.connect(self.accept)
         btn.rejected.connect(self.reject)
-        # layout.addWidget(btn)
         base_layout.addWidget(btn)
 
         self.setLayout(base_layout)
 
         self.cmb_optype.currentIndexChanged.connect(self.cmb_optype_currentIndexChanged)
         self.cmb_opset.currentIndexChanged.connect(self.cmb_opset_currentIndexChanged)
-        self.cmb_opset.setCurrentIndex(opset)
+        self.cmb_opset.setCurrentIndex(opset-1)
 
     def create_variables_widget(self, index:int, is_input=True)->QtWidgets.QBoxLayout:
         if is_input:
@@ -197,7 +194,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_input_valiables.setEnabled(True)
             self.btn_del_input_valiables.setEnabled(True)
-        self.resize(self.sizeHint())
 
     def set_visible_output_valiables(self):
         for key, widgets in self.add_output_valiables.items():
@@ -211,7 +207,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_output_valiables.setEnabled(True)
             self.btn_del_output_valiables.setEnabled(True)
-        self.resize(self.sizeHint())
 
     def set_visible_add_op_attributes(self):
         for key, widgets in self.attributes.items():
@@ -225,7 +220,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         else:
             self.btn_add_attributes.setEnabled(True)
             self.btn_del_attributes.setEnabled(True)
-        self.resize(self.sizeHint())
 
     def btn_add_input_valiables_clicked(self, e):
         self.visible_input_valiables_count = min(max(0, self.visible_input_valiables_count + 1), self._MAX_INPUT_VARIABLES_COUNT)
@@ -252,6 +246,7 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.set_visible_add_op_attributes()
 
     def cmb_optype_currentIndexChanged(self, selected_index:int):
+        current_size = self.size()
         selected_operator: OperatorVersion = self.cmb_optype.currentData()
         if selected_operator:
             self.visible_input_valiables_count = selected_operator.inputs

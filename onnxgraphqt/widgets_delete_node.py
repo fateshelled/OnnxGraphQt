@@ -10,7 +10,7 @@ DeleteNodeProperties = namedtuple("DeleteNodeProperties",
     ])
 
 class DeleteNodeWidgets(QtWidgets.QDialog):
-    _DEFAULT_WINDOW_WIDTH = 400
+    # _DEFAULT_WINDOW_WIDTH = 400
     _MAX_REMOVE_NODE_NAMES_COUNT = 5
 
     def __init__(self, graph: OnnxGraph=None, selected_nodes:List[str]=[], parent=None) -> None:
@@ -23,13 +23,13 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
         self.updateUI(self.graph, selected_nodes)
 
     def initUI(self):
-        self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()
+        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # attributes
         self.layout = QtWidgets.QVBoxLayout()
-        self.layout.addWidget(QtWidgets.QLabel("remove_node_names"))
+        self.layout.addWidget(QtWidgets.QLabel("remove_node_names                                        "))
         self.visible_remove_node_names_count = 1
         self.remove_node_names = {}
         for index in range(self._MAX_REMOVE_NODE_NAMES_COUNT):

@@ -32,7 +32,6 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
         # self.updateUI(self.graph)
 
     def initUI(self):
-        self.resize(self.sizeHint())
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()

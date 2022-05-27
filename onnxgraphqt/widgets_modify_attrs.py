@@ -60,6 +60,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
 
         base_layout = QtWidgets.QVBoxLayout()
+        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # Form layout
         layout = QtWidgets.QFormLayout()
