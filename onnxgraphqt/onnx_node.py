@@ -68,7 +68,10 @@ class ONNXNode(BaseNode):
             if self.has_property(key + "_"):
                 self.set_property(key + "_", val, push_undo=push_undo)
             else:
-                self.create_property(key + "_", val, widget_type=NODE_PROP_QLINEEDIT)
+                if key == "dtype":
+                    self.create_property(key + "_", val, widget_type=NODE_PROP_QLABEL)
+                else:
+                    self.create_property(key + "_", val, widget_type=NODE_PROP_QLINEEDIT)
 
     def get_attrs(self)->OrderedDict:
         d = [(key, self.get_property(key + "_")) for key in self.attrs.keys()]
@@ -81,10 +84,14 @@ class ONNXNode(BaseNode):
         else:
             self.set_property("node_name", self.node_name, push_undo=push_undo)
 
+    def get_node_name(self):
+        self.node_name = self.get_property("node_name")
+        return self.node_name
+
     def set_op(self, op:str, push_undo=False):
         self.op = op
         if not self.has_property("op"):
-            self.create_property("op", self.op, widget_type=NODE_PROP_QLINEEDIT)
+            self.create_property("op", self.op, widget_type=NODE_PROP_QLABEL)
         else:
             self.set_property("op", self.op, push_undo=push_undo)
 
@@ -128,13 +135,25 @@ class ONNXInput(BaseNode):
         self.add_output('multi out', multi_output=True)
         self.set_color()
 
+    def get_shape(self):
+        self.shape = self.get_property("shape")
+        return self.shape
+
     def set_shape(self, shape, push_undo=False):
         self.shape = shape
         self.set_property("shape", self.shape, push_undo=push_undo)
 
+    def get_dtype(self):
+        self.dtype = self.get_property("dtype")
+        return self.dtype
+
     def set_dtype(self, dtype, push_undo=False):
         self.dtype = str(dtype)
         self.set_property("dtype", self.dtype, push_undo=push_undo)
+
+    def get_output_names(self):
+        self.output_names = self.get_property("output_names")
+        return self.output_names
 
     def set_output_names(self, output_names, push_undo=False):
         self.output_names = output_names
@@ -163,13 +182,25 @@ class ONNXOutput(BaseNode):
         self.add_input('multi in', multi_input=True)
         self.set_color()
 
+    def get_shape(self):
+        self.shape = self.get_property("shape")
+        return self.shape
+
     def set_shape(self, shape, push_undo=False):
         self.shape = shape
         self.set_property("shape", self.shape, push_undo)
 
+    def get_dtype(self):
+        self.dtype = self.get_property("dtype")
+        return self.dtype
+
     def set_dtype(self, dtype, push_undo=False):
         self.dtype = str(dtype)
         self.set_property("dtype", self.dtype, push_undo)
+
+    def get_input_names(self):
+        self.input_names = self.get_property("input_names")
+        return self.input_names
 
     def set_input_names(self, input_names, push_undo=False):
         self.input_names = input_names

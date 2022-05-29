@@ -2,9 +2,6 @@ import sys, os, io
 import time
 
 from PySide2 import QtCore, QtWidgets, QtGui
-from NodeGraphQt import NodeGraph, NodesTreeWidget, PropertiesBinWidget
-from NodeGraphQt.widgets.node_graph import NodeGraphWidget
-
 import onnx
 import onnx_graphsurgeon as gs
 
@@ -36,6 +33,8 @@ from widgets_generate_operator import GenerateOperatorWidgets
 from widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets_rename_op import RenameOpWidget
 
+from custom_properties_bin import CustomPropertiesBinWidget
+
 from onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 
@@ -61,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.load_graph()
 
         self.graph_widget = self.graph.widget
-        self.properties_bin: PropertiesBinWidget = None
+        self.properties_bin: CustomPropertiesBinWidget = None
 
         self.init_ui()
 
@@ -327,8 +326,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.graph.doc_string = onnx_graph.doc_string
             self.graph.import_domains = onnx_graph.import_domains
 
-        self.graph.remove_all_nodes()
+        self.graph.clear_undo_stack()
 
+        self.graph.remove_all_nodes()
         self.graph.load_onnx_graph(onnx_graph)
 
         self.set_cursor_arrow()
@@ -336,8 +336,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(f"load graph: {dt0}s")
 
     def create_properties_bin(self, graph: ONNXNodeGraph):
-        properties_bin = PropertiesBinWidget(node_graph=graph)
-        properties_bin.set_limit(1)
+        properties_bin = CustomPropertiesBinWidget(node_graph=graph)
         return properties_bin
 
     def btnOpenONNX_clicked(self, e:bool):

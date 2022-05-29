@@ -346,13 +346,13 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
     gs_variables_all = {}
 
     for n in graph.get_nodes_by_type("nodes.node.ONNXInput"):
-        v = gs.Variable(name=n.name(), dtype=n.dtype, shape=n.shape)
+        v = gs.Variable(name=n.name(), dtype=n.get_dtype(), shape=n.get_shape())
         input_variables.append(v)
         input_names.append(n.name())
         gs_variables_all[n.name()] = v
 
     for n in graph.get_nodes_by_type("nodes.node.ONNXOutput"):
-        v = gs.Variable(name=n.name(), dtype=n.dtype, shape=n.shape)
+        v = gs.Variable(name=n.name(), dtype=n.get_dtype(), shape=n.get_shape())
         output_variables.append(v)
         output_names.append(n.name())
         gs_variables_all[n.name()] = v
@@ -391,7 +391,7 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
                 v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
                 gs_variables_all[name] = v
             output_gs_variables.append(v)
-
+        n:ONNXNode
         # 2. Node Generation
         node = None
         value_info = None
@@ -399,8 +399,8 @@ def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
             # non constant
             node = gs.Node(
                 op=n.op,
-                name=n.node_name,
-                attrs=n.attrs,
+                name=n.get_node_name(),
+                attrs=n.get_attrs(),
                 inputs=input_gs_variables,
                 outputs=output_gs_variables
             )
