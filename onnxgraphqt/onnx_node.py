@@ -125,15 +125,25 @@ class ONNXInput(BaseNode):
     NODE_NAME = 'input'
     def __init__(self):
         super(ONNXInput, self).__init__()
+        self.node_name = ""
         self.shape = []
         self.dtype = ""
         self.output_names = []
+        self.create_property("node_name", self.node_name, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("shape", self.shape, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("output_names", self.output_names, widget_type=NODE_PROP_QTEXTEDIT)
         # create node outputs.
         self.add_output('multi out', multi_output=True)
         self.set_color()
+
+    def get_node_name(self):
+        self.node_name = self.get_property("node_name")
+        return self.node_name
+
+    def set_node_name(self, node_name:str, push_undo=False):
+        self.node_name = node_name
+        self.set_property("node_name", self.node_name, push_undo=push_undo)
 
     def get_shape(self):
         self.shape = self.get_property("shape")
@@ -172,15 +182,25 @@ class ONNXOutput(BaseNode):
     NODE_NAME = 'output'
     def __init__(self):
         super(ONNXOutput, self).__init__()
+        self.node_name = ""
         self.shape = []
         self.dtype:str = ""
         self.input_names = []
+        self.create_property("node_name", self.node_name, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("shape", self.shape, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("input_names", self.input_names, widget_type=NODE_PROP_QTEXTEDIT)
         # create node inputs.
         self.add_input('multi in', multi_input=True)
         self.set_color()
+
+    def get_node_name(self):
+        self.node_name = self.get_property("node_name")
+        return self.node_name
+
+    def set_node_name(self, node_name:str, push_undo=False):
+        self.node_name = node_name
+        self.set_property("node_name", self.node_name, push_undo=push_undo)
 
     def get_shape(self):
         self.shape = self.get_property("shape")

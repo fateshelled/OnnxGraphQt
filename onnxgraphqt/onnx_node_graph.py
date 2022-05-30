@@ -187,6 +187,7 @@ class ONNXNodeGraph(NodeGraph):
     def create_qtinput(self, input: gs.Tensor)->ONNXInput:
         node_name = input.name
         n = self.create_node("nodes.node.ONNXInput", node_name, push_undo=False)
+        n.set_node_name(node_name)
         n.set_shape(copy.deepcopy(input.shape))
         n.set_dtype(input.dtype)
         n.set_output_names([o.name for o in input.outputs])
@@ -196,6 +197,7 @@ class ONNXNodeGraph(NodeGraph):
     def create_qtoutput(self, output: gs.Tensor)->ONNXOutput:
         node_name = output.name
         n = self.create_node("nodes.node.ONNXOutput", node_name, push_undo=False)
+        n.set_node_name(node_name)
         n.set_shape(copy.deepcopy(output.shape))
         n.set_dtype(output.dtype)
         n.set_input_names([i.name for i in output.inputs])
@@ -494,11 +496,12 @@ def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
     #     node.set_pos(x*3, -y*1.5)
 
     edges = NodeGraphToEdges(graph)
-    ig_graph = igraph.Graph(edges=edges)
-    layout = ig_graph.layout_reingold_tilford(root=start_nodes)
+    ig_graph = igraph.Graph(edges=edges, directed=True)
+    layout, _graph = ig_graph.layout_sugiyama(hgap=2, return_extended_graph=True)
+    # ig_graph = igraph.Graph(edges=edges)
+    # layout = ig_graph.layout_reingold_tilford(root=start_nodes)
     for i, node in enumerate(graph.all_nodes()):
         x, y = layout.coords[i]
-        # node.set_pos(x*240, y*120)
         node.set_property('pos', [float(x*240), float(y*120)], push_undo=push_undo)
 
     if push_undo:

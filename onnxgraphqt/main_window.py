@@ -341,16 +341,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def btnOpenONNX_clicked(self, e:bool):
         self.set_font_bold(self.btnOpenONNX, True)
+        self.set_sidemenu_buttons_enabled(False, self.btnOpenONNX)
         file_name, filter = QtWidgets.QFileDialog.getOpenFileName(
                             self,
                             caption="Open ONNX Model File",
                             # directory=os.path.abspath(os.curdir),
                             filter="*.onnx *.json")
         if not file_name:
+            self.set_sidemenu_buttons_enabled(True)
             self.set_font_bold(self.btnOpenONNX, False)
             return
         print(f"Open: {file_name}")
-        time.sleep(0.01)
         ext = os.path.splitext(file_name)[-1]
         model_name = os.path.basename(file_name)
         if ext == ".onnx":
@@ -362,8 +363,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.update_graph()
         else:
             MessageBox.warn("no supported format", title="open")
-        # self.btnImportONNX.setEnabled(True)
-        self.btnExportONNX.setEnabled(True)
+        self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(self.btnOpenONNX, False)
 
     # def btnImportONNX_clicked(self, e: bool):
@@ -381,15 +381,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def btnExportONNX_clicked(self, e:bool):
         self.set_font_bold(self.btnExportONNX, True)
+        self.set_sidemenu_buttons_enabled(False, self.btnExportONNX)
         file_name, filter = QtWidgets.QFileDialog.getSaveFileName(
                             self,
                             caption="Export ONNX Model File",
                             directory=os.path.abspath(os.curdir),
                             filter="*.onnx;;*.json")
         if not file_name:
+            self.set_sidemenu_buttons_enabled(True)
             self.set_font_bold(self.btnExportONNX, False)
             return
-        time.sleep(0.01)
         ext = os.path.splitext(file_name)[-1]
         if filter == "*.onnx":
             if ext != ".onnx":
@@ -397,6 +398,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if os.path.exists(file_name):
                     ret = MessageBox.question([f"{file_name} is already exist.", "overwrite?"], "export")
                     if ret == MessageBox.No:
+                        self.set_sidemenu_buttons_enabled(True)
                         self.set_font_bold(self.btnExportONNX, False)
                         return
             self.graph.export(file_name)
@@ -411,6 +413,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ["Success.", f"Export to {file_name}."],
             "Export ONNX",
             parent=self)
+        self.set_sidemenu_buttons_enabled(True)
         self.set_font_bold(self.btnExportONNX, False)
 
     def btnAutoLayout_clicked(self, e:bool):
