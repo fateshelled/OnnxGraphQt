@@ -182,13 +182,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout_main_properties.addSpacerItem(QtWidgets.QSpacerItem(self._sidemenu_width, 10))
         self.layout_main_properties.addLayout(layout_operator_btn)
 
-    def update_graph(self):
+    def update_graph(self, update_layout=True):
 
         t0 = time.time()
         self.set_cursor_busy()
 
         self.graph.auto_layout(push_undo=False)
-        self.graph.fit_to_selection()
+        if update_layout:
+            self.graph.fit_to_selection()
 
         self.lbl_graph_opset.setText(f"opset: {self.graph.opset}")
         self.lbl_graph_name.setText(f"name: {self.graph.name}")
@@ -482,7 +483,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=True)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -551,7 +552,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=True)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -620,7 +621,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -689,7 +690,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     "Const Shrink",
@@ -753,7 +754,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=True)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -822,7 +823,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -901,7 +902,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"Change opset {old_opset} to {new_opset}.",
                     msg_title,
@@ -970,7 +971,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -1039,7 +1040,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -1115,7 +1116,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     msg_title,
@@ -1184,7 +1185,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.load_graph(onnx_model=onnx_model, model_name=model_name)
-                self.update_graph()
+                self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
                     msg_title,

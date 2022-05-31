@@ -444,6 +444,8 @@ def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
         graph.begin_undo('Auto Layout Nodes')
 
     edges = NodeGraphToEdges(graph, reverse=True)
+    if len(edges) == 0:
+        return
     ig_graph = igraph.Graph(edges=edges, directed=True)
     layout, _graph = ig_graph.layout_sugiyama(hgap=2, return_extended_graph=True)
     for i, node in enumerate(graph.all_nodes()[::-1]):
