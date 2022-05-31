@@ -1,3 +1,5 @@
+from enum import Enum
+
 COLOR_WHITE = [235, 235, 235]
 COLOR_LIGHTGRAY = [200, 200, 203]
 COLOR_GRAY = [132, 145, 158]
@@ -180,7 +182,7 @@ NODE_COLORS = {
 def get_node_color(op_name):
     return NODE_COLORS.get(op_name, DEFAULT_COLOR)
 
-class PrintColor:
+class PrintColor(Enum):
     BLACK          = '\033[30m'
     RED            = '\033[31m'
     GREEN          = '\033[32m'
@@ -204,3 +206,12 @@ class PrintColor:
     BG_WHITE       = '\033[47m'
     BG_DEFAULT     = '\033[49m'
     RESET          = '\033[0m'
+
+def removePrintColor(message:str)->str:
+    ret = message
+    for c in PrintColor:
+        ret = ret.replace(c.value, "")
+    for i in range(32):
+        v = f'\033[38;5;{i}m'
+        ret = ret.replace(v, '')
+    return ret

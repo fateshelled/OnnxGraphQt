@@ -253,15 +253,7 @@ class ONNXNodeGraph(NodeGraph):
                 model=ret,
                 full_check=False
             )
-            # ret = onnx.shape_inference.infer_shapes(ret)
         except BaseException as e:
-            # ret = gs.export_onnx(graph)
-            # if not non_verbose:
-            #     print(
-            #         f'{PrintColor.YELLOW}WARNING:{PrintColor.RESET} '+
-            #         'The input shape of the next OP does not match the output shape. '+
-            #         'Be sure to open the .onnx file to verify the certainty of the geometry.'
-            #     )
             if not non_verbose:
                 print(e)
         return ret

@@ -37,6 +37,7 @@ from custom_properties_bin import CustomPropertiesBinWidget
 
 from onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
+from utils.color import removePrintColor
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -459,6 +460,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -472,7 +474,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -527,6 +529,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -540,7 +543,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -595,6 +598,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -608,7 +612,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -663,6 +667,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -676,7 +681,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -728,6 +733,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     sys.stdout = sys.__stdout__
                     print_msg = f.getvalue()
                     print(print_msg)
+                    print_msg = removePrintColor(print_msg)
                     print_msg = print_msg[:1000]
                     f.close()
 
@@ -739,7 +745,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -794,6 +800,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -807,7 +814,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -872,6 +879,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -885,7 +893,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -940,6 +948,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -953,7 +962,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -1008,6 +1017,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1021,7 +1031,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -1083,6 +1093,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1096,7 +1107,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
@@ -1151,6 +1162,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
+                        print_msg = removePrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1164,7 +1176,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             parent=self)
                     continue
 
-                if print_msg.strip() and print_msg != "\x1b[32mINFO:\x1b[0m Finish!\n":
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
                     MessageBox.warn(
                         print_msg,
                         msg_title,
