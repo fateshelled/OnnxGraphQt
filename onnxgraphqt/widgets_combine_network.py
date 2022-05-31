@@ -83,7 +83,11 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
             layout_inputs_file_paths.addWidget(self.inputs_file_paths[index]["base"])
 
         self.combine_with_current_graph = QtWidgets.QCheckBox("combine_with_current_graph")
-        self.combine_with_current_graph.setChecked(True)
+        if len(self.graph.nodes) > 0:
+            self.combine_with_current_graph.setChecked(True)
+        else:
+            self.combine_with_current_graph.setChecked(False)
+            self.combine_with_current_graph.setEnabled(False)
         self.combine_with_current_graph.clicked.connect(self.combine_with_current_graph_clicked)
         layout_inputs_file_paths.addWidget(self.combine_with_current_graph)
         layout_inputs_file_paths.setAlignment(self.combine_with_current_graph, QtCore.Qt.AlignRight)
@@ -102,6 +106,9 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
             self.op_prefixes[index]["label"] = QtWidgets.QLabel(label)
             self.op_prefixes[index]["value"] = QtWidgets.QLineEdit()
             layout_op_prefixes.addRow(self.op_prefixes[index]["label"], self.op_prefixes[index]["value"])
+        if len(self.graph.nodes) == 0:
+            self.op_prefixes[0]["label"].setVisible(False)
+            self.op_prefixes[0]["value"].setVisible(False)
         layout_op_prefixes_base.addLayout(layout_op_prefixes)
 
 

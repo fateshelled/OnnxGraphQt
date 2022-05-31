@@ -47,26 +47,22 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, onnx_model_path="", parent=None):
         super(MainWindow, self).__init__(parent)
 
-        ext = os.path.splitext(onnx_model_path)[-1]
-
         self.graph: ONNXNodeGraph = None
+        self.load_graph()
+        self.init_ui()
+
+        ext = os.path.splitext(onnx_model_path)[-1]
 
         if ext == ".onnx":
             self.load_graph(onnx_model_path=onnx_model_path)
         elif ext == ".json":
             onnx_graph = onnx_tools_json2onnx(input_json_path=onnx_model_path)
             self.load_graph(onnx_model=onnx_graph)
-        else:
-            self.load_graph()
 
         self.graph_widget = self.graph.widget
         self.properties_bin: CustomPropertiesBinWidget = None
 
-        self.init_ui()
-
-        if onnx_model_path:
-            # self.btnImportONNX.setEnabled(True)
-            self.btnExportONNX.setEnabled(True)
+        self.update_graph()
 
     def init_ui(self):
         # Window size
@@ -185,10 +181,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout_main_properties.addSpacerItem(QtWidgets.QSpacerItem(self._sidemenu_width, 10))
         self.layout_main_properties.addLayout(layout_operator_btn)
 
-        # ONNXNodeGraph
-        self.update_graph()
-
-
     def update_graph(self):
 
         t0 = time.time()
@@ -234,11 +226,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if enable:
             self.btnOpenONNX.setEnabled(True)
             self.btnAutoLayout.setEnabled(True)
+            self.btnCombineNetwork.setEnabled(True)
+            self.btnGenerateOperator.setEnabled(True)
+            self.btnAddNode.setEnabled(True)
+            self.properties_bin.setEnabled(True)
 
             if self.graph.node_count() > 0:
                 self.btnExportONNX.setEnabled(True)
-
-                self.btnCombineNetwork.setEnabled(True)
                 self.btnExtractNetwork.setEnabled(True)
                 self.btnDelNode.setEnabled(True)
                 self.btnConstShrink.setEnabled(True)
@@ -247,13 +241,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChannelConvert.setEnabled(True)
                 self.btnInitializeBatchSize.setEnabled(True)
                 self.btnRenameOp.setEnabled(True)
-
-                self.btnGenerateOperator.setEnabled(True)
-                self.btnAddNode.setEnabled(True)
             else:
                 self.btnExportONNX.setEnabled(False)
-
-                self.btnCombineNetwork.setEnabled(False)
                 self.btnExtractNetwork.setEnabled(False)
                 self.btnDelNode.setEnabled(False)
                 self.btnConstShrink.setEnabled(False)
@@ -263,9 +252,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnInitializeBatchSize.setEnabled(False)
                 self.btnRenameOp.setEnabled(False)
 
-                self.btnGenerateOperator.setEnabled(True)
-                self.btnAddNode.setEnabled(True)
-            self.properties_bin.setEnabled(True)
         else:
             self.btnOpenONNX.setEnabled(False)
             self.btnAutoLayout.setEnabled(False)

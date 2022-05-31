@@ -4,37 +4,18 @@ from typing import (
 )
 from collections import OrderedDict
 import copy
+import NodeGraphQt
 
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-# import networkx as nx
 import igraph
 
 from PySide2 import QtCore, QtWidgets
 from NodeGraphQt.constants import (
     NODE_LAYOUT_HORIZONTAL,
     NODE_LAYOUT_VERTICAL,
-    NODE_PROP_QLABEL,
-    NODE_PROP_QLINEEDIT,
-    NODE_PROP_QTEXTEDIT,
-    NODE_PROP_QCOMBO,
-    NODE_PROP_QCHECKBOX,
-    NODE_PROP_QSPINBOX,
-    NODE_PROP_COLORPICKER,
-    NODE_PROP_SLIDER,
-    NODE_PROP_FILE,
-    NODE_PROP_FILE_SAVE,
-    NODE_PROP_VECTOR2,
-    NODE_PROP_VECTOR3,
-    NODE_PROP_VECTOR4,
-    NODE_PROP_FLOAT,
-    NODE_PROP_INT,
-    NODE_PROP_BUTTON,
-
-    VIEWER_GRID_NONE,
-    VIEWER_GRID_DOTS,
-    VIEWER_GRID_LINES,
+    ViewerEnum,
 )
 from NodeGraphQt.base import node, graph
 from NodeGraphQt.qgraphics import pipe
@@ -126,7 +107,7 @@ class ONNXNodeGraph(NodeGraph):
             ONNXOutput,
         ])
         self.set_background_color(*COLOR_BG)
-        self.set_grid_mode(VIEWER_GRID_DOTS)
+        self.set_grid_mode(ViewerEnum.GRID_DISPLAY_DOTS)
         self.set_grid_color(*COLOR_GRID)
         set_context_menu_style(self, text_color=COLOR_FONT, bg_color=COLOR_WHITE, selected_color=COLOR_GRAY)
         # # Disable right click menu
@@ -260,9 +241,6 @@ class ONNXNodeGraph(NodeGraph):
     def load_onnx_graph(self, onnx_graph):
         ONNXtoNodeGraph(onnx_graph, self)
 
-    # def to_networkx(self)->nx.DiGraph:
-    #     return NodeGraphToNetworkX(self)
-
     def to_onnx_gs(self)->gs.Graph:
         return NodeGraphtoONNX(self)
 
@@ -318,25 +296,22 @@ class ONNXNodeGraph(NodeGraph):
     def auto_layout(self, push_undo=True):
         auto_layout_nodes(self, push_undo=push_undo)
 
-
-# def NodeGraphToNetworkX(graph:ONNXNodeGraph)->nx.DiGraph:
-#     nx_g = nx.DiGraph()
-#     for n in graph.all_nodes():
-#         nx_g.add_node(n.name())
-#     for n in graph.all_nodes():
-#         for input_nodes in n.connected_input_nodes().values():
-#             for inp in input_nodes:
-#                 nx_g.add_edge(inp.name(), n.name())
-#     return nx_g
-
-def NodeGraphToEdges(graph:ONNXNodeGraph)->List:
+def NodeGraphToEdges(graph:ONNXNodeGraph, reverse=True)->List:
     ret = []
-    node_names = [n.name() for n in graph.all_nodes()]
-    for i, n in enumerate(graph.all_nodes()):
-        for input_nodes in n.connected_input_nodes().values():
-            for inp in input_nodes:
-                input_index = node_names.index(inp.name())
-                ret.append([input_index, i])
+    if reverse:
+        node_names = [n.name() for n in graph.all_nodes()[::-1]]
+        for i, n in enumerate(graph.all_nodes()[::-1]):
+            for input_nodes in n.connected_input_nodes().values():
+                for inp in input_nodes:
+                    input_index = node_names.index(inp.name())
+                    ret.append([i, input_index])
+    else:
+        node_names = [n.name() for n in graph.all_nodes()]
+        for i, n in enumerate(graph.all_nodes()):
+            for input_nodes in n.connected_input_nodes().values():
+                for inp in input_nodes:
+                    input_index = node_names.index(inp.name())
+                    ret.append([input_index, i])
     return ret
 
 
@@ -476,33 +451,12 @@ def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
     if push_undo:
         graph.begin_undo('Auto Layout Nodes')
 
-    nodes = graph.all_nodes()
-    filtered_nodes = [n for n in nodes if not isinstance(n, ONNXInput)]
-    # start_nodes = [
-    #     n for n in filtered_nodes
-    #     if not any(n.connected_output_nodes().values())
-    # ]
-    start_nodes = [
-        i for i, n in enumerate(filtered_nodes)
-        if not any(n.connected_output_nodes().values())
-    ]
-    if not start_nodes:
-        return
-
-    # nx_graph = NodeGraphToNetworkX(graph)
-    # pos = nx.nx_pydot.pydot_layout(nx_graph, root=None, prog="dot")
-    # for name, (x, y) in pos.items():
-    #     node = graph.get_node_by_name(name)
-    #     node.set_pos(x*3, -y*1.5)
-
-    edges = NodeGraphToEdges(graph)
+    edges = NodeGraphToEdges(graph, reverse=True)
     ig_graph = igraph.Graph(edges=edges, directed=True)
     layout, _graph = ig_graph.layout_sugiyama(hgap=2, return_extended_graph=True)
-    # ig_graph = igraph.Graph(edges=edges)
-    # layout = ig_graph.layout_reingold_tilford(root=start_nodes)
-    for i, node in enumerate(graph.all_nodes()):
+    for i, node in enumerate(graph.all_nodes()[::-1]):
         x, y = layout.coords[i]
-        node.set_property('pos', [float(x*240), float(y*120)], push_undo=push_undo)
+        node.set_property('pos', [float(-x*240), float(-y*120)], push_undo=push_undo)
 
     if push_undo:
         graph.end_undo()
