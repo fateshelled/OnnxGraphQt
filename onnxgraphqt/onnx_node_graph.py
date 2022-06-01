@@ -134,19 +134,19 @@ class ONNXNodeGraph(NodeGraph):
                 ret.append(node)
         return ret
 
-    def remove_all_nodes(self):
+    def remove_all_nodes(self, push_undo=False):
         for node in self.all_nodes():
             for p in node.input_ports():
-                p.set_locked(state=False, push_undo=False)
+                p.set_locked(state=False, push_undo=push_undo)
             for p in node.input_ports():
-                p.clear_connections(push_undo=False)
+                p.clear_connections(push_undo=push_undo)
 
             for p in node.output_ports():
-                p.set_locked(state=False, push_undo=False)
+                p.set_locked(state=False, push_undo=push_undo)
             for p in node.output_ports():
-                p.clear_connections(push_undo=False)
+                p.clear_connections(push_undo=push_undo)
 
-            self.remove_node(node, push_undo=False)
+            self.remove_node(node, push_undo=push_undo)
 
     def _serialize(self, nodes)->Dict[str, Any]:
         ret = super()._serialize(nodes)
@@ -165,9 +165,9 @@ class ONNXNodeGraph(NodeGraph):
     def node_count(self)->int:
         return len(self.all_nodes())
 
-    def create_qtinput(self, input: gs.Tensor)->ONNXInput:
+    def create_qtinput(self, input: gs.Tensor, push_undo=False)->ONNXInput:
         node_name = input.name
-        n = self.create_node("nodes.node.ONNXInput", node_name, push_undo=False)
+        n = self.create_node("nodes.node.ONNXInput", node_name, push_undo=push_undo)
         n.set_node_name(node_name)
         n.set_shape(copy.deepcopy(input.shape))
         n.set_dtype(input.dtype)
@@ -175,9 +175,9 @@ class ONNXNodeGraph(NodeGraph):
         n.set_color()
         return n
 
-    def create_qtoutput(self, output: gs.Tensor)->ONNXOutput:
+    def create_qtoutput(self, output: gs.Tensor, push_undo=False)->ONNXOutput:
         node_name = output.name
-        n = self.create_node("nodes.node.ONNXOutput", node_name, push_undo=False)
+        n = self.create_node("nodes.node.ONNXOutput", node_name, push_undo=push_undo)
         n.set_node_name(node_name)
         n.set_shape(copy.deepcopy(output.shape))
         n.set_dtype(output.dtype)
@@ -185,9 +185,9 @@ class ONNXNodeGraph(NodeGraph):
         n.set_color()
         return n
 
-    def create_qtnode(self, onnx_node: gs.Node)->NodeObject:
+    def create_qtnode(self, onnx_node: gs.Node, push_undo=False)->NodeObject:
         node_name = onnx_node.name # str
-        n = self.create_node("nodes.node.ONNXNode", name=node_name, push_undo=False)
+        n = self.create_node("nodes.node.ONNXNode", name=node_name, push_undo=push_undo)
         onnx_inputs:List[OnnxNodeIO] = []
         for inp in onnx_node.inputs:
             t = type(inp)
@@ -238,8 +238,8 @@ class ONNXNodeGraph(NodeGraph):
             n.set_port_deletion_allowed(False)
         return n
 
-    def load_onnx_graph(self, onnx_graph):
-        ONNXtoNodeGraph(onnx_graph, self)
+    def load_onnx_graph(self, onnx_graph, push_undo=False):
+        ONNXtoNodeGraph(onnx_graph, self, push_undo=push_undo)
 
     def to_onnx_gs(self)->gs.Graph:
         return NodeGraphtoONNX(self)
@@ -456,7 +456,7 @@ def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
         graph.end_undo()
 
 
-def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
+def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph, push_undo=False):
     qt_io_nodes = {}
     qt_io_edge = {}
     qt_nodes = {}
@@ -464,16 +464,16 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
 
     # Create Input/Output Node
     for inp in onnx_graph.inputs:
-        qt_n = node_graph.create_qtinput(inp)
+        qt_n = node_graph.create_qtinput(inp, push_undo=push_undo)
         qt_io_nodes[inp.name] = qt_n
 
     for out in onnx_graph.outputs:
-        qt_n = node_graph.create_qtoutput(out)
+        qt_n = node_graph.create_qtoutput(out, push_undo=push_undo)
         qt_io_nodes[out.name] = qt_n
 
     # Create Node
     for onnx_node in onnx_graph.nodes:
-        qt_n = node_graph.create_qtnode(onnx_node)
+        qt_n = node_graph.create_qtnode(onnx_node, push_undo=push_undo)
         qt_nodes[onnx_node.name] = qt_n
 
     for onnx_node in onnx_graph.nodes:
@@ -504,21 +504,21 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph):
             for inp in node_inputs:
                 # qt_io_nodes[key].set_output(0, qt_nodes[inp].input(0))
                 src_port = qt_io_nodes[key].output(0)
-                src_port.connect_to(qt_nodes[inp].input(0), push_undo=False)
+                src_port.connect_to(qt_nodes[inp].input(0), push_undo=push_undo)
         if key in output_names:
             for out in node_outputs:
                 # qt_nodes[out].set_output(0, qt_io_nodes[key].input(0))
                 src_port = qt_nodes[out].output(0)
-                src_port.connect_to(qt_io_nodes[key].input(0), push_undo=False)
+                src_port.connect_to(qt_io_nodes[key].input(0), push_undo=push_undo)
         for inp in node_inputs:
             for out in node_outputs:
                 # qt_nodes[out].set_output(0, qt_nodes[inp].input(0))
                 src_port = qt_nodes[out].output(0)
-                src_port.connect_to(qt_nodes[inp].input(0), push_undo=False)
+                src_port.connect_to(qt_nodes[inp].input(0), push_undo=push_undo)
     # Lock Node and Port
     for n in node_graph.all_nodes():
         for ip in n.input_ports():
-            ip.set_locked(state=True, connected_ports=True, push_undo=False)
+            ip.set_locked(state=True, connected_ports=True, push_undo=push_undo)
         for op in n.output_ports():
-            op.set_locked(state=True, connected_ports=True, push_undo=False)
+            op.set_locked(state=True, connected_ports=True, push_undo=push_undo)
 

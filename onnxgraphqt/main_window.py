@@ -55,10 +55,10 @@ class MainWindow(QtWidgets.QMainWindow):
         ext = os.path.splitext(onnx_model_path)[-1]
 
         if ext == ".onnx":
-            self.load_graph(onnx_model_path=onnx_model_path)
+            self.load_graph(onnx_model_path=onnx_model_path, clear_undo_stack=True, push_undo=False)
         elif ext == ".json":
             onnx_graph = onnx_tools_json2onnx(input_json_path=onnx_model_path)
-            self.load_graph(onnx_model=onnx_graph)
+            self.load_graph(onnx_model=onnx_graph, clear_undo_stack=True, push_undo=False)
 
         self.graph_widget = self.graph.widget
         self.properties_bin: CustomPropertiesBinWidget = None
@@ -275,7 +275,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if current_button:
             current_button.setEnabled(True)
 
-    def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, model_name:str=None):
+    def load_graph(self, onnx_model:onnx.ModelProto=None, onnx_model_path:str=None, model_name:str=None, clear_undo_stack=False, push_undo=False):
 
         t0 = time.time()
         self.set_cursor_busy()
@@ -314,10 +314,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.graph.doc_string = onnx_graph.doc_string
             self.graph.import_domains = onnx_graph.import_domains
 
-        self.graph.clear_undo_stack()
+        if clear_undo_stack:
+            self.graph.clear_undo_stack()
 
-        self.graph.remove_all_nodes()
-        self.graph.load_onnx_graph(onnx_graph)
+        self.graph.remove_all_nodes(push_undo=push_undo)
+        self.graph.load_onnx_graph(onnx_graph, push_undo=push_undo)
 
         self.set_cursor_arrow()
         dt0 = time.time() - t0
@@ -343,11 +344,11 @@ class MainWindow(QtWidgets.QMainWindow):
         ext = os.path.splitext(file_name)[-1]
         model_name = os.path.basename(file_name)
         if ext == ".onnx":
-            self.load_graph(onnx_model_path=file_name, model_name=model_name)
+            self.load_graph(onnx_model_path=file_name, model_name=model_name, clear_undo_stack=True, push_undo=False)
             self.update_graph()
         elif ext == ".json":
             onnx_graph = onnx_tools_json2onnx(input_json_path=file_name)
-            self.load_graph(onnx_model=onnx_graph, model_name=model_name)
+            self.load_graph(onnx_model=onnx_graph, model_name=model_name, clear_undo_stack=True, push_undo=False)
             self.update_graph()
         else:
             MessageBox.warn("no supported format", title="open")
@@ -620,7 +621,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
@@ -689,7 +692,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
@@ -753,7 +758,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=True)
                 MessageBox.info(
                     f"complete.",
@@ -822,7 +829,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
@@ -901,7 +910,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"Change opset {old_opset} to {new_opset}.",
@@ -970,7 +981,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
@@ -1039,7 +1052,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
@@ -1115,7 +1130,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
@@ -1184,7 +1201,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         parent=self)
 
                 model_name = self.windowTitle()
-                self.load_graph(onnx_model=onnx_model, model_name=model_name)
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
