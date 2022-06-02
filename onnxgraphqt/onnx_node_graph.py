@@ -113,6 +113,15 @@ class ONNXNodeGraph(NodeGraph):
         # # Disable right click menu
         # self.disable_context_menu(True)
 
+    def reset_selection(self):
+        for node in self.all_nodes():
+            node.set_selected(False)
+
+    def fit_to_selection_node(self, node):
+        self.reset_selection()
+        node.set_selected(True)
+        self.fit_to_selection()
+
     def get_selected_node_names(self)->List[str]:
         return [node.name() for node in self.all_nodes() if node.selected()]
 

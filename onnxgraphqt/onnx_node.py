@@ -160,7 +160,7 @@ class ONNXInput(BaseNode):
         self.dtype = str(dtype)
         self.set_property("dtype", self.dtype, push_undo=push_undo)
 
-    def get_output_names(self):
+    def get_output_names(self)->List[str]:
         self.output_names = self.get_property("output_names")
         return self.output_names
 

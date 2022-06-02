@@ -5,6 +5,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 import onnx
 import onnx_graphsurgeon as gs
 
+from NodeGraphQt.widgets.node_graph import NodeGraphWidget
 from snc4onnx import combine as onnx_tools_combine
 from sne4onnx import extraction as onnx_tools_extraction
 from snd4onnx import remove as onnx_tools_deletion
@@ -32,6 +33,7 @@ from widgets_delete_node import DeleteNodeWidgets
 from widgets_generate_operator import GenerateOperatorWidgets
 from widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets_rename_op import RenameOpWidget
+from widgets_node_search import NodeSearchWidget
 
 from custom_properties_bin import CustomPropertiesBinWidget
 
@@ -60,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow):
             onnx_graph = onnx_tools_json2onnx(input_json_path=onnx_model_path)
             self.load_graph(onnx_model=onnx_graph, clear_undo_stack=True, push_undo=False)
 
-        self.graph_widget = self.graph.widget
+        self.graph_widget: NodeGraphWidget = self.graph.widget
         self.properties_bin: CustomPropertiesBinWidget = None
 
         self.update_graph()
@@ -111,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # File Button
         layout_file_btn = QtWidgets.QHBoxLayout()
+
         self.btnOpenONNX = QtWidgets.QPushButton("open")
         self.btnOpenONNX.clicked.connect(self.btnOpenONNX_clicked)
 
@@ -119,16 +122,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # self.btnImportONNX.clicked.connect(self.btnImportONNX_clicked)
 
         self.btnExportONNX = QtWidgets.QPushButton("export")
-        self.btnExportONNX.setEnabled(False)
         self.btnExportONNX.clicked.connect(self.btnExportONNX_clicked)
 
         self.btnAutoLayout = QtWidgets.QPushButton("auto layout")
         self.btnAutoLayout.clicked.connect(self.btnAutoLayout_clicked)
 
+        self.btnSearch = QtWidgets.QPushButton("search")
+        self.btnSearch.clicked.connect(self.btnSearch_clicked)
+
         layout_file_btn.addWidget(self.btnOpenONNX)
         # layout_file_btn.addWidget(self.btnImportONNX)
         layout_file_btn.addWidget(self.btnExportONNX)
         layout_file_btn.addWidget(self.btnAutoLayout)
+        layout_file_btn.addWidget(self.btnSearch)
+
+
         self.layout_main_properties.addLayout(layout_file_btn)
 
         # Operator Button
@@ -416,6 +424,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_cursor_arrow()
         self.set_font_bold(self.btnAutoLayout, False)
 
+
+    def btnSearch_clicked(self):
+        w = NodeSearchWidget(self.graph, parent=self)
+        w.show()
 
     def btnCombineNetwork_clicked(self, e:bool):
         btn = self.btnCombineNetwork
