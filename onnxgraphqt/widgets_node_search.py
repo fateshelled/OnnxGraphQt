@@ -159,7 +159,6 @@ class NodeSearchWidget(QtWidgets.QDialog):
 
             if all_matched:
                 self.model.appendRow(row)
-            print(type(row), row)
 
 if __name__ == "__main__":
     import signal

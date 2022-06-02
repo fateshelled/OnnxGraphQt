@@ -129,6 +129,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.btnSearch = QtWidgets.QPushButton("search")
         self.btnSearch.clicked.connect(self.btnSearch_clicked)
+        self.search_widget = NodeSearchWidget(self.graph, parent=self)
 
         layout_file_btn.addWidget(self.btnOpenONNX)
         # layout_file_btn.addWidget(self.btnImportONNX)
@@ -211,6 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout_node_properties.addWidget(self.properties_bin)
 
         self.set_sidemenu_buttons_enabled(True)
+        self.search_widget.update(self.graph)
 
         self.set_cursor_arrow()
         dt0 = time.time() - t0
@@ -426,8 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def btnSearch_clicked(self):
-        w = NodeSearchWidget(self.graph, parent=self)
-        w.show()
+        self.search_widget.show()
 
     def btnCombineNetwork_clicked(self, e:bool):
         btn = self.btnCombineNetwork
