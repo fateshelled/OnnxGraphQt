@@ -20,7 +20,7 @@ from sor4onnx import rename as onnx_tools_rename
 from onnx2json.onnx2json import convert as onnx_tools_onnx2json
 from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 
-from widgets_menubar import MenuBarWidget
+from widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
 from widgets_message_box import MessageBox
 from widgets_combine_network import CombineNetworkWidgets
 from widgets_extract_network import ExtractNetworkWidgets
@@ -52,6 +52,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graph: ONNXNodeGraph = None
         self.load_graph()
+        self.graph_widget: NodeGraphWidget = self.graph.widget
+
+        self.properties_bin: CustomPropertiesBinWidget = None
         self.init_ui()
 
         ext = os.path.splitext(onnx_model_path)[-1]
@@ -62,9 +65,6 @@ class MainWindow(QtWidgets.QMainWindow):
             onnx_graph = onnx_tools_json2onnx(input_json_path=onnx_model_path)
             self.load_graph(onnx_model=onnx_graph, clear_undo_stack=True, push_undo=False)
 
-        self.graph_widget: NodeGraphWidget = self.graph.widget
-        self.properties_bin: CustomPropertiesBinWidget = None
-
         self.update_graph()
 
     def init_ui(self):
@@ -72,9 +72,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setGeometry(0, 0, self._default_window_width, self._default_window_height)
 
         # MenuBar
-        self.menu_bar = MenuBarWidget()
-        self.menu_bar.file_exit_clicked = self.exit
+        menu_list = [
+            Menu(
+                "File",
+                [
+                    SubMenu("Open", self.btnOpenONNX_clicked),
+                    SubMenu("Export", self.btnExportONNX_clicked),
+                    Separator(),
+                    SubMenu("Exit", self.exit),
+                ]),
+            Menu(
+                "View",
+                [
+                    SubMenu("Search", self.btnSearch_clicked),
+                    SubMenu("Auto Layout", self.btnAutoLayout_clicked)
+                ]
+            )
+        ]
+        self.menu_bar = MenuBarWidget(menu_list=menu_list)
         self.setMenuBar(self.menu_bar)
+
+        # Search Widget
+        self.search_widget = NodeSearchWidget(self.graph, parent=self)
 
         # Main Layout
         # Fixed side menu size.
@@ -82,6 +101,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout_graph.addWidget(self.graph.widget)
 
         self.layout_base = QtWidgets.QHBoxLayout()
+
+        # Enable Drag&Drop
+        self.setAcceptDrops(True)
+        self.graph._viewer.dropEvent = self.dropEvent
 
         self.widget_sidemenu = QtWidgets.QWidget()
         self.widget_sidemenu.setFixedWidth(self._sidemenu_width)
@@ -110,35 +133,6 @@ class MainWindow(QtWidgets.QMainWindow):
         layout_lbl.addWidget(self.lbl_graph_opset)
         layout_lbl.addWidget(self.lbl_graph_doc_string)
         self.layout_main_properties.addLayout(layout_lbl)
-
-        # File Button
-        layout_file_btn = QtWidgets.QHBoxLayout()
-
-        self.btnOpenONNX = QtWidgets.QPushButton("open")
-        self.btnOpenONNX.clicked.connect(self.btnOpenONNX_clicked)
-
-        # self.btnImportONNX = QtWidgets.QPushButton("import")
-        # self.btnImportONNX.setEnabled(False)
-        # self.btnImportONNX.clicked.connect(self.btnImportONNX_clicked)
-
-        self.btnExportONNX = QtWidgets.QPushButton("export")
-        self.btnExportONNX.clicked.connect(self.btnExportONNX_clicked)
-
-        self.btnAutoLayout = QtWidgets.QPushButton("auto layout")
-        self.btnAutoLayout.clicked.connect(self.btnAutoLayout_clicked)
-
-        self.btnSearch = QtWidgets.QPushButton("search")
-        self.btnSearch.clicked.connect(self.btnSearch_clicked)
-        self.search_widget = NodeSearchWidget(self.graph, parent=self)
-
-        layout_file_btn.addWidget(self.btnOpenONNX)
-        # layout_file_btn.addWidget(self.btnImportONNX)
-        layout_file_btn.addWidget(self.btnExportONNX)
-        layout_file_btn.addWidget(self.btnAutoLayout)
-        layout_file_btn.addWidget(self.btnSearch)
-
-
-        self.layout_main_properties.addLayout(layout_file_btn)
 
         # Operator Button
         layout_operator_btn = QtWidgets.QVBoxLayout()
@@ -199,6 +193,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graph.auto_layout(push_undo=False)
         if update_layout:
             self.graph.fit_to_selection()
+        self.graph.reset_selection()
 
         self.lbl_graph_opset.setText(f"opset: {self.graph.opset}")
         self.lbl_graph_name.setText(f"name: {self.graph.name}")
@@ -236,15 +231,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_sidemenu_buttons_enabled(self, enable=True, current_button: QtWidgets.QPushButton=None):
 
         if enable:
-            self.btnOpenONNX.setEnabled(True)
-            self.btnAutoLayout.setEnabled(True)
+            self.menu_bar.setEnabled(True)
             self.btnCombineNetwork.setEnabled(True)
             self.btnGenerateOperator.setEnabled(True)
             self.btnAddNode.setEnabled(True)
             self.properties_bin.setEnabled(True)
 
             if self.graph.node_count() > 0:
-                self.btnExportONNX.setEnabled(True)
+                self.menu_bar.actions["Export"].setEnabled(True)
                 self.btnExtractNetwork.setEnabled(True)
                 self.btnDelNode.setEnabled(True)
                 self.btnConstShrink.setEnabled(True)
@@ -254,7 +248,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnInitializeBatchSize.setEnabled(True)
                 self.btnRenameOp.setEnabled(True)
             else:
-                self.btnExportONNX.setEnabled(False)
+                self.menu_bar.actions["Export"].setEnabled(False)
                 self.btnExtractNetwork.setEnabled(False)
                 self.btnDelNode.setEnabled(False)
                 self.btnConstShrink.setEnabled(False)
@@ -265,9 +259,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnRenameOp.setEnabled(False)
 
         else:
-            self.btnOpenONNX.setEnabled(False)
-            self.btnAutoLayout.setEnabled(False)
-            self.btnExportONNX.setEnabled(False)
+            self.menu_bar.setEnabled(False)
             self.btnCombineNetwork.setEnabled(False)
             self.btnExtractNetwork.setEnabled(False)
             self.btnDelNode.setEnabled(False)
@@ -338,19 +330,7 @@ class MainWindow(QtWidgets.QMainWindow):
         properties_bin = CustomPropertiesBinWidget(node_graph=graph)
         return properties_bin
 
-    def btnOpenONNX_clicked(self, e:bool):
-        self.set_font_bold(self.btnOpenONNX, True)
-        self.set_sidemenu_buttons_enabled(False, self.btnOpenONNX)
-        file_name, filter = QtWidgets.QFileDialog.getOpenFileName(
-                            self,
-                            caption="Open ONNX Model File",
-                            # directory=os.path.abspath(os.curdir),
-                            filter="*.onnx *.json")
-        if not file_name:
-            self.set_sidemenu_buttons_enabled(True)
-            self.set_font_bold(self.btnOpenONNX, False)
-            return
-        print(f"Open: {file_name}")
+    def open_onnx(self, file_name:str):
         ext = os.path.splitext(file_name)[-1]
         model_name = os.path.basename(file_name)
         if ext == ".onnx":
@@ -361,26 +341,52 @@ class MainWindow(QtWidgets.QMainWindow):
             self.load_graph(onnx_model=onnx_graph, model_name=model_name, clear_undo_stack=True, push_undo=False)
             self.update_graph()
         else:
-            MessageBox.warn("no supported format", title="open")
+            MessageBox.warn(f"no supported format ({ext}).", title="open")
+
+    def dragEnterEvent(self, event: QtGui.QDragEnterEvent):
+        mime = event.mimeData()
+
+        if mime.hasUrls() == True:
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.setDropAction(QtCore.Qt.CopyAction)
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        mimedata = event.mimeData()
+ 
+        if mimedata.hasUrls():
+            urls = mimedata.urls()
+            files = [url.path() for url in urls]
+            for file in files:
+                ext = os.path.splitext(file)[-1]
+                if ext in [".onnx", ".json"]:
+                    self.open_onnx(file)
+                    break
+
+    def btnOpenONNX_clicked(self):
+        self.set_sidemenu_buttons_enabled(False)
+        file_name, filter = QtWidgets.QFileDialog.getOpenFileName(
+                            self,
+                            caption="Open ONNX Model File",
+                            # directory=os.path.abspath(os.curdir),
+                            filter="*.onnx *.json")
+        if not file_name:
+            self.set_sidemenu_buttons_enabled(True)
+            return
+        print(f"Open: {file_name}")
+        self.open_onnx(file_name)
         self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(self.btnOpenONNX, False)
-
-    # def btnImportONNX_clicked(self, e: bool):
-    #     file_name, exp = QtWidgets.QFileDialog.getOpenFileName(
-    #                         self,
-    #                         caption="Open ONNX Model File",
-    #                         directory=os.path.abspath(os.curdir),
-    #                         filter="*.onnx")
-    #     if not file_name:
-    #         return
-    #     print(f"Import: {file_name}")
-    #     self.load_graph(onnx_model_path=file_name, graph=self.graph)
-    #     self.update_graph()
 
 
-    def btnExportONNX_clicked(self, e:bool):
-        self.set_font_bold(self.btnExportONNX, True)
-        self.set_sidemenu_buttons_enabled(False, self.btnExportONNX)
+    def btnExportONNX_clicked(self):
+        self.set_sidemenu_buttons_enabled(False)
         file_name, filter = QtWidgets.QFileDialog.getSaveFileName(
                             self,
                             caption="Export ONNX Model File",
@@ -388,7 +394,6 @@ class MainWindow(QtWidgets.QMainWindow):
                             filter="*.onnx;;*.json")
         if not file_name:
             self.set_sidemenu_buttons_enabled(True)
-            self.set_font_bold(self.btnExportONNX, False)
             return
         ext = os.path.splitext(file_name)[-1]
         if filter == "*.onnx":
@@ -398,7 +403,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     ret = MessageBox.question([f"{file_name} is already exist.", "overwrite?"], "export")
                     if ret == MessageBox.No:
                         self.set_sidemenu_buttons_enabled(True)
-                        self.set_font_bold(self.btnExportONNX, False)
                         return
             self.graph.export(file_name)
         elif filter == "*.json":
@@ -413,10 +417,8 @@ class MainWindow(QtWidgets.QMainWindow):
             "Export ONNX",
             parent=self)
         self.set_sidemenu_buttons_enabled(True)
-        self.set_font_bold(self.btnExportONNX, False)
 
-    def btnAutoLayout_clicked(self, e:bool):
-        self.set_font_bold(self.btnAutoLayout, True)
+    def btnAutoLayout_clicked(self):
         self.set_cursor_busy()
         self.set_sidemenu_buttons_enabled(False)
 
@@ -424,13 +426,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.set_sidemenu_buttons_enabled(True)
         self.set_cursor_arrow()
-        self.set_font_bold(self.btnAutoLayout, False)
-
 
     def btnSearch_clicked(self):
         self.search_widget.show()
 
-    def btnCombineNetwork_clicked(self, e:bool):
+    def btnCombineNetwork_clicked(self):
         btn = self.btnCombineNetwork
         if self.current_button is btn:
             self.current_widgets.close()

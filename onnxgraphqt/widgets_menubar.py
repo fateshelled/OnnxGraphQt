@@ -1,37 +1,39 @@
+from typing import Callable, Union, List
+from dataclasses import dataclass
 from PySide2 import QtCore, QtWidgets, QtGui
 
+@dataclass
+class SubMenu:
+    name: str
+    func: Callable
+
+class Separator:
+    pass
+
+@dataclass
+class Menu:
+    name: str
+    contents: List[Union[SubMenu, Separator]]
+
 class MenuBarWidget(QtWidgets.QMenuBar):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, menu_list: List[Menu], parent=None) -> None:
         super().__init__(parent)
-        menu = {
-            "File": {
-                "exit": self.file_exit_clicked,
-            },
-            # "Edit": {
-            #     "Redo": self.edit_redo_clicked,
-            #     "Undo": self.edit_undo_clicked,
-            # }
-        }
+
         self.actions = {}
-        for key, items in menu.items():
-            m = self.addMenu(key)
-            for key, func in items.items():
-                self.actions[key] = m.addAction(key, func)
+        for menu in menu_list:
+            m = self.addMenu(menu.name)
+            for content in menu.contents:
+                if isinstance(content, Separator):
+                    m.menuAction()
+                elif isinstance(content, SubMenu):
+                    self.actions[content.name] = m.addAction(content.name, content.func)
 
-    def file_open_clicked(self, e):
-        print("file_open")
 
-    def file_import_onnx_clicked(self, e):
-        print("import")
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
 
-    def file_export_onnx_clicked(self, e):
-        print("export")
+    m = MenuBarWidget()
+    m.show()
 
-    def file_exit_clicked(self, e):
-        print("exit")
-
-    def edit_redo_clicked(self, e):
-        pass
-
-    def edit_undo_clicked(self, e):
-        pass
+    app.exec_()

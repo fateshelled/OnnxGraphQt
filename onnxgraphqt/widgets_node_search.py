@@ -28,7 +28,6 @@ class NodeSearchWidget(QtWidgets.QDialog):
             self.setGeometry(0, 0, self._DEFAULT_WINDOW_WIDTH, self._DEFAULT_WINDOW_HEIGHT)
 
         base_layout = QtWidgets.QVBoxLayout()
-        # base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # layout
         layout = QtWidgets.QHBoxLayout()
