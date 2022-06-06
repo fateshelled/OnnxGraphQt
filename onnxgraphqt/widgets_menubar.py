@@ -6,6 +6,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 class SubMenu:
     name: str
     func: Callable
+    icon: str
 
 class Separator:
     pass
@@ -19,14 +20,16 @@ class MenuBarWidget(QtWidgets.QMenuBar):
     def __init__(self, menu_list: List[Menu], parent=None) -> None:
         super().__init__(parent)
 
-        self.actions = {}
+        self.menu_actions = {}
         for menu in menu_list:
             m = self.addMenu(menu.name)
             for content in menu.contents:
                 if isinstance(content, Separator):
-                    m.menuAction()
+                    m.addSeparator()
                 elif isinstance(content, SubMenu):
-                    self.actions[content.name] = m.addAction(content.name, content.func)
+                    self.menu_actions[content.name] = m.addAction(content.name, content.func)
+                    if content.icon:
+                        self.menu_actions[content.name].setIcon(QtGui.QIcon(content.icon))
 
 
 if __name__ == "__main__":

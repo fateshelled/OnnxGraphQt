@@ -40,6 +40,7 @@ from custom_properties_bin import CustomPropertiesBinWidget
 from onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 from utils.color import removePrintColor
+from utils.widgets import setFont, createIconButton
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -72,26 +73,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setGeometry(0, 0, self._default_window_width, self._default_window_height)
 
         # MenuBar
+        icon_dir = os.path.join(os.path.dirname(__file__), "data/icon")
         menu_list = [
             Menu(
                 "File",
                 [
-                    SubMenu("Open", self.btnOpenONNX_clicked),
-                    SubMenu("Export", self.btnExportONNX_clicked),
+                    SubMenu("Open", self.btnOpenONNX_clicked, None),
+                    SubMenu("Export", self.btnExportONNX_clicked, None),
                     Separator(),
-                    SubMenu("Exit", self.exit),
-                ]),
+                    SubMenu("Exit", self.exit, None),
+                ]
+            ),
             Menu(
                 "View",
                 [
-                    SubMenu("Search", self.btnSearch_clicked),
-                    SubMenu("Auto Layout", self.btnAutoLayout_clicked)
+                    SubMenu("Search", self.btnSearch_clicked, None),
+                    SubMenu("Auto Layout", self.btnAutoLayout_clicked, None)
                 ]
-            )
+            ),
         ]
         self.menu_bar = MenuBarWidget(menu_list=menu_list)
+        setFont(self, 16)
+        for key, action in self.menu_bar.menu_actions.items():
+            setFont(action, 16)
         self.setMenuBar(self.menu_bar)
-
         # Search Widget
         self.search_widget = NodeSearchWidget(self.graph, parent=self)
 
@@ -135,52 +140,54 @@ class MainWindow(QtWidgets.QMainWindow):
         self.layout_main_properties.addLayout(layout_lbl)
 
         # Operator Button
-        layout_operator_btn = QtWidgets.QVBoxLayout()
+        layout_operator_btn = QtWidgets.QGridLayout()
+        for i in range(6):
+            layout_operator_btn.setRowMinimumHeight(i, 45)
 
-        self.btnCombineNetwork = QtWidgets.QPushButton("Combine Network (snc4onnx)")
+        self.btnCombineNetwork = createIconButton("Combine Network\n(snc4onnx)", os.path.join(icon_dir, "snc4onnx.png"))
         self.btnCombineNetwork.clicked.connect(self.btnCombineNetwork_clicked)
 
-        self.btnExtractNetwork = QtWidgets.QPushButton("Extract Network (sne4onnx)")
+        self.btnExtractNetwork = createIconButton("Extract Network\n(sne4onnx)", os.path.join(icon_dir, "sne4onnx.png"))
         self.btnExtractNetwork.clicked.connect(self.btnExtractNetwork_clicked)
 
-        self.btnDelNode = QtWidgets.QPushButton("Delete Node (snd4onnx)")
+        self.btnDelNode = createIconButton("Delete Node\n(snd4onnx)", os.path.join(icon_dir, "snd4onnx.png"))
         self.btnDelNode.clicked.connect(self.btnDelNode_clicked)
 
-        self.btnConstShrink = QtWidgets.QPushButton("Const Shrink (scs4onnx)")
+        self.btnConstShrink = createIconButton("Const Shrink\n(scs4onnx)", os.path.join(icon_dir, "scs4onnx.png"))
         self.btnConstShrink.clicked.connect(self.btnConstShrink_clicked)
 
-        self.btnGenerateOperator = QtWidgets.QPushButton("Generate Operator (sog4onnx)")
+        self.btnGenerateOperator = createIconButton("Generate Operator\n(sog4onnx)", os.path.join(icon_dir, "sog4onnx.png"))
         self.btnGenerateOperator.clicked.connect(self.btnGenerateOperator_clicked)
 
-        self.btnModifyAttrConst = QtWidgets.QPushButton("Modify Attribute and Constant (sam4onnx)")
+        self.btnModifyAttrConst = createIconButton("Mod Attr and Const\n(sam4onnx)", os.path.join(icon_dir, "sam4onnx.png"))
         self.btnModifyAttrConst.clicked.connect(self.btnModifyAttrConst_clicked)
 
-        self.btnChangeOpset = QtWidgets.QPushButton("Change Opset (soc4onnx)")
+        self.btnChangeOpset = createIconButton("Change Opset\n(soc4onnx)", os.path.join(icon_dir, "soc4onnx.png"))
         self.btnChangeOpset.clicked.connect(self.btnChangeOpset_clicked)
 
-        self.btnChannelConvert = QtWidgets.QPushButton("Channel Convert (scc4onnx)")
+        self.btnChannelConvert = createIconButton("Channel Convert\n(scc4onnx)", os.path.join(icon_dir, "scc4onnx.png"))
         self.btnChannelConvert.clicked.connect(self.btnChannelConvert_clicked)
 
-        self.btnAddNode = QtWidgets.QPushButton("Add Node (sna4onnx)")
+        self.btnAddNode = createIconButton("Add Node\n(sna4onnx)", os.path.join(icon_dir, "sna4onnx.png"))
         self.btnAddNode.clicked.connect(self.btnAddNode_clicked)
 
-        self.btnInitializeBatchSize = QtWidgets.QPushButton("Initialize Batchsize (sbi4onnx)")
+        self.btnInitializeBatchSize = createIconButton("Initialize Batchsize\n(sbi4onnx)", os.path.join(icon_dir, "sbi4onnx.png"))
         self.btnInitializeBatchSize.clicked.connect(self.btnInitializeBatchSize_clicked)
 
-        self.btnRenameOp = QtWidgets.QPushButton("Rename op (sor4onnx)")
+        self.btnRenameOp = createIconButton("Rename Op\n(sor4onnx)", os.path.join(icon_dir, "sor4onnx.png"))
         self.btnRenameOp.clicked.connect(self.btnRenameOp_clicked)
 
+        layout_operator_btn.addWidget(self.btnGenerateOperator, 0, 0)
+        layout_operator_btn.addWidget(self.btnAddNode, 0, 1)
         layout_operator_btn.addWidget(self.btnCombineNetwork)
         layout_operator_btn.addWidget(self.btnExtractNetwork)
-        layout_operator_btn.addWidget(self.btnDelNode)
-        layout_operator_btn.addWidget(self.btnConstShrink)
-        layout_operator_btn.addWidget(self.btnGenerateOperator)
-        layout_operator_btn.addWidget(self.btnModifyAttrConst)
-        layout_operator_btn.addWidget(self.btnChangeOpset)
-        layout_operator_btn.addWidget(self.btnChannelConvert)
-        layout_operator_btn.addWidget(self.btnAddNode)
-        layout_operator_btn.addWidget(self.btnInitializeBatchSize)
         layout_operator_btn.addWidget(self.btnRenameOp)
+        layout_operator_btn.addWidget(self.btnModifyAttrConst)
+        layout_operator_btn.addWidget(self.btnChannelConvert)
+        layout_operator_btn.addWidget(self.btnInitializeBatchSize)
+        layout_operator_btn.addWidget(self.btnChangeOpset)
+        layout_operator_btn.addWidget(self.btnConstShrink)
+        layout_operator_btn.addWidget(self.btnDelNode)
 
         self.layout_main_properties.addSpacerItem(QtWidgets.QSpacerItem(self._sidemenu_width, 10))
         self.layout_main_properties.addLayout(layout_operator_btn)
@@ -238,7 +245,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.properties_bin.setEnabled(True)
 
             if self.graph.node_count() > 0:
-                self.menu_bar.actions["Export"].setEnabled(True)
+                self.menu_bar.menu_actions["Export"].setEnabled(True)
                 self.btnExtractNetwork.setEnabled(True)
                 self.btnDelNode.setEnabled(True)
                 self.btnConstShrink.setEnabled(True)
@@ -248,7 +255,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnInitializeBatchSize.setEnabled(True)
                 self.btnRenameOp.setEnabled(True)
             else:
-                self.menu_bar.actions["Export"].setEnabled(False)
+                self.menu_bar.menu_actions["Export"].setEnabled(False)
                 self.btnExtractNetwork.setEnabled(False)
                 self.btnDelNode.setEnabled(False)
                 self.btnConstShrink.setEnabled(False)
@@ -360,7 +367,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def dropEvent(self, event):
         mimedata = event.mimeData()
- 
         if mimedata.hasUrls():
             urls = mimedata.urls()
             files = [url.path() for url in urls]
