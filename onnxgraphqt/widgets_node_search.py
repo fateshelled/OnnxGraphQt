@@ -62,6 +62,9 @@ class NodeSearchWidget(QtWidgets.QDialog):
         node_name = self.model.data(indexItem)
         nodes = self.graph.get_node_by_name(node_name)
         self.graph.fit_to_selection_node(nodes[0])
+        parent = self.parent()
+        if hasattr(parent, "properties_bin"):
+            parent.properties_bin.add_node(nodes[0])
 
     def btn_clicked(self, e):
         self.search(self.tb.text())

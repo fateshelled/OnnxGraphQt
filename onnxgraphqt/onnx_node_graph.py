@@ -115,11 +115,13 @@ class ONNXNodeGraph(NodeGraph):
 
     def reset_selection(self):
         for node in self.all_nodes():
-            node.set_selected(False)
+            # node.set_selected(False)
+            node.set_property("selected", False, push_undo=False)
 
     def fit_to_selection_node(self, node):
         self.reset_selection()
-        node.set_selected(True)
+        # node.set_selected(True)
+        node.set_property("selected", True, push_undo=False)
         self.fit_to_selection()
 
     def get_selected_node_names(self)->List[str]:
