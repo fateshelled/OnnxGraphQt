@@ -1,13 +1,15 @@
-# [WIP]OnnxGraphQt
+# OnnxGraphQt
 
 ONNX model visualizer with NodeGraphQt.
 
 ## Requirements
 - [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt)
 - PySide2
+- Qt.py
 - igraph
 - Numpy
 - onnx
+- onnx-simplifier
 - onnx_graphsurgeon
 - [simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
 
@@ -15,7 +17,8 @@ ONNX model visualizer with NodeGraphQt.
 ```bash
 git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt
-python3 -m pip install nvidia-pyindex
+python3 -m pip install -U nvidia-pyindex
+python3 -m pip install -U Qt.py
 python3 -m pip install -U -r requirements.txt
 ```
 

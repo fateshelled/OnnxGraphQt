@@ -1,6 +1,5 @@
 igraph
 PySide2
-Qt.py
 numpy
 onnx
 onnx-simplifier

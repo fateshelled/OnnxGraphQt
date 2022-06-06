@@ -13,7 +13,6 @@ RUN groupadd -f -g ${GID} ${USERNAME} && \
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && \
     apt install -y \
-        # sudo \
         git \
         bash-completion \
         python3-dev \
@@ -29,7 +28,7 @@ RUN git clone https://github.com/fateshelled/OnnxGraphQt && \
     python3 -m pip install -U pip && \
     python3 -m pip install -U nvidia-pyindex && \
     python3 -m pip install -U Qt.py && \
-    python3 -m pip install -U onnx-simplifier && \
-    python3 -m pip install -U protobuf==3.20.0 && \
     python3 -m pip install -U -r requirements.txt && \
     rm -rf ~/.cache/pip
+
+WORKDIR ${HOME}/OnnxGraphQt
