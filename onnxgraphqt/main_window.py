@@ -20,24 +20,24 @@ from sor4onnx import rename as onnx_tools_rename
 from onnx2json.onnx2json import convert as onnx_tools_onnx2json
 from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 
-from widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
-from widgets_message_box import MessageBox
-from widgets_combine_network import CombineNetworkWidgets
-from widgets_extract_network import ExtractNetworkWidgets
-from widgets_add_node import AddNodeWidgets
-from widgets_change_opset import ChangeOpsetWidget
-from widgets_change_channel import ChangeChannelWidgets
-from widgets_constant_shrink import ConstantShrinkWidgets
-from widgets_modify_attrs import ModifyAttrsWidgets
-from widgets_delete_node import DeleteNodeWidgets
-from widgets_generate_operator import GenerateOperatorWidgets
-from widgets_initialize_batchsize import InitializeBatchsizeWidget
-from widgets_rename_op import RenameOpWidget
-from widgets_node_search import NodeSearchWidget
+from widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
+from widgets.widgets_message_box import MessageBox
+from widgets.widgets_combine_network import CombineNetworkWidgets
+from widgets.widgets_extract_network import ExtractNetworkWidgets
+from widgets.widgets_add_node import AddNodeWidgets
+from widgets.widgets_change_opset import ChangeOpsetWidget
+from widgets.widgets_change_channel import ChangeChannelWidgets
+from widgets.widgets_constant_shrink import ConstantShrinkWidgets
+from widgets.widgets_modify_attrs import ModifyAttrsWidgets
+from widgets.widgets_delete_node import DeleteNodeWidgets
+from widgets.widgets_generate_operator import GenerateOperatorWidgets
+from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
+from widgets.widgets_rename_op import RenameOpWidget
+from widgets.widgets_node_search import NodeSearchWidget
 
-from custom_properties_bin import CustomPropertiesBinWidget
+from widgets.custom_properties_bin import CustomPropertiesBinWidget
 
-from onnx_node_graph import ONNXNodeGraph
+from graph.onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 from utils.color import removePrintColor
 from utils.widgets import setFont, createIconButton
@@ -1243,7 +1243,7 @@ class MainWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     import signal
     import os, time
-    from splash_screen import create_screen, create_screen_progressbar
+    from widgets.splash_screen import create_screen, create_screen_progressbar
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

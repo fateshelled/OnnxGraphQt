@@ -1,22 +1,24 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.opset import DEFAULT_OPSET
 
-ChangeOpsetProperties = namedtuple("ChangeOpsetProperties",
+InitializeBatchsizeProperties = namedtuple("InitializeBatchsizeProperties",
     [
-        "opset",
+        "initialization_character_string",
     ])
 
-class ChangeOpsetWidget(QtWidgets.QDialog):
+class InitializeBatchsizeWidget(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 300
 
-    def __init__(self, current_opset, parent=None) -> None:
+    def __init__(self, current_batchsize="-1", parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
-        self.setWindowTitle("change opset")
-        self.current_opset = current_opset
+        self.setWindowTitle("initialize batchsize")
         self.initUI()
+        self.updateUI(current_batchsize)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -24,14 +26,14 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
         base_layout = QtWidgets.QVBoxLayout()
         base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
-        # Form layout
-        layout = QtWidgets.QFormLayout()
-        layout.setLabelAlignment(QtCore.Qt.AlignRight)
-        self.ledit_opset = QtWidgets.QLineEdit()
-        self.ledit_opset.setText(str(self.current_opset))
-        self.ledit_opset.setPlaceholderText("opset")
-
-        layout.addRow("opset number to be changed", self.ledit_opset)
+        # layout
+        layout = QtWidgets.QVBoxLayout()
+        self.lbl_name = QtWidgets.QLabel("Input string to initialize batch size.")
+        self.ledit_character = QtWidgets.QLineEdit()
+        self.ledit_character.setText("-1")
+        self.ledit_character.setPlaceholderText("initialization_character_string")
+        layout.addWidget(self.lbl_name)
+        layout.addWidget(self.ledit_character)
 
         # add layout
         base_layout.addLayout(layout)
@@ -46,9 +48,13 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
 
         self.setLayout(base_layout)
 
-    def get_properties(self)->ChangeOpsetProperties:
-        return ChangeOpsetProperties(
-            opset=self.ledit_opset.text()
+    def updateUI(self, current_batchsize):
+        self.ledit_character.setText(str(current_batchsize))
+
+    def get_properties(self)->InitializeBatchsizeProperties:
+        character = self.ledit_character.text().strip()
+        return InitializeBatchsizeProperties(
+            initialization_character_string=character
         )
 
     def accept(self) -> None:
@@ -56,8 +62,8 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
-        if not str(props.opset).isdecimal():
-            print("ERROR: opset")
+        if props.initialization_character_string == "":
+            print("ERROR: initialization_character_string")
             invalid = True
         if invalid:
             return
@@ -73,7 +79,7 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication([])
-    window = ChangeOpsetWidget(current_opset=DEFAULT_OPSET)
+    window = InitializeBatchsizeWidget()
     window.show()
 
     app.exec_()

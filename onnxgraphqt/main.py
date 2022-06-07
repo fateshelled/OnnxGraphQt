@@ -4,7 +4,7 @@ import signal
 import time
 from PySide2 import QtCore, QtWidgets, QtGui
 from main_window import MainWindow
-from splash_screen import create_screen
+from widgets.splash_screen import create_screen
 
 if __name__ == "__main__":
     args = sys.argv

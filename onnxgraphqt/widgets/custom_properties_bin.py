@@ -1,9 +1,8 @@
-#!/usr/bin/python
 from PySide2 import QtWidgets, QtCore, QtGui
 from Qt import QtCompat
-
-from custom_properties import CustomNodePropWidget
 from NodeGraphQt.custom_widgets.properties_bin import PropertiesDelegate, PropertiesList
+
+from .custom_properties import CustomNodePropWidget
 
 class CustomPropertiesBinWidget(QtWidgets.QWidget):
     """

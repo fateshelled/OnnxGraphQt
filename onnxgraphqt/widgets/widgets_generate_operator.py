@@ -4,6 +4,8 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 import numpy as np
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.opset import DEFAULT_OPSET
 from utils.operators import onnx_opsets, OperatorVersion, latest_opset
 

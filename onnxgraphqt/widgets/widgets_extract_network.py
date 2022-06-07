@@ -1,7 +1,9 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from onnx_node_graph import OnnxGraph
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from graph.onnx_node_graph import OnnxGraph
 
 ExtractNetworkProperties = namedtuple("ExtractNetworkProperties",
     [

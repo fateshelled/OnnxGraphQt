@@ -1,7 +1,10 @@
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from onnx_node_graph import ONNXNodeGraph
-from onnx_node import ONNXInput, ONNXOutput, ONNXNode, OnnxNodeIO
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from graph.onnx_node_graph import ONNXNodeGraph
+from graph.onnx_node import ONNXInput, ONNXOutput, ONNXNode, OnnxNodeIO
 
 
 class NodeSearchWidget(QtWidgets.QDialog):

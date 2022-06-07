@@ -29,6 +29,8 @@ from NodeGraphQt.base.factory import NodeFactory
 from NodeGraphQt.base.model import NodeGraphModel
 from NodeGraphQt.widgets.viewer import NodeViewer
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.color import (
     COLOR_BG,
     COLOR_FONT,
@@ -44,7 +46,7 @@ from utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,
 )
 from utils.style import set_context_menu_style
-from onnx_node import (
+from .onnx_node import (
     ONNXInput,
     ONNXOutput,
     ONNXNode,

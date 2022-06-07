@@ -24,6 +24,8 @@ from NodeGraphQt.constants import (
     NODE_PROP_BUTTON,
 )
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.color import (
     COLOR_BG,
     COLOR_FONT,

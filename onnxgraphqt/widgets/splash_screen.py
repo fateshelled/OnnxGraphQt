@@ -2,7 +2,7 @@ import os
 import time
 from PySide2 import QtCore, QtWidgets, QtGui
 
-DEFAULT_SPLASH_IMAGE = os.path.join(os.path.dirname(__file__), "data/splash.png")
+DEFAULT_SPLASH_IMAGE = os.path.join(os.path.dirname(__file__), "../data/splash.png")
 
 def create_screen(image_path=DEFAULT_SPLASH_IMAGE):
     pixmap = QtGui.QPixmap(image_path)
@@ -31,6 +31,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
     splash, progressBar = create_screen_progressbar()
+    # splash = create_screen()
     splash.show()
     time.sleep(0.01)
     splash.showMessage("loading...", alignment=QtCore.Qt.AlignBottom, color=QtGui.QColor.fromRgb(255, 255, 255))

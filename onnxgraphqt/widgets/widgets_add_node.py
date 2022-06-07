@@ -1,8 +1,11 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from utils.operators import onnx_opsets, opnames, OperatorVersion
 from ast import literal_eval
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from utils.operators import onnx_opsets, opnames, OperatorVersion
 
 AVAILABLE_DTYPES = [
     'float32',

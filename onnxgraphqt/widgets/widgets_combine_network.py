@@ -4,7 +4,7 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 
-from onnx_node_graph import OnnxGraph
+from graph.onnx_node_graph import OnnxGraph
 from utils.widgets import setFont
 
 CombineNetworkProperties = namedtuple("CombineNetworkProperties",

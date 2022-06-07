@@ -1,9 +1,12 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
-from utils.color import PrintColor
-from onnx_node_graph import OnnxGraph
 from ast import literal_eval
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from graph.onnx_node_graph import OnnxGraph
+from utils.color import PrintColor
 
 ChangeChannelProperties = namedtuple("ChangeChannelProperties",
     [

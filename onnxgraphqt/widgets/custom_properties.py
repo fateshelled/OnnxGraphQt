@@ -1,8 +1,5 @@
-#!/usr/bin/python
 from collections import defaultdict
-
 from PySide2 import QtWidgets, QtCore, QtGui
-
 from NodeGraphQt.constants import (NODE_PROP_QLABEL,
                                    NODE_PROP_QLINEEDIT,
                                    NODE_PROP_QTEXTEDIT,
