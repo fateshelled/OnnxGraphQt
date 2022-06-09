@@ -717,7 +717,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.update_graph(update_layout=False)
                 MessageBox.info(
                     f"complete.",
-                    "Const Shrink",
+                    msg_title,
                     parent=self)
                 break
             else:
@@ -778,7 +778,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.graph.begin_undo(msg_title)
-                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
                 self.graph.end_undo()
                 self.update_graph(update_layout=True)
                 MessageBox.info(
@@ -1025,7 +1025,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(False, btn)
         msg_title = "Add Node"
 
-        self.current_widgets = AddNodeWidgets(current_opset=self.graph.opset, parent=self)
+        self.current_widgets = AddNodeWidgets(current_opset=self.graph.opset,
+                                              graph=self.graph.to_data(), parent=self)
         while True:
             self.current_widgets.show()
             if self.current_widgets.exec_():
@@ -1072,7 +1073,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 model_name = self.windowTitle()
                 self.graph.begin_undo(msg_title)
-                self.load_graph(onnx_model=onnx_model, graph=self.graph, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
                 self.graph.end_undo()
                 self.update_graph(update_layout=False)
                 MessageBox.info(

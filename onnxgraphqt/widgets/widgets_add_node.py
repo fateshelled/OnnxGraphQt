@@ -5,7 +5,9 @@ from ast import literal_eval
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from utils.widgets import setFont
 from utils.operators import onnx_opsets, opnames, OperatorVersion
+from graph.onnx_node_graph import OnnxGraph
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -17,8 +19,8 @@ AVAILABLE_DTYPES = [
 
 AddNodeProperties = namedtuple("AddNodeProperties",
     [
-        "connection_src_op_output_name",
-        "connection_dest_op_input_name",
+        "connection_src_op_output_names",
+        "connection_dest_op_input_names",
         "add_op_type",
         "add_op_name",
         "add_op_input_variables",
@@ -30,13 +32,16 @@ class AddNodeWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 500
     _MAX_VARIABLES_COUNT = 5
     _MAX_ATTRIBUTES_COUNT = 10
+    _LABEL_FONT_SIZE = 16
 
-    def __init__(self, current_opset:int, parent=None) -> None:
+    def __init__(self, current_opset:int, graph: OnnxGraph=None, parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("add node")
         self.current_opset = current_opset
+        self.graph = graph
         self.initUI()
+        self.updateUI(self.graph)
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -44,13 +49,43 @@ class AddNodeWidgets(QtWidgets.QDialog):
         base_layout = QtWidgets.QVBoxLayout()
         base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
+        # src_output
+        labels_src_output = ["src_op", "src_op output", "add_op", "add_op input"]
+        layout_src_output = QtWidgets.QVBoxLayout()
+        lbl_src_output = QtWidgets.QLabel("connection_src_op_output_names")
+        setFont(lbl_src_output, font_size=self._LABEL_FONT_SIZE, bold=True)
+        layout_src_output.addWidget(lbl_src_output)
+        layout_src_output_form = QtWidgets.QFormLayout()
+        self.src_output_names = {}
+        for i in range(len(labels_src_output)):
+            if i in [0, 1]:
+                self.src_output_names[i] = QtWidgets.QComboBox()
+                self.src_output_names[i].setEditable(True)
+            else:
+                self.src_output_names[i] = QtWidgets.QLineEdit()
+            layout_src_output_form.addRow(labels_src_output[i], self.src_output_names[i])
+        layout_src_output.addLayout(layout_src_output_form)
+
+        # dest_input
+        labels_dest_input = ["add_op", "add_op output", "dst_op", "dst_op input"]
+        layout_dest_input = QtWidgets.QVBoxLayout()
+        lbl_dest_input = QtWidgets.QLabel("connection_dest_op_input_names")
+        setFont(lbl_dest_input, font_size=self._LABEL_FONT_SIZE, bold=True)
+        layout_dest_input.addWidget(lbl_dest_input)
+        layout_dest_input_form = QtWidgets.QFormLayout()
+        self.dest_input_names = {}
+        for i in range(len(labels_dest_input)):
+            if i in [0, 1]:
+                self.dest_input_names[i] = QtWidgets.QLineEdit()
+            else:
+                self.dest_input_names[i] = QtWidgets.QComboBox()
+                self.dest_input_names[i].setEditable(True)
+            layout_dest_input_form.addRow(labels_dest_input[i], self.dest_input_names[i])
+        layout_dest_input.addLayout(layout_dest_input_form)
+
         # Form layout
-        layout = QtWidgets.QFormLayout()
-        layout.setLabelAlignment(QtCore.Qt.AlignRight)
-        self.src_output_name = QtWidgets.QLineEdit()
-        self.src_output_name.setPlaceholderText("List of op name. Separater is space ' '.")
-        self.dst_input_name = QtWidgets.QLineEdit()
-        self.dst_input_name.setPlaceholderText("e.g. `Sub_451 onnx::Pow_603 dummy_mul inp1`")
+        layout_op = QtWidgets.QFormLayout()
+        layout_op.setLabelAlignment(QtCore.Qt.AlignRight)
         self.add_op_type = QtWidgets.QComboBox()
         for op in onnx_opsets:
             for version in op.versions:
@@ -61,14 +96,15 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.add_op_type.currentIndexChanged.connect(self.add_op_type_currentIndexChanged)
         self.add_op_name = QtWidgets.QLineEdit()
         self.add_op_name.setPlaceholderText("Name of op to be added")
-
-        layout.addRow("src_output_name", self.src_output_name)
-        layout.addRow("dst_input_name", self.dst_input_name)
-        layout.addRow("add_op_name", self.add_op_name)
-        layout.addRow("add_op_type", self.add_op_type)
+        lbl_add_op_name = QtWidgets.QLabel("add_op_name")
+        setFont(lbl_add_op_name, font_size=self._LABEL_FONT_SIZE, bold=True)
+        lbl_add_op_type = QtWidgets.QLabel("add_op_type")
+        setFont(lbl_add_op_type, font_size=self._LABEL_FONT_SIZE, bold=True)
+        layout_op.addRow(lbl_add_op_name, self.add_op_name)
+        layout_op.addRow(lbl_add_op_type, self.add_op_type)
 
         # variables
-        self.layout_valiables = QtWidgets.QVBoxLayout()
+        layout_valiables = QtWidgets.QVBoxLayout()
         self.visible_input_valiables_count = 1
         self.visible_output_valiables_count = 1
 
@@ -88,30 +124,36 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.btn_add_output_valiables.clicked.connect(self.btn_add_output_valiables_clicked)
         self.btn_del_output_valiables.clicked.connect(self.btn_del_output_valiables_clicked)
 
-        self.layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_valiables.addWidget(QtWidgets.QLabel("add op input valiables [optional]"))
+        layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
+        lbl_add_input_valiables = QtWidgets.QLabel("add op input valiables [optional]")
+        setFont(lbl_add_input_valiables, font_size=self._LABEL_FONT_SIZE, bold=True)
+        layout_valiables.addWidget(lbl_add_input_valiables)
         for key, widgets in self.add_input_valiables.items():
-            self.layout_valiables.addWidget(widgets["base"])
+            layout_valiables.addWidget(widgets["base"])
         self.set_visible_input_valiables()
         layout_btn_input = QtWidgets.QHBoxLayout()
         layout_btn_input.addWidget(self.btn_add_input_valiables)
         layout_btn_input.addWidget(self.btn_del_input_valiables)
-        self.layout_valiables.addLayout(layout_btn_input)
+        layout_valiables.addLayout(layout_btn_input)
 
-        self.layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_valiables.addWidget(QtWidgets.QLabel("add op output valiables [optional]"))
+        layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
+        lbl_add_output_valiables = QtWidgets.QLabel("add op output valiables [optional]")
+        setFont(lbl_add_output_valiables, font_size=self._LABEL_FONT_SIZE, bold=True)
+        layout_valiables.addWidget(lbl_add_output_valiables)
         for key, widgets in self.add_output_valiables.items():
-            self.layout_valiables.addWidget(widgets["base"])
+            layout_valiables.addWidget(widgets["base"])
         self.set_visible_output_valiables()
         layout_btn_output = QtWidgets.QHBoxLayout()
         layout_btn_output.addWidget(self.btn_add_output_valiables)
         layout_btn_output.addWidget(self.btn_del_output_valiables)
-        self.layout_valiables.addLayout(layout_btn_output)
+        layout_valiables.addLayout(layout_btn_output)
 
         # add_attributes
-        self.layout_attributes = QtWidgets.QVBoxLayout()
-        self.layout_attributes.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_attributes.addWidget(QtWidgets.QLabel("add op atrributes [optional]"))
+        layout_attributes = QtWidgets.QVBoxLayout()
+        layout_attributes.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
+        lbl_add_atrributes = QtWidgets.QLabel("add op atrributes [optional]")
+        setFont(lbl_add_atrributes, font_size=self._LABEL_FONT_SIZE, bold=True)
+        layout_attributes.addWidget(lbl_add_atrributes)
         self.visible_add_attributes_count = 3
         self.add_op_attributes = {}
         for index in range(self._MAX_ATTRIBUTES_COUNT):
@@ -125,7 +167,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
             self.add_op_attributes[index]["value"].setPlaceholderText("value")
             self.add_op_attributes[index]["layout"].addWidget(self.add_op_attributes[index]["name"])
             self.add_op_attributes[index]["layout"].addWidget(self.add_op_attributes[index]["value"])
-            self.layout_attributes.addWidget(self.add_op_attributes[index]["base"])
+            layout_attributes.addWidget(self.add_op_attributes[index]["base"])
         self.btn_add_op_attributes = QtWidgets.QPushButton("+")
         self.btn_del_op_attributes = QtWidgets.QPushButton("-")
         self.btn_add_op_attributes.clicked.connect(self.btn_add_op_attributes_clicked)
@@ -134,12 +176,16 @@ class AddNodeWidgets(QtWidgets.QDialog):
         layout_btn_attributes = QtWidgets.QHBoxLayout()
         layout_btn_attributes.addWidget(self.btn_add_op_attributes)
         layout_btn_attributes.addWidget(self.btn_del_op_attributes)
-        self.layout_attributes.addLayout(layout_btn_attributes)
+        layout_attributes.addLayout(layout_btn_attributes)
 
         # add layout
-        base_layout.addLayout(layout)
-        base_layout.addLayout(self.layout_valiables)
-        base_layout.addLayout(self.layout_attributes)
+        base_layout.addLayout(layout_src_output)
+        base_layout.addSpacerItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 10))
+        base_layout.addLayout(layout_dest_input)
+        base_layout.addSpacerItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 10))
+        base_layout.addLayout(layout_op)
+        base_layout.addLayout(layout_valiables)
+        base_layout.addLayout(layout_attributes)
 
         # Dialog button
         btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
@@ -151,6 +197,22 @@ class AddNodeWidgets(QtWidgets.QDialog):
 
         self.setLayout(base_layout)
         self.add_op_type_currentIndexChanged(self.add_op_type.currentIndex())
+
+    def updateUI(self, graph: OnnxGraph):
+        if graph:
+            for name in graph.node_inputs.keys():
+                self.src_output_names[0].addItem(name)
+                self.src_output_names[1].addItem(name)
+            for name in graph.nodes.keys():
+                self.src_output_names[0].addItem(name)
+                self.src_output_names[1].addItem(name)
+
+            for name in graph.node_inputs.keys():
+                self.dest_input_names[2].addItem(name)
+                self.dest_input_names[3].addItem(name)
+            for name in graph.nodes.keys():
+                self.dest_input_names[2].addItem(name)
+                self.dest_input_names[3].addItem(name)
 
     def create_variables_widget(self, index:int, is_input=True)->QtWidgets.QBoxLayout:
         if is_input:
@@ -303,21 +365,29 @@ class AddNodeWidgets(QtWidgets.QDialog):
         if len(add_op_attributes) == 0:
             add_op_attributes = None
 
-        src_output_name = self.src_output_name.text().strip()
-        if src_output_name:
-            src_output_name = [n.strip() for n in src_output_name.split(" ")]
-        else:
-            src_output_name = []
+        src_output_names = []
+        for i in [0, 1]:
+            name: str = self.src_output_names[i].currentText().strip()
+            if name:
+                src_output_names.append(name)
+        for i in [2, 3]:
+            name: str = self.src_output_names[i].text().strip()
+            if name:
+                src_output_names.append(name)
 
-        dst_input_name = self.dst_input_name.text().strip()
-        if dst_input_name:
-            dst_input_name = [n.strip() for n in dst_input_name.split(" ")]
-        else:
-            dst_input_name = []
+        dest_input_names = []
+        for i in [0, 1]:
+            name: str = self.dest_input_names[i].text().strip()
+            if name:
+                dest_input_names.append(name)
+        for i in [2, 3]:
+            name: str = self.dest_input_names[i].currentText().strip()
+            if name:
+                dest_input_names.append(name)
 
         return AddNodeProperties(
-            connection_src_op_output_name=src_output_name,
-            connection_dest_op_input_name=dst_input_name,
+            connection_src_op_output_names=[src_output_names],
+            connection_dest_op_input_names=[dest_input_names],
             add_op_type=self.add_op_type.currentText(),
             add_op_name=self.add_op_name.text(),
             add_op_input_variables=add_op_input_variables,
@@ -330,12 +400,14 @@ class AddNodeWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
-        if len(props.connection_src_op_output_name) < 1:
-            print("ERROR: connection_src_op_output_name")
-            invalid = True
-        if len(props.connection_dest_op_input_name) < 1:
-            print("ERROR: connection_dest_op_input_name")
-            invalid = True
+        for src_op_output_name in props.connection_src_op_output_names:
+            if len(src_op_output_name) != 4:
+                print("ERROR: connection_src_op_output_name")
+                invalid = True
+        for dest_op_input_name in props.connection_dest_op_input_names:
+            if len(dest_op_input_name) != 4:
+                print("ERROR: connection_dest_op_input_name")
+                invalid = True
         if not props.add_op_name:
             print("ERROR: add_op_name")
             invalid = True
