@@ -238,11 +238,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_sidemenu_buttons_enabled(self, enable=True, current_button: QtWidgets.QPushButton=None):
 
         if enable:
-            self.menu_bar.setEnabled(True)
+            self.menu_bar.menu_actions["Open"].setEnabled(True)
+            self.menu_bar.menu_actions["Export"].setEnabled(True)
             self.btnCombineNetwork.setEnabled(True)
             self.btnGenerateOperator.setEnabled(True)
             self.btnAddNode.setEnabled(True)
-            self.properties_bin.setEnabled(True)
 
             if self.graph.node_count() > 0:
                 self.menu_bar.menu_actions["Export"].setEnabled(True)
@@ -266,7 +266,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnRenameOp.setEnabled(False)
 
         else:
-            self.menu_bar.setEnabled(False)
+            self.menu_bar.menu_actions["Open"].setEnabled(False)
+            self.menu_bar.menu_actions["Export"].setEnabled(False)
             self.btnCombineNetwork.setEnabled(False)
             self.btnExtractNetwork.setEnabled(False)
             self.btnDelNode.setEnabled(False)
@@ -278,7 +279,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.btnRenameOp.setEnabled(False)
             self.btnGenerateOperator.setEnabled(False)
             self.btnAddNode.setEnabled(False)
-            self.properties_bin.setEnabled(False)
 
         self.current_button = current_button
         if current_button:
