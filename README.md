@@ -54,7 +54,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
 
-![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/173078260-3f7cbff4-5fed-4da8-8ae3-931b7ba93140.png)
+![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/173088722-a6ba22d4-d49a-4663-b2c2-a9a28e69c75a.png)
 
 
 ### Open Onnx Model
