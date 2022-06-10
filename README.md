@@ -1,6 +1,14 @@
 # OnnxGraphQt
 
-ONNX model visualizer with NodeGraphQt.
+ONNX model visualizer. You can edit model structure with GUI!
+
+![https://github.com/fateshelled/OnnxGraphQt/blob/main/LICENSE](https://img.shields.io/github/license/fateshelled/OnnxGraphQt)
+![https://github.com/fateshelled/OnnxGraphQt/stargazers](https://img.shields.io/github/stars/fateshelled/OnnxGraphQt)
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/53618876/173075283-3344ca39-adcc-4e73-a5ea-31148fa641bf.png" />
+</p>
+
 
 ## Requirements
 - [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt)
@@ -15,6 +23,8 @@ ONNX model visualizer with NodeGraphQt.
 
 ## Install
 ```bash
+sudo apt install python3-pyside2*
+
 git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt
 python3 -m pip install -U nvidia-pyindex
@@ -43,6 +53,34 @@ python3 onnxgraphqt/main.py
 python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
+
+![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/173078260-3f7cbff4-5fed-4da8-8ae3-931b7ba93140.png)
+
+
+### Open Onnx Model
+Open file dialog from menubar(File - Open) or drag and drop to main window.
+
+![file open](https://user-images.githubusercontent.com/53618876/173079093-5cb8b80a-7b2e-46cf-a0c2-ff96f824486b.png)
+
+
+### Export
+Export to ONNX file or Json file.
+
+### Node detail
+Double click on Node for more information.
+
+![node information](https://user-images.githubusercontent.com/53618876/173081692-da179f1d-bdc2-4122-9d1f-89461410afc4.png)
+
+### Node Search
+Node search window can be open from menubar(View - Search).
+You can search node by name, type, input or output name.
+
+![serach](https://user-images.githubusercontent.com/53618876/173082166-0cb05288-8033-451d-8fd0-23a2836d301f.png)
+
+### simple-onnx-processing-tools
+Please refer to each tool's Github repository for detailed usage.
+[simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
+
 
 ## ToDo
 - [ ] Add Simple Shape Inference tool [[ssi4onnx](https://github.com/PINTO0309/ssi4onnx)]
