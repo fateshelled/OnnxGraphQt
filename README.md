@@ -58,7 +58,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 
 
 ### Open Onnx Model
-Open file dialog from menubar(File - Open) or drag and drop to main window.
+Open file dialog from menubar(File - Open) or drag and drop from file manager to main window.
 
 ![file open](https://user-images.githubusercontent.com/53618876/173079093-5cb8b80a-7b2e-46cf-a0c2-ff96f824486b.png)
 
@@ -77,9 +77,21 @@ You can search node by name, type, input or output name.
 
 ![serach](https://user-images.githubusercontent.com/53618876/173082166-0cb05288-8033-451d-8fd0-23a2836d301f.png)
 
-### simple-onnx-processing-tools
+### [simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
+
 Please refer to each tool's Github repository for detailed usage.
-[simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
+
+- Generate Operator [[sog4onnx](https://github.com/PINTO0309/sog4onnx)]
+- Add Node [[sna4onnx](https://github.com/PINTO0309/sna4onnx)]
+- Combine Network [[snc4onnx](https://github.com/PINTO0309/snc4onnx)]
+- Extract Network [[sne4onnx](https://github.com/PINTO0309/sne4onnx)]
+- Rename Operator [[sor4onnx](https://github.com/PINTO0309/sor4onnx)]
+- Modify Attributes and Constant [[sam4onnx](https://github.com/PINTO0309/sam4onnx)]
+- Input Channel Conversion [[scc4onnx](https://github.com/PINTO0309/scc4onnx)]
+- Initialize Batchsize [[sbi4onnx](https://github.com/PINTO0309/sbi4onnx)]
+- Change Opset [[soc4onnx](https://github.com/PINTO0309/soc4onnx)]
+- Constant Value Shrink [[scs4onnx](https://github.com/PINTO0309/scs4onnx)]
+- Delete Node [[snd4onnx](https://github.com/PINTO0309/snd4onnx)]
 
 
 ## ToDo
@@ -87,6 +99,7 @@ Please refer to each tool's Github repository for detailed usage.
 - [ ] Add Simple Inference Test[[sit4onnx](https://github.com/PINTO0309/sit4onnx)]
 - [ ] Add Simple Structure Checker[[ssc4onnx](https://github.com/PINTO0309/ssc4onnx)]
 - [ ] Update auto layout algorithm
+
 
 ## References
 - https://github.com/jchanvfx/NodeGraphQt
