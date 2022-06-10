@@ -463,6 +463,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         graph = onnx.load(onnx_file)
                         onnx_graphs.append(graph)
 
+                    exception = None
                     try:
                         f = io.StringIO()
                         sys.stdout = f
@@ -475,6 +476,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             non_verbose=False,
                         )
                     except BaseException as e:
+                        exception = e
                         onnx_tool_error = True
                         raise e
                     finally:
@@ -491,6 +493,11 @@ class MainWindow(QtWidgets.QMainWindow):
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -532,6 +539,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -544,6 +552,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             **props._asdict(),
                         )
                     except BaseException as e:
+                        exception = e
                         onnx_tool_error = True
                         raise e
                     finally:
@@ -560,6 +569,11 @@ class MainWindow(QtWidgets.QMainWindow):
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -602,6 +616,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -623,12 +638,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -672,6 +693,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -694,12 +716,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -743,6 +771,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     f = io.StringIO()
@@ -753,6 +782,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     )
                 except BaseException as e:
                     onnx_tool_error = True
+                    exception = e
                     pass
                 finally:
                     sys.stdout = sys.__stdout__
@@ -766,6 +796,11 @@ class MainWindow(QtWidgets.QMainWindow):
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -809,6 +844,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -831,12 +867,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -881,6 +923,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     new_opset = int(props.opset)
@@ -912,12 +955,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -961,6 +1010,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = e
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -983,12 +1033,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -1033,6 +1089,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -1055,12 +1112,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -1111,6 +1174,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -1133,12 +1197,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
@@ -1182,6 +1252,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 onnx_tool_error = False
                 print_msg = ""
 
+                exception = None
                 props = self.current_widgets.get_properties()
                 try:
                     onnx_graph=self.graph.to_onnx(non_verbose=True)
@@ -1204,12 +1275,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
+                    exception = e
                     print(e)
 
                 if onnx_tool_error:
                     if print_msg:
                         MessageBox.error(
                             print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
                             msg_title,
                             parent=self)
                     continue
