@@ -5,6 +5,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
+from widgets.widgets_message_box import MessageBox
 
 DeleteNodeProperties = namedtuple("DeleteNodeProperties",
     [
@@ -125,11 +126,15 @@ class DeleteNodeWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         if len(props.remove_node_names) == 0:
-            print("ERROR: remove_node_names.")
+            err_msgs.append("- remove_node_names is not set.")
             invalid = True
 
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "delete node", parent=self)
             return
         return super().accept()
 

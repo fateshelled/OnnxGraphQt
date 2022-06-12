@@ -1,6 +1,9 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from widgets.widgets_message_box import MessageBox
 
 RenameOpProperties = namedtuple("RenameOpProperties",
     [
@@ -61,10 +64,14 @@ class RenameOpWidget(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         if props.old_new[0] == "":
-            print("ERROR: old")
+            err_msgs.append("substring old must be set.")
             invalid = True
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "rename op", parent=self)
             return
         return super().accept()
 

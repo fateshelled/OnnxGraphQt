@@ -4,6 +4,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
+from widgets.widgets_message_box import MessageBox
 
 ExtractNetworkProperties = namedtuple("ExtractNetworkProperties",
     [
@@ -174,14 +175,18 @@ class ExtractNetworkWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         if len(props.input_op_names) == 0:
-            print("ERROR: input_op_names.")
+            err_msgs.append("- input_op_names is not set")
             invalid = True
         if len(props.output_op_names) == 0:
-            print("ERROR: output_op_names.")
+            err_msgs.append("- output_op_names is not set")
             invalid = True
 
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "extract network", parent=self)
             return
         return super().accept()
 

@@ -5,6 +5,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.opset import DEFAULT_OPSET
+from widgets.widgets_message_box import MessageBox
 
 ChangeOpsetProperties = namedtuple("ChangeOpsetProperties",
     [
@@ -59,10 +60,14 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         if not str(props.opset).isdecimal():
-            print("ERROR: opset")
+            err_msgs.append("opset must be unsigned integer")
             invalid = True
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "change opset", parent=self)
             return
         return super().accept()
 

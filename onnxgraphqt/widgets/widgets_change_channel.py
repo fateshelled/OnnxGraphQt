@@ -7,6 +7,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
 from utils.color import PrintColor
+from widgets.widgets_message_box import MessageBox
 
 ChangeChannelProperties = namedtuple("ChangeChannelProperties",
     [
@@ -229,24 +230,20 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         if len(props.channel_change_inputs) < 1 and len(props.input_op_names_and_order_dims) < 1:
-            print(
-                f'{PrintColor.RED}ERROR:{PrintColor.RESET} '+
-                f'At least one of input_op_names_and_order_dims or channel_change_inputs must be specified.'
-            )
+            err_msgs.append("At least one of input_op_names_and_order_dims or channel_change_inputs must be specified.")
             invalid = True
 
         for key, val in props.channel_change_inputs.items():
-            print(key)
-            print(val)
             if type(val) is not int:
-                print(
-                    f'{PrintColor.RED}ERROR:{PrintColor.RESET} '+
-                    f'channel_change_inputs value must be integer. {key}: {val}'
-                )
+                err_msgs.append(f'channel_change_inputs value must be integer. {key}: {val}')
                 invalid = True
 
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "change channel", parent=self)
             return
         return super().accept()
 

@@ -4,8 +4,11 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
 from utils.widgets import setFont
+from widgets.widgets_message_box import MessageBox
 
 CombineNetworkProperties = namedtuple("CombineNetworkProperties",
     [
@@ -83,7 +86,7 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
             layout_inputs_file_paths.addWidget(self.inputs_file_paths[index]["base"])
 
         self.combine_with_current_graph = QtWidgets.QCheckBox("combine_with_current_graph")
-        if len(self.graph.nodes) > 0:
+        if self.graph is not None and len(self.graph.nodes) > 0:
             self.combine_with_current_graph.setChecked(True)
         else:
             self.combine_with_current_graph.setChecked(False)
@@ -106,7 +109,7 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
             self.op_prefixes[index]["label"] = QtWidgets.QLabel(label)
             self.op_prefixes[index]["value"] = QtWidgets.QLineEdit()
             layout_op_prefixes.addRow(self.op_prefixes[index]["label"], self.op_prefixes[index]["value"])
-        if len(self.graph.nodes) == 0:
+        if self.graph is not None and len(self.graph.nodes) == 0:
             self.op_prefixes[0]["label"].setVisible(False)
             self.op_prefixes[0]["value"].setVisible(False)
         layout_op_prefixes_base.addLayout(layout_op_prefixes)
@@ -190,27 +193,31 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         if len(props.input_onnx_file_paths) == 0:
-            print("ERROR: input_onnx_file_paths must be specified")
+            err_msgs.append("- input_onnx_file_paths must be specified")
             invalid = True
         if props.combine_with_current_graph:
             if len(props.srcop_destop) != len(props.input_onnx_file_paths):
-                print("ERROR: The number of srcop_destops must be (number of input_onnx_file_paths + 1).")
+                err_msgs.append("- The number of srcop_destops must be (number of input_onnx_file_paths + 1).")
                 invalid = True
             if props.op_prefixes_after_merging:
                 if len(props.input_onnx_file_paths) + 1 != len(props.op_prefixes_after_merging):
-                    print("ERROR: The number of op_prefixes_after_merging must match (number of input_onnx_file_paths + 1).")
+                    err_msgs.append("- The number of op_prefixes_after_merging must match (number of input_onnx_file_paths + 1).")
                     invalid = True
         else:
             if len(props.srcop_destop) != len(props.input_onnx_file_paths)-1:
-                print("ERROR: The number of srcop_destop must match the number of input_onnx_file_paths.")
+                err_msgs.append("- The number of srcop_destop must match the number of input_onnx_file_paths.")
                 invalid = True
             if props.op_prefixes_after_merging:
                 if len(props.input_onnx_file_paths) != len(props.op_prefixes_after_merging):
-                    print("ERROR: The number of op_prefixes_after_merging must match number of input_onnx_file_paths.")
+                    err_msgs.append("- The number of op_prefixes_after_merging must match number of input_onnx_file_paths.")
                     invalid = True
 
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "combine network", parent=self)
             return
         return super().accept()
 

@@ -8,6 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.widgets import setFont
 from utils.operators import onnx_opsets, opnames, OperatorVersion
 from graph.onnx_node_graph import OnnxGraph
+from widgets.widgets_message_box import MessageBox
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -368,22 +369,18 @@ class AddNodeWidgets(QtWidgets.QDialog):
         src_output_names = []
         for i in [0, 1]:
             name: str = self.src_output_names[i].currentText().strip()
-            if name:
-                src_output_names.append(name)
+            src_output_names.append(name)
         for i in [2, 3]:
             name: str = self.src_output_names[i].text().strip()
-            if name:
-                src_output_names.append(name)
+            src_output_names.append(name)
 
         dest_input_names = []
         for i in [0, 1]:
             name: str = self.dest_input_names[i].text().strip()
-            if name:
-                dest_input_names.append(name)
+            dest_input_names.append(name)
         for i in [2, 3]:
             name: str = self.dest_input_names[i].currentText().strip()
-            if name:
-                dest_input_names.append(name)
+            dest_input_names.append(name)
 
         return AddNodeProperties(
             connection_src_op_output_names=[src_output_names],
@@ -400,21 +397,45 @@ class AddNodeWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         for src_op_output_name in props.connection_src_op_output_names:
-            if len(src_op_output_name) != 4:
-                print("ERROR: connection_src_op_output_name")
+            src_op, src_op_output, add_op, add_op_input = src_op_output_name
+            if not src_op:
+                err_msgs.append("- [connection_src_op_output_names] src_op is not set.")
+                invalid = True
+            if not src_op_output:
+                err_msgs.append("- [connection_src_op_output_names] src_op output is not set.")
+                invalid = True
+            if not add_op:
+                err_msgs.append("- [connection_src_op_output_names] add_op is not set.")
+                invalid = True
+            if not add_op_input:
+                err_msgs.append("- [connection_src_op_output_names] add_op input is not set.")
                 invalid = True
         for dest_op_input_name in props.connection_dest_op_input_names:
-            if len(dest_op_input_name) != 4:
-                print("ERROR: connection_dest_op_input_name")
+            add_op, add_op_output, dst_op, dst_op_input = dest_op_input_name
+            if not add_op:
+                err_msgs.append("- [connection_dest_op_input_names] add_op is not set")
+                invalid = True
+            if not add_op_output:
+                err_msgs.append("- [connection_dest_op_input_names] add_op_output is not set")
+                invalid = True
+            if not dst_op:
+                err_msgs.append("- [connection_dest_op_input_names] dst_op is not set")
+                invalid = True
+            if not dst_op_input:
+                err_msgs.append("- [connection_dest_op_input_names] dst_op input is not set")
                 invalid = True
         if not props.add_op_name:
-            print("ERROR: add_op_name")
+            err_msgs.append("- [add_op_name] not set")
             invalid = True
         if not props.add_op_type in opnames:
-            print("ERROR: add_op_type")
+            err_msgs.append("- [add_op_type] not support")
             invalid = True
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "add node", parent=self)
             return
         return super().accept()
 

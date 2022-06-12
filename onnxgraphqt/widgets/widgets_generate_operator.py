@@ -7,7 +7,8 @@ import numpy as np
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.opset import DEFAULT_OPSET
-from utils.operators import onnx_opsets, OperatorVersion, latest_opset
+from utils.operators import onnx_opsets, opnames, OperatorVersion, latest_opset
+from widgets.widgets_message_box import MessageBox
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -286,7 +287,7 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         if opset:
             opset = literal_eval(opset)
         if not isinstance(opset, int):
-            opset = DEFAULT_OPSET
+            opset = ""
         op_name = self.tb_opname.text()
 
         input_variables = {}
@@ -332,13 +333,20 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
-        if not props.op_name:
-            print("ERROR: op_name")
+        err_msgs = []
+        if not props.op_type in opnames:
+            err_msgs.append("- op_type is invalid.")
             invalid = True
-        if not props.op_type:
-            print("ERROR: op_type")
+        if not isinstance(props.opset, int):
+            err_msgs.append("- opset must be unsigned integer.")
+            invalid = True
+        if not props.op_name:
+            err_msgs.append("- op_name is not set.")
             invalid = True
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "generate operator", parent=self)
             return
         return super().accept()
 

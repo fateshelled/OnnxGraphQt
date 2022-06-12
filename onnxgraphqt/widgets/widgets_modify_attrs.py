@@ -12,6 +12,7 @@ from sam4onnx.onnx_attr_const_modify import (
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
+from widgets.widgets_message_box import MessageBox
 
 ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
     [
@@ -348,23 +349,22 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         invalid = False
         props = self.get_properties()
         print(props)
+        err_msgs = []
         edit_attr = len(props.attributes) > 0
         edit_const = len(props.input_constants) > 0
         delete_attr = len(props.delete_attributes) > 0
-        if edit_attr and edit_const:
-            print("ERROR: Specify only one of attributes or input_constants.")
+        if (not props.op_name and edit_attr) or (not props.op_name and delete_attr):
+            err_msgs.append("- op_name and attributes must always be specified at the same time.")
             invalid = True
-        if not props.op_name and edit_attr:
-            print("ERROR: Specify op_name.")
-            invalid = True
-        if not props.op_name and delete_attr:
-            print("ERROR: Specify op_name.")
-            invalid = True
-        if not edit_attr and not edit_const and not delete_attr:
-            print("ERROR: Specify attributes or input_constants or delete_attributes")
-            invalid = True
-
+        if self.graph:
+            for const in props.input_constants:
+                if not const in self.graph.nodes.keys():
+                    err_msgs.append(f"- input_constants not found. input_constant: {const}")
+                    invalid = True
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "modify attrs", parent=self)
             return
         return super().accept()
 

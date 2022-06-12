@@ -2,6 +2,7 @@ from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
+from widgets.widgets_message_box import MessageBox
 
 ConstantShrinkProperties = namedtuple("ConstantShrinkProperties",
     [
@@ -97,13 +98,17 @@ class ConstantShrinkWidgets(QtWidgets.QDialog):
         try:
             props = self.get_properties()
             print(props)
+            err_msgs = []
         except Exception as e:
             print(e)
             return
         if not props.mode in MODE:
-            print("ERROR: mode")
+            err_msgs.append(f"- mode is select from {'or'.join(MODE)}")
             invalid = True
         if invalid:
+            for m in err_msgs:
+                print(m)
+            MessageBox.error(err_msgs, "constant shrink", parent=self)
             return
         return super().accept()
 
