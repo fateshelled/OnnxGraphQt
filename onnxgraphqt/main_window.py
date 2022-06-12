@@ -338,6 +338,9 @@ class MainWindow(QtWidgets.QMainWindow):
         return properties_bin
 
     def open_onnx(self, file_name:str):
+        if not os.path.exists(file_name):
+            MessageBox.warn(f"not found {file_name}.", title="open")
+            return
         ext = os.path.splitext(file_name)[-1]
         model_name = os.path.basename(file_name)
         if ext == ".onnx":

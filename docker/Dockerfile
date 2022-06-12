@@ -32,3 +32,4 @@ RUN git clone https://github.com/fateshelled/OnnxGraphQt && \
     rm -rf ~/.cache/pip
 
 WORKDIR ${HOME}/OnnxGraphQt
+CMD [ "python3", "onnxgraphqt/main.py" ]

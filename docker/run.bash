@@ -19,4 +19,4 @@ docker run --rm -it \
         -e="DISPLAY=${DISPLAY}" \
         -e=TERM=xterm-256color \
         -e=QT_X11_NO_MITSHM=1 \
-        onnxgraphqt:latest bash
+        onnxgraphqt:latest
