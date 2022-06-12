@@ -356,11 +356,6 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         if (not props.op_name and edit_attr) or (not props.op_name and delete_attr):
             err_msgs.append("- op_name and attributes must always be specified at the same time.")
             invalid = True
-        if self.graph:
-            for const in props.input_constants:
-                if not const in self.graph.nodes.keys():
-                    err_msgs.append(f"- input_constants not found. input_constant: {const}")
-                    invalid = True
         if invalid:
             for m in err_msgs:
                 print(m)
