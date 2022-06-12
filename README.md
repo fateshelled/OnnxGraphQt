@@ -60,6 +60,8 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 ### Open Onnx Model
 Open file dialog from menubar(File - Open) or drag and drop from file manager to main window.
 
+Sample model is available at `ONNXGraphQt/onnxgraphqt/data/mobilenetv2-7.onnx`
+
 ![file open](https://user-images.githubusercontent.com/53618876/173079093-5cb8b80a-7b2e-46cf-a0c2-ff96f824486b.png)
 
 
