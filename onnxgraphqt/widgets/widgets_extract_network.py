@@ -1,10 +1,13 @@
 from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
+
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
 from widgets.widgets_message_box import MessageBox
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 ExtractNetworkProperties = namedtuple("ExtractNetworkProperties",
     [
@@ -27,12 +30,18 @@ class ExtractNetworkWidgets(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
 
         # inputs
         self.layout_inputs = QtWidgets.QVBoxLayout()
-        self.layout_inputs.addWidget(QtWidgets.QLabel("input_op_names"))
+
+        lbl_input_op_names = QtWidgets.QLabel("input_op_names")
+        set_font(lbl_input_op_names, font_size=LARGE_FONT_SIZE, bold=True)
+
+        self.layout_inputs.addWidget(lbl_input_op_names)
+
         self.visible_input_op_names_count = 1
         self.widgets_inputs = {}
         for index in range(self._MAX_INPUT_OP_NAMES_COUNT):
@@ -56,7 +65,11 @@ class ExtractNetworkWidgets(QtWidgets.QDialog):
 
         # outputs
         self.layout_outputs = QtWidgets.QVBoxLayout()
-        self.layout_outputs.addWidget(QtWidgets.QLabel("output_op_names"))
+
+        lbl_output_op_names = QtWidgets.QLabel("output_op_names")
+        set_font(lbl_output_op_names, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_outputs.addWidget(lbl_output_op_names)
+
         self.visible_output_op_names_count = 1
         self.widgets_outputs = {}
         for index in range(self._MAX_OUTPUT_OP_NAMES_COUNT):
@@ -78,16 +91,17 @@ class ExtractNetworkWidgets(QtWidgets.QDialog):
         layout_btn_outputs.addWidget(self.btn_del_outputs)
         self.layout_outputs.addLayout(layout_btn_outputs)
 
-        # add layout
-        base_layout.addLayout(self.layout_inputs)
-        base_layout.addLayout(self.layout_outputs)
-
         # Dialog button
         btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
                                          QtWidgets.QDialogButtonBox.Cancel)
         btn.accepted.connect(self.accept)
         btn.rejected.connect(self.reject)
-        # layout.addWidget(btn)
+
+        # add layout
+        base_layout.addLayout(self.layout_inputs)
+        base_layout.addSpacing(10)
+        base_layout.addLayout(self.layout_outputs)
+        base_layout.addSpacing(10)
         base_layout.addWidget(btn)
 
         self.setLayout(base_layout)

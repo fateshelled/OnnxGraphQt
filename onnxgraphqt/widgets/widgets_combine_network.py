@@ -7,8 +7,9 @@ from ast import literal_eval
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
-from utils.widgets import setFont
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
 from widgets.widgets_message_box import MessageBox
+
 
 CombineNetworkProperties = namedtuple("CombineNetworkProperties",
     [
@@ -20,9 +21,8 @@ CombineNetworkProperties = namedtuple("CombineNetworkProperties",
     ])
 
 
-
 class CombineNetworkWidgets(QtWidgets.QDialog):
-    _DEFAULT_WINDOW_WIDTH = 500
+    _DEFAULT_WINDOW_WIDTH = 560
     _MAX_INPUTS_FILE = 3
     _MAX_OP_PREFIXES = _MAX_INPUTS_FILE + 1
 
@@ -36,13 +36,14 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
 
         # src dst
         layout_src_dst = QtWidgets.QFormLayout()
         lbl_src_dst = QtWidgets.QLabel("srcop_destop")
-        setFont(lbl_src_dst, font_size=14, bold=True)
+        set_font(lbl_src_dst, font_size=LARGE_FONT_SIZE, bold=True)
         self.src_op_dst_op = QtWidgets.QTextEdit()
         self.src_op_dst_op.setMinimumHeight(20*7)
         self.src_op_dst_op.setPlaceholderText(
@@ -59,7 +60,7 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
         # input_onnx_file_paths
         layout_inputs_file_paths = QtWidgets.QVBoxLayout()
         lbl_inputs = QtWidgets.QLabel("input_onnx_file_paths")
-        setFont(lbl_inputs, font_size=14, bold=True)
+        set_font(lbl_inputs, font_size=LARGE_FONT_SIZE, bold=True)
         layout_inputs_file_paths.addWidget(lbl_inputs)
 
         self.inputs_file_paths = {}
@@ -98,7 +99,7 @@ class CombineNetworkWidgets(QtWidgets.QDialog):
         #
         layout_op_prefixes_base = QtWidgets.QVBoxLayout()
         lbl_op_prefixes = QtWidgets.QLabel("op_prefixes_after_merging")
-        setFont(lbl_op_prefixes, font_size=14, bold=True)
+        set_font(lbl_op_prefixes, font_size=LARGE_FONT_SIZE, bold=True)
         layout_op_prefixes_base.addWidget(lbl_op_prefixes)
 
         layout_op_prefixes = QtWidgets.QFormLayout()

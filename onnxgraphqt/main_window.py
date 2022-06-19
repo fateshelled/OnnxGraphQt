@@ -40,7 +40,7 @@ from widgets.custom_properties_bin import CustomPropertiesBinWidget
 from graph.onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
 from utils.color import removePrintColor
-from utils.widgets import setFont, createIconButton
+from utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -93,9 +93,9 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         ]
         self.menu_bar = MenuBarWidget(menu_list=menu_list)
-        setFont(self, 16)
+        set_font(self, BASE_FONT_SIZE)
         for key, action in self.menu_bar.menu_actions.items():
-            setFont(action, 16)
+            set_font(action, BASE_FONT_SIZE)
         self.setMenuBar(self.menu_bar)
         # Search Widget
         self.search_widget = NodeSearchWidget(self.graph, parent=self)
@@ -231,9 +231,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCursor(cursor)
 
     def set_font_bold(self, widget: QtWidgets.QWidget, bold=True):
-        f = widget.font()
-        f.setBold(bold)
-        widget.setFont(f)
+        set_font(widget, bold=bold)
 
     def set_sidemenu_buttons_enabled(self, enable=True, current_button: QtWidgets.QPushButton=None):
 

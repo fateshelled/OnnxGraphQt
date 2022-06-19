@@ -1,7 +1,10 @@
 from typing import List
 from PySide2 import QtCore, QtWidgets, QtGui
 
-def setFont(widget: QtWidgets.QWidget, font_size:int=None, bold=False):
+BASE_FONT_SIZE = 16
+LARGE_FONT_SIZE = 18
+
+def set_font(widget: QtWidgets.QWidget, font_size:int=None, bold=False):
     f = widget.font()
     if font_size:
         f.setPixelSize(font_size)

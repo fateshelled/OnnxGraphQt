@@ -5,14 +5,17 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.opset import DEFAULT_OPSET
 from widgets.widgets_message_box import MessageBox
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 InitializeBatchsizeProperties = namedtuple("InitializeBatchsizeProperties",
     [
         "initialization_character_string",
     ])
 
+
 class InitializeBatchsizeWidget(QtWidgets.QDialog):
-    _DEFAULT_WINDOW_WIDTH = 300
+    _DEFAULT_WINDOW_WIDTH = 350
 
     def __init__(self, current_batchsize="-1", parent=None) -> None:
         super().__init__(parent)
@@ -23,17 +26,18 @@ class InitializeBatchsizeWidget(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
-        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # layout
         layout = QtWidgets.QVBoxLayout()
-        self.lbl_name = QtWidgets.QLabel("Input string to initialize batch size.")
+        lbl_name = QtWidgets.QLabel("Input string to initialize batch size.")
+        set_font(lbl_name, font_size=LARGE_FONT_SIZE, bold=True)
         self.ledit_character = QtWidgets.QLineEdit()
         self.ledit_character.setText("-1")
         self.ledit_character.setPlaceholderText("initialization_character_string")
-        layout.addWidget(self.lbl_name)
+        layout.addWidget(lbl_name)
         layout.addWidget(self.ledit_character)
 
         # add layout

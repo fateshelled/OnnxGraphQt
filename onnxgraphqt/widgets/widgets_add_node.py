@@ -5,10 +5,11 @@ from ast import literal_eval
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.widgets import setFont
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
 from utils.operators import onnx_opsets, opnames, OperatorVersion
 from graph.onnx_node_graph import OnnxGraph
 from widgets.widgets_message_box import MessageBox
+
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -17,6 +18,7 @@ AVAILABLE_DTYPES = [
     'int64',
     'str',
 ]
+
 
 AddNodeProperties = namedtuple("AddNodeProperties",
     [
@@ -29,14 +31,16 @@ AddNodeProperties = namedtuple("AddNodeProperties",
         "add_op_attributes",
     ])
 
+
 class AddNodeWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 500
     _MAX_VARIABLES_COUNT = 5
     _MAX_ATTRIBUTES_COUNT = 10
-    _LABEL_FONT_SIZE = 16
+    # _LABEL_FONT_SIZE = 16
 
     def __init__(self, current_opset:int, graph: OnnxGraph=None, parent=None) -> None:
         super().__init__(parent)
+        set_font(self, font_size=BASE_FONT_SIZE)
         self.setModal(False)
         self.setWindowTitle("add node")
         self.current_opset = current_opset
@@ -54,7 +58,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         labels_src_output = ["src_op", "src_op output", "add_op", "add_op input"]
         layout_src_output = QtWidgets.QVBoxLayout()
         lbl_src_output = QtWidgets.QLabel("connection_src_op_output_names")
-        setFont(lbl_src_output, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_src_output, font_size=LARGE_FONT_SIZE, bold=True)
         layout_src_output.addWidget(lbl_src_output)
         layout_src_output_form = QtWidgets.QFormLayout()
         self.src_output_names = {}
@@ -71,7 +75,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         labels_dest_input = ["add_op", "add_op output", "dst_op", "dst_op input"]
         layout_dest_input = QtWidgets.QVBoxLayout()
         lbl_dest_input = QtWidgets.QLabel("connection_dest_op_input_names")
-        setFont(lbl_dest_input, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_dest_input, font_size=LARGE_FONT_SIZE, bold=True)
         layout_dest_input.addWidget(lbl_dest_input)
         layout_dest_input_form = QtWidgets.QFormLayout()
         self.dest_input_names = {}
@@ -98,9 +102,9 @@ class AddNodeWidgets(QtWidgets.QDialog):
         self.add_op_name = QtWidgets.QLineEdit()
         self.add_op_name.setPlaceholderText("Name of op to be added")
         lbl_add_op_name = QtWidgets.QLabel("add_op_name")
-        setFont(lbl_add_op_name, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_add_op_name, font_size=LARGE_FONT_SIZE, bold=True)
         lbl_add_op_type = QtWidgets.QLabel("add_op_type")
-        setFont(lbl_add_op_type, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_add_op_type, font_size=LARGE_FONT_SIZE, bold=True)
         layout_op.addRow(lbl_add_op_name, self.add_op_name)
         layout_op.addRow(lbl_add_op_type, self.add_op_type)
 
@@ -127,7 +131,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
 
         layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
         lbl_add_input_valiables = QtWidgets.QLabel("add op input valiables [optional]")
-        setFont(lbl_add_input_valiables, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_add_input_valiables, font_size=LARGE_FONT_SIZE, bold=True)
         layout_valiables.addWidget(lbl_add_input_valiables)
         for key, widgets in self.add_input_valiables.items():
             layout_valiables.addWidget(widgets["base"])
@@ -139,7 +143,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
 
         layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
         lbl_add_output_valiables = QtWidgets.QLabel("add op output valiables [optional]")
-        setFont(lbl_add_output_valiables, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_add_output_valiables, font_size=LARGE_FONT_SIZE, bold=True)
         layout_valiables.addWidget(lbl_add_output_valiables)
         for key, widgets in self.add_output_valiables.items():
             layout_valiables.addWidget(widgets["base"])
@@ -153,7 +157,7 @@ class AddNodeWidgets(QtWidgets.QDialog):
         layout_attributes = QtWidgets.QVBoxLayout()
         layout_attributes.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
         lbl_add_atrributes = QtWidgets.QLabel("add op atrributes [optional]")
-        setFont(lbl_add_atrributes, font_size=self._LABEL_FONT_SIZE, bold=True)
+        set_font(lbl_add_atrributes, font_size=LARGE_FONT_SIZE, bold=True)
         layout_attributes.addWidget(lbl_add_atrributes)
         self.visible_add_attributes_count = 3
         self.add_op_attributes = {}

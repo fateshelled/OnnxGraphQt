@@ -13,6 +13,8 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
 from widgets.widgets_message_box import MessageBox
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
     [
@@ -60,7 +62,8 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         self.updateUI(self.graph)
 
     def initUI(self):
-        self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        # self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
         base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
@@ -70,11 +73,15 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         layout.setLabelAlignment(QtCore.Qt.AlignRight)
         self.cmb_opname = QtWidgets.QComboBox()
         self.cmb_opname.setEditable(True)
-        layout.addRow("opname", self.cmb_opname)
+        lbl_opname = QtWidgets.QLabel("opname")
+        set_font(lbl_opname, font_size=LARGE_FONT_SIZE, bold=True)
+        layout.addRow(lbl_opname, self.cmb_opname)
 
         # attributes
         self.layout_attributes = QtWidgets.QVBoxLayout()
-        self.layout_attributes.addWidget(QtWidgets.QLabel("attributes"))
+        lbl_attributes = QtWidgets.QLabel("attributes")
+        set_font(lbl_attributes, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_attributes.addWidget(lbl_attributes)
         self.visible_attributes_count = 3
         self.edit_attributes = {}
         for index in range(self._MAX_ATTRIBUTES_COUNT):
@@ -105,8 +112,9 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
 
         # input_const
         self.layout_const = QtWidgets.QVBoxLayout()
-        self.layout_const.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_const.addWidget(QtWidgets.QLabel("input_constants"))
+        lbl_input_constants = QtWidgets.QLabel("input_constants")
+        set_font(lbl_input_constants, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_const.addWidget(lbl_input_constants)
         self.visible_const_count = 3
         self.edit_const = {}
         for index in range(self._MAX_CONST_COUNT):
@@ -137,7 +145,9 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
 
         # delete_attributes
         self.layout_delete_attributes = QtWidgets.QVBoxLayout()
-        self.layout_delete_attributes.addWidget(QtWidgets.QLabel("delete_attributes"))
+        lbl_delete_attributes = QtWidgets.QLabel("delete_attributes")
+        set_font(lbl_delete_attributes, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_delete_attributes.addWidget(lbl_delete_attributes)
         self.visible_delete_attributes_count = 3
         self.delete_attributes = {}
         for index in range(self._MAX_DELETE_ATTRIBUTES_COUNT):
@@ -159,18 +169,21 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         layout_btn_delete_attributes.addWidget(self.btn_del_delete_attributes)
         self.layout_delete_attributes.addLayout(layout_btn_delete_attributes)
 
-        # add layout
-        base_layout.addLayout(layout)
-        base_layout.addLayout(self.layout_attributes)
-        base_layout.addLayout(self.layout_const)
-        base_layout.addLayout(self.layout_delete_attributes)
-
         # Dialog button
         btn = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok |
                                          QtWidgets.QDialogButtonBox.Cancel)
         btn.accepted.connect(self.accept)
         btn.rejected.connect(self.reject)
-        # layout.addWidget(btn)
+
+        # add layout
+        base_layout.addLayout(layout)
+        base_layout.addSpacing(10)
+        base_layout.addLayout(self.layout_attributes)
+        base_layout.addSpacing(10)
+        base_layout.addLayout(self.layout_const)
+        base_layout.addSpacing(10)
+        base_layout.addLayout(self.layout_delete_attributes)
+        base_layout.addSpacing(10)
         base_layout.addWidget(btn)
 
         self.set_visible_attributes()

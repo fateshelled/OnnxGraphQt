@@ -4,14 +4,17 @@ from PySide2 import QtCore, QtWidgets, QtGui
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from widgets.widgets_message_box import MessageBox
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 RenameOpProperties = namedtuple("RenameOpProperties",
     [
         "old_new",
     ])
 
+
 class RenameOpWidget(QtWidgets.QDialog):
-    _DEFAULT_WINDOW_WIDTH = 350
+    _DEFAULT_WINDOW_WIDTH = 420
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -21,14 +24,15 @@ class RenameOpWidget(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
-        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # layout
         layout = QtWidgets.QVBoxLayout()
-        self.lbl_name = QtWidgets.QLabel("Replace substring 'old' in opname with 'new'.")
-        layout.addWidget(self.lbl_name)
+        lbl_name = QtWidgets.QLabel("Replace substring 'old' in opname with 'new'.")
+        set_font(lbl_name, font_size=LARGE_FONT_SIZE, bold=True)
+        layout.addWidget(lbl_name)
 
         layout_ledit = QtWidgets.QHBoxLayout()
         self.ledit_old = QtWidgets.QLineEdit()

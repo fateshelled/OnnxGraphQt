@@ -4,11 +4,14 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 import numpy as np
+
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from widgets.widgets_message_box import MessageBox
 from utils.opset import DEFAULT_OPSET
 from utils.operators import onnx_opsets, opnames, OperatorVersion, latest_opset
-from widgets.widgets_message_box import MessageBox
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 AVAILABLE_DTYPES = [
     'float32',
@@ -17,6 +20,7 @@ AVAILABLE_DTYPES = [
     'int64',
     'str',
 ]
+
 
 GenerateOperatorProperties = namedtuple("GenerateOperatorProperties",
     [
@@ -42,7 +46,8 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.initUI(opset)
 
     def initUI(self, opset:int):
-        self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        # self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
         base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
@@ -52,17 +57,23 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         layout.setLabelAlignment(QtCore.Qt.AlignRight)
         self.cmb_optype = QtWidgets.QComboBox()
         self.cmb_optype.setEditable(True)
-        layout.addRow("op_type", self.cmb_optype)
+        lbl_op_type = QtWidgets.QLabel("op_type")
+        set_font(lbl_op_type, font_size=LARGE_FONT_SIZE, bold=True)
+        layout.addRow(lbl_op_type, self.cmb_optype)
 
         self.cmb_opset = QtWidgets.QComboBox()
         self.cmb_opset.setEditable(True)
         for i in range(1,latest_opset + 1):
             self.cmb_opset.addItem(str(i), i)
-        layout.addRow("opset", self.cmb_opset)
+        lbl_opset = QtWidgets.QLabel("opset")
+        set_font(lbl_opset, font_size=LARGE_FONT_SIZE, bold=True)
+        layout.addRow(lbl_opset, self.cmb_opset)
 
         self.tb_opname = QtWidgets.QLineEdit()
         self.tb_opname.setText("")
-        layout.addRow("op_name", self.tb_opname)
+        lbl_op_name = QtWidgets.QLabel("op_name")
+        set_font(lbl_op_name, font_size=LARGE_FONT_SIZE, bold=True)
+        layout.addRow(lbl_op_name, self.tb_opname)
 
         # variables
         self.layout_valiables = QtWidgets.QVBoxLayout()
@@ -86,7 +97,9 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.btn_del_output_valiables.clicked.connect(self.btn_del_output_valiables_clicked)
 
         self.layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_valiables.addWidget(QtWidgets.QLabel("input valiables [optional]"))
+        lbl_inp_val = QtWidgets.QLabel("input valiables [optional]")
+        set_font(lbl_inp_val, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_valiables.addWidget(lbl_inp_val)
         for key, widgets in self.add_input_valiables.items():
             self.layout_valiables.addWidget(widgets["base"])
         layout_btn_input = QtWidgets.QHBoxLayout()
@@ -95,7 +108,9 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.layout_valiables.addLayout(layout_btn_input)
 
         self.layout_valiables.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_valiables.addWidget(QtWidgets.QLabel("output valiables [optional]"))
+        lbl_out_val = QtWidgets.QLabel("output valiables [optional]")
+        set_font(lbl_out_val, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_valiables.addWidget(lbl_out_val)
         for key, widgets in self.add_output_valiables.items():
             self.layout_valiables.addWidget(widgets["base"])
         layout_btn_output = QtWidgets.QHBoxLayout()
@@ -106,7 +121,9 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         # add_attributes
         self.layout_attributes = QtWidgets.QVBoxLayout()
         self.layout_attributes.addItem(QtWidgets.QSpacerItem(self._DEFAULT_WINDOW_WIDTH, 20))
-        self.layout_attributes.addWidget(QtWidgets.QLabel("atrributes [optional]"))
+        lbl_atrributes = QtWidgets.QLabel("atrributes [optional]")
+        set_font(lbl_atrributes, font_size=LARGE_FONT_SIZE, bold=True)
+        self.layout_attributes.addWidget(lbl_atrributes)
         self.visible_attributes_count = 3
         self.attributes = {}
         for index in range(self._MAX_ATTRIBUTES_COUNT):

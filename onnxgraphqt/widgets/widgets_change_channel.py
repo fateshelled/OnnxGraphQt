@@ -6,14 +6,17 @@ from ast import literal_eval
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from graph.onnx_node_graph import OnnxGraph
-from utils.color import PrintColor
 from widgets.widgets_message_box import MessageBox
+from utils.color import PrintColor
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 ChangeChannelProperties = namedtuple("ChangeChannelProperties",
     [
         "input_op_names_and_order_dims",
         "channel_change_inputs",
     ])
+
 
 class ChangeChannelWidgets(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 300
@@ -36,6 +39,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
         base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
@@ -63,7 +67,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
                                       'dimension_number_representing_the_channel must specify' +
                                       'the dimension position after the change in input_op_names_and_order_dims.' +
                                       'For example, dimension_number_representing_the_channel is 1 for NCHW and 3 for NHWC.')
-
+        set_font(lbl_channel_change, font_size=LARGE_FONT_SIZE, bold=True)
         self.layout_change_channel.addWidget(lbl_channel_change)
         for i in range(self._MAX_CHANGE_ORDER_DIM_INPUTS_COUNT):
             self.layout_change_channel.addWidget(self.channel_change_inputs[i]["base"])
@@ -73,6 +77,7 @@ class ChangeChannelWidgets(QtWidgets.QDialog):
                                   "the order of the dimensions after the change.\n" + 
                                   "The name of the input_op to be dimensionally changed\n" +
                                   "can be specified multiple times.")
+        set_font(lbl_order_dims, font_size=LARGE_FONT_SIZE, bold=True)
         self.layout_order_dims.addWidget(lbl_order_dims)
         for i in range(self._MAX_CHANNEL_CHANGE_INPUTS_COUNT):
             self.layout_order_dims.addWidget(self.input_op_names_and_order_dims[i]["base"])

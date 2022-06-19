@@ -2,7 +2,12 @@ from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
+
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
 from widgets.widgets_message_box import MessageBox
+
 
 ConstantShrinkProperties = namedtuple("ConstantShrinkProperties",
     [
@@ -28,22 +33,30 @@ class ConstantShrinkWidgets(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
 
         # Form layout
         layout = QtWidgets.QFormLayout()
         layout.setLabelAlignment(QtCore.Qt.AlignRight)
-        self.lbl_mode = QtWidgets.QLabel("mode")
+        lbl_mode = QtWidgets.QLabel("mode")
+        set_font(lbl_mode, font_size=LARGE_FONT_SIZE, bold=True)
         self.cmb_mode = QtWidgets.QComboBox()
         for m in MODE:
             self.cmb_mode.addItem(m)
 
+        lbl_forced_extraction_op_names = QtWidgets.QLabel("forced_extraction_op_names")
+        set_font(lbl_forced_extraction_op_names, font_size=LARGE_FONT_SIZE, bold=True)
         self.tb_forced_extraction_op_names = QtWidgets.QLineEdit()
+
+        lbl_forced_extraction_constant_names = QtWidgets.QLabel("forced_extraction_constant_names")
+        set_font(lbl_forced_extraction_constant_names, font_size=LARGE_FONT_SIZE, bold=True)
         self.tb_forced_extraction_constant_names = QtWidgets.QLineEdit()
-        layout.addRow("mode", self.cmb_mode)
-        layout.addRow("forced_extraction_op_names", self.tb_forced_extraction_op_names)
-        layout.addRow("forced_extraction_constant_names", self.tb_forced_extraction_constant_names)
+
+        layout.addRow(lbl_mode, self.cmb_mode)
+        layout.addRow(lbl_forced_extraction_op_names, self.tb_forced_extraction_op_names)
+        layout.addRow(lbl_forced_extraction_constant_names, self.tb_forced_extraction_constant_names)
 
         layout2 = QtWidgets.QVBoxLayout()
         self.check_auto_downcast = QtWidgets.QCheckBox("auto_downcast")

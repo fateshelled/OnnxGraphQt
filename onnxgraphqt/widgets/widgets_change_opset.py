@@ -4,13 +4,16 @@ from PySide2 import QtCore, QtWidgets, QtGui
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.opset import DEFAULT_OPSET
 from widgets.widgets_message_box import MessageBox
+from utils.opset import DEFAULT_OPSET
+from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
 
 ChangeOpsetProperties = namedtuple("ChangeOpsetProperties",
     [
         "opset",
     ])
+
 
 class ChangeOpsetWidget(QtWidgets.QDialog):
     _DEFAULT_WINDOW_WIDTH = 300
@@ -24,6 +27,7 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
 
     def initUI(self):
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
         base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
@@ -35,7 +39,9 @@ class ChangeOpsetWidget(QtWidgets.QDialog):
         self.ledit_opset.setText(str(self.current_opset))
         self.ledit_opset.setPlaceholderText("opset")
 
-        layout.addRow("opset number to be changed", self.ledit_opset)
+        label = QtWidgets.QLabel("opset number to be changed")
+        set_font(label, font_size=LARGE_FONT_SIZE, bold=True)
+        layout.addRow(label, self.ledit_opset)
 
         # add layout
         base_layout.addLayout(layout)
