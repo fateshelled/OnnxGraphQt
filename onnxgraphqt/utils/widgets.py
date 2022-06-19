@@ -36,6 +36,6 @@ def createIconButton(text:str, icon_path: str, icon_size:List[int]=[25, 25], fon
     label = QtWidgets.QLabel(text=text)
     label.setMargin(0)
     label.setAlignment(QtCore.Qt.AlignRight)
-    setFont(label, font_size=font_size)
+    set_font(label, font_size=font_size)
     button_layout.addWidget(label)
     return button
