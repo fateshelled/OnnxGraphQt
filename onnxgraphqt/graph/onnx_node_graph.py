@@ -97,12 +97,18 @@ class ONNXNodeGraph(NodeGraph):
         # self._register_builtin_nodes()
         self._wire_signals()
 
-    def __init__(self, name:str, opset:int, doc_string:str, import_domains:str, parent=None, **kwargs):
+    def __init__(self, name: str, opset: int, doc_string: str, import_domains: str,
+                 producer_name: str, producer_version: str, ir_version: int, model_version: int,
+                 parent=None, **kwargs):
         self.__super__init__(parent, **kwargs)
         self.name = name
         self.opset = opset
         self.doc_string = doc_string
         self.import_domains = import_domains
+        self.producer_name = producer_name
+        self.producer_version = producer_version
+        self.ir_version = ir_version
+        self.model_version = model_version
         self.register_nodes([
             ONNXNode,
             ONNXInput,
@@ -254,7 +260,7 @@ class ONNXNodeGraph(NodeGraph):
     def load_onnx_graph(self, onnx_graph, push_undo=False):
         ONNXtoNodeGraph(onnx_graph, self, push_undo=push_undo)
 
-    def to_onnx_gs(self)->gs.Graph:
+    def to_onnx_gs(self) -> gs.Graph:
         return NodeGraphtoONNX(self)
 
     def to_onnx(self, non_verbose=True)->onnx.ModelProto:
@@ -262,6 +268,10 @@ class ONNXNodeGraph(NodeGraph):
         ret = None
         try:
             ret = gs.export_onnx(graph, do_type_check=True)
+            ret.producer_name = self.producer_name
+            ret.producer_version = self.producer_version
+            ret.ir_version = self.ir_version
+            ret.model_version = self.model_version
             onnx.checker.check_model(
                 model=ret,
                 full_check=False
@@ -320,7 +330,7 @@ def NodeGraphToEdges(graph:ONNXNodeGraph, reverse=True)->List:
     return ret
 
 
-def NodeGraphtoONNX(graph:ONNXNodeGraph)->gs.Graph:
+def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
     input_names = []
     output_names = []
     input_variables = []

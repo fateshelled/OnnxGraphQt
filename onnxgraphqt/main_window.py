@@ -128,15 +128,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(central_widget)
 
         # Label
-        layout_lbl = QtWidgets.QVBoxLayout()
+        layout_lbl = QtWidgets.QFormLayout()
 
+        lbl_graph_opset_ = QtWidgets.QLabel("opset")
+        lbl_graph_name_ = QtWidgets.QLabel("name")
+        lbl_graph_doc_string_ = QtWidgets.QLabel("doc_string")
+        lbl_graph_ir_version_ = QtWidgets.QLabel("ir_version")
+        self.set_font_bold(lbl_graph_opset_)
+        self.set_font_bold(lbl_graph_name_)
+        self.set_font_bold(lbl_graph_doc_string_)
+        self.set_font_bold(lbl_graph_ir_version_)
         self.lbl_graph_opset = QtWidgets.QLabel()
         self.lbl_graph_name = QtWidgets.QLabel()
         self.lbl_graph_doc_string = QtWidgets.QLabel()
+        self.lbl_graph_ir_version = QtWidgets.QLabel()
 
-        layout_lbl.addWidget(self.lbl_graph_name)
-        layout_lbl.addWidget(self.lbl_graph_opset)
-        layout_lbl.addWidget(self.lbl_graph_doc_string)
+        layout_lbl.addRow(lbl_graph_name_, self.lbl_graph_name)
+        layout_lbl.addRow(lbl_graph_opset_, self.lbl_graph_opset)
+        layout_lbl.addRow(lbl_graph_ir_version_, self.lbl_graph_ir_version)
+        layout_lbl.addRow(lbl_graph_doc_string_, self.lbl_graph_doc_string)
         self.layout_main_properties.addLayout(layout_lbl)
 
         # Operator Button
@@ -202,9 +212,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.graph.fit_to_selection()
         self.graph.reset_selection()
 
-        self.lbl_graph_opset.setText(f"opset: {self.graph.opset}")
-        self.lbl_graph_name.setText(f"name: {self.graph.name}")
-        self.lbl_graph_doc_string.setText(f"doc_string: {self.graph.doc_string}")
+        self.lbl_graph_opset.setText(f"{self.graph.opset}")
+        self.lbl_graph_ir_version.setText(f"{self.graph.ir_version}")
+        self.lbl_graph_name.setText(f"{self.graph.name}")
+        self.lbl_graph_doc_string.setText(f"{self.graph.doc_string}")
 
         if self.properties_bin is not None:
             self.properties_bin.hide()
@@ -291,8 +302,12 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.graph is None:
                 self.graph = ONNXNodeGraph(name="onnx_graph_qt",
                                            opset=DEFAULT_OPSET,
-                                           doc_string=None,
-                                           import_domains=None)
+                                           doc_string="",
+                                           import_domains=None,
+                                           producer_name="onnx_graph_qt",
+                                           producer_version=0,
+                                           ir_version=8,
+                                           model_version=0)
             return
 
         onnx_graph = None
@@ -314,12 +329,20 @@ class MainWindow(QtWidgets.QMainWindow):
             self.graph = ONNXNodeGraph(name=onnx_graph.name,
                                        opset=onnx_graph.opset,
                                        doc_string=onnx_graph.doc_string,
-                                       import_domains=onnx_graph.import_domains)
+                                       import_domains=onnx_graph.import_domains,
+                                       producer_name=onnx_model.producer_name,
+                                       producer_version=onnx_model.producer_version,
+                                       ir_version=onnx_model.ir_version,
+                                       model_version=onnx_model.model_version)
         else:
             self.graph.name = onnx_graph.name
             self.graph.opset = onnx_graph.opset
             self.graph.doc_string = onnx_graph.doc_string
             self.graph.import_domains = onnx_graph.import_domains
+            self.graph.producer_name=onnx_model.producer_name
+            self.graph.producer_version=onnx_model.producer_version
+            self.graph.ir_version=onnx_model.ir_version
+            self.graph.model_version=onnx_model.model_version
 
         if clear_undo_stack:
             self.graph.clear_undo_stack()
