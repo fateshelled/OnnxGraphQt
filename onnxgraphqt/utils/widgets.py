@@ -3,6 +3,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 
 BASE_FONT_SIZE = 16
 LARGE_FONT_SIZE = 18
+GRAPH_FONT_SIZE = 32
 
 def set_font(widget: QtWidgets.QWidget, font_size:int=None, bold=False):
     f = widget.font()

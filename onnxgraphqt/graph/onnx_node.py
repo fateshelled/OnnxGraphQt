@@ -34,6 +34,7 @@ from utils.color import (
     OUTPUT_NODE_COLOR,
     get_node_color,
 )
+from utils.widgets import set_font, GRAPH_FONT_SIZE
 
 
 @dataclass
@@ -62,6 +63,7 @@ class ONNXNode(BaseNode):
         self.add_input('multi in', multi_input=True)
         # create node outputs.
         self.add_output('multi out', multi_output=True)
+        self.set_font()
 
     def set_attrs(self, attrs:OrderedDict, push_undo=False):
         self.attrs = attrs
@@ -118,6 +120,10 @@ class ONNXNode(BaseNode):
         # return super().set_color(*color)
         return self.set_property('color', (color[0], color[1], color[2], 255), push_undo)
 
+    def set_font(self, font_size=GRAPH_FONT_SIZE, bold=False):
+        set_font(self.view.text_item, font_size=font_size, bold=bold)
+
+
 
 class ONNXInput(BaseNode):
     # unique node identifier.
@@ -137,6 +143,7 @@ class ONNXInput(BaseNode):
         # create node outputs.
         self.add_output('multi out', multi_output=True)
         self.set_color()
+        self.set_font()
 
     def get_node_name(self):
         self.node_name = self.get_property("node_name")
@@ -175,6 +182,9 @@ class ONNXInput(BaseNode):
         # return super().set_color(*INPUT_NODE_COLOR)
         return self.set_property('color', (INPUT_NODE_COLOR[0], INPUT_NODE_COLOR[1], INPUT_NODE_COLOR[2], 255), push_undo)
 
+    def set_font(self, font_size=GRAPH_FONT_SIZE, bold=False):
+        set_font(self.view.text_item, font_size=font_size, bold=bold)
+
 
 class ONNXOutput(BaseNode):
     # unique node identifier.
@@ -194,6 +204,7 @@ class ONNXOutput(BaseNode):
         # create node inputs.
         self.add_input('multi in', multi_input=True)
         self.set_color()
+        self.set_font()
 
     def get_node_name(self):
         self.node_name = self.get_property("node_name")
@@ -230,3 +241,6 @@ class ONNXOutput(BaseNode):
     def set_color(self):
         self.view.text_color = COLOR_FONT + [255]
         return super().set_color(*INPUT_NODE_COLOR)
+
+    def set_font(self, font_size=GRAPH_FONT_SIZE, bold=False):
+        set_font(self.view.text_item, font_size=font_size, bold=bold)
