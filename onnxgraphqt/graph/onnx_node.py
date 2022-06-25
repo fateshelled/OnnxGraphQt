@@ -60,9 +60,9 @@ class ONNXNode(BaseNode):
         self.onnx_outputs = []
 
         # create node inputs.
-        self.add_input('multi in', multi_input=True)
+        self.input_port = self.add_input('multi in', multi_input=True)
         # create node outputs.
-        self.add_output('multi out', multi_output=True)
+        self.output_port = self.add_output('multi out', multi_output=True)
         self.set_font()
 
     def set_attrs(self, attrs:OrderedDict, push_undo=False):
@@ -141,7 +141,7 @@ class ONNXInput(BaseNode):
         self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("output_names", self.output_names, widget_type=NODE_PROP_QTEXTEDIT)
         # create node outputs.
-        self.add_output('multi out', multi_output=True)
+        self.output_port = self.add_output('multi out', multi_output=True)
         self.set_color()
         self.set_font()
 
@@ -202,7 +202,7 @@ class ONNXOutput(BaseNode):
         self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
         self.create_property("input_names", self.input_names, widget_type=NODE_PROP_QTEXTEDIT)
         # create node inputs.
-        self.add_input('multi in', multi_input=True)
+        self.input_port = self.add_input('multi in', multi_input=True)
         self.set_color()
         self.set_font()
 

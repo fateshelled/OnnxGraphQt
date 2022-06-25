@@ -46,6 +46,7 @@ from utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,
 )
 from utils.style import set_context_menu_style
+from utils.widgets import pipe_paint
 from .onnx_node import (
     ONNXInput,
     ONNXOutput,
@@ -310,6 +311,27 @@ class ONNXNodeGraph(NodeGraph):
 
     def auto_layout(self, push_undo=True):
         auto_layout_nodes(self, push_undo=push_undo)
+
+    def update_pipe_paint(self):
+        nodes = self.all_nodes()
+        for node in nodes:
+            if isinstance(node, ONNXNode):
+                pipes = node.output_port.view.connected_pipes
+                for pipe in pipes:
+                    def paint(pipe, text):
+                        def func(painter, option, widget):
+                            return pipe_paint(pipe, painter, option, widget, text)
+                        return func
+                    attrs = node.get_attrs()
+                    pipe.paint = paint(pipe, f"")
+            if isinstance(node, ONNXInput):
+                pipes = node.output_port.view.connected_pipes
+                for pipe in pipes:
+                    def paint(pipe, text):
+                        def func(painter, option, widget):
+                            return pipe_paint(pipe, painter, option, widget, text)
+                        return func
+                    pipe.paint = paint(pipe, f"{node.get_shape()}")
 
 def NodeGraphToEdges(graph:ONNXNodeGraph, reverse=True)->List:
     ret = []

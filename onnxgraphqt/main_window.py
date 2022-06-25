@@ -207,6 +207,7 @@ class MainWindow(QtWidgets.QMainWindow):
         t0 = time.time()
         self.set_cursor_busy()
 
+        self.graph.update_pipe_paint()
         self.graph.auto_layout(push_undo=False)
         if update_layout:
             self.graph.fit_to_selection()
