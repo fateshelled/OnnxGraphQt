@@ -23,7 +23,7 @@ node.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
 graph.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
 pipe.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
 
-from NodeGraphQt import NodeGraph, BaseNode
+from NodeGraphQt import NodeGraph, BaseNode, Port
 from NodeGraphQt.base.node import NodeObject
 from NodeGraphQt.base.factory import NodeFactory
 from NodeGraphQt.base.model import NodeGraphModel
@@ -548,17 +548,17 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph, push_undo=Fa
         if key in input_names:
             for inp in node_inputs:
                 # qt_io_nodes[key].set_output(0, qt_nodes[inp].input(0))
-                src_port = qt_io_nodes[key].output(0)
+                src_port: Port = qt_io_nodes[key].output(0)
                 src_port.connect_to(qt_nodes[inp].input(0), push_undo=push_undo)
         if key in output_names:
             for out in node_outputs:
                 # qt_nodes[out].set_output(0, qt_io_nodes[key].input(0))
-                src_port = qt_nodes[out].output(0)
+                src_port: Port = qt_nodes[out].output(0)
                 src_port.connect_to(qt_io_nodes[key].input(0), push_undo=push_undo)
         for inp in node_inputs:
             for out in node_outputs:
                 # qt_nodes[out].set_output(0, qt_nodes[inp].input(0))
-                src_port = qt_nodes[out].output(0)
+                src_port: Port = qt_nodes[out].output(0)
                 src_port.connect_to(qt_nodes[inp].input(0), push_undo=push_undo)
     # Lock Node and Port
     for n in node_graph.all_nodes():

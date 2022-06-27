@@ -125,7 +125,6 @@ def pipe_paint(pipe, painter, option, widget, text=""):
             painter.setPen(QtCore.Qt.black)
             set_font(painter, font_size=20)
             painter.drawText(QtCore.QRectF(cen_x, cen_y, 200, 100), text)
-            # painter.drawText(tgt_pt.x(), tgt_pt.y(), 200, 200, QtCore.Qt.AlignLeft, text)
 
 
     # QPaintDevice: Cannot destroy paint device that is being painted.
