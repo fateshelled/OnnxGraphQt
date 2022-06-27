@@ -2,6 +2,7 @@ from typing import Callable, Union, List
 from dataclasses import dataclass
 from PySide2 import QtCore, QtWidgets, QtGui
 
+
 @dataclass
 class SubMenu:
     name: str

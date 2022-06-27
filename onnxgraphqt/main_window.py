@@ -76,7 +76,7 @@ class MainWindow(QtWidgets.QMainWindow):
         icon_dir = os.path.join(os.path.dirname(__file__), "data/icon")
         menu_list = [
             Menu(
-                "File",
+                "File (&F)",
                 [
                     SubMenu("Open", self.btnOpenONNX_clicked, None),
                     SubMenu("Export", self.btnExportONNX_clicked, None),
@@ -85,10 +85,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 ]
             ),
             Menu(
-                "View",
+                "View (&V)",
                 [
-                    SubMenu("Search", self.btnSearch_clicked, None),
-                    SubMenu("Auto Layout", self.btnAutoLayout_clicked, None)
+                    SubMenu("&Search", self.btnSearch_clicked, None),
+                    SubMenu("Auto &Layout", self.btnAutoLayout_clicked, None),
                 ]
             ),
         ]
