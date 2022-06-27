@@ -318,20 +318,20 @@ class ONNXNodeGraph(NodeGraph):
             if isinstance(node, ONNXNode):
                 pipes = node.output_port.view.connected_pipes
                 for pipe in pipes:
-                    def paint(pipe, text):
+                    def paint(pipe, text=""):
                         def func(painter, option, widget):
                             return pipe_paint(pipe, painter, option, widget, text)
                         return func
                     attrs = node.get_attrs()
-                    pipe.paint = paint(pipe, f"")
+                    pipe.paint = paint(pipe)
             if isinstance(node, ONNXInput):
                 pipes = node.output_port.view.connected_pipes
                 for pipe in pipes:
-                    def paint(pipe, text):
+                    def paint(pipe, text=""):
                         def func(painter, option, widget):
                             return pipe_paint(pipe, painter, option, widget, text)
                         return func
-                    pipe.paint = paint(pipe, f"{node.get_shape()}")
+                    pipe.paint = paint(pipe)
 
 def NodeGraphToEdges(graph:ONNXNodeGraph, reverse=True)->List:
     ret = []
