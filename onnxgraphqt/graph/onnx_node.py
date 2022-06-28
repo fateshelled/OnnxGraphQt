@@ -22,6 +22,7 @@ from NodeGraphQt.constants import (
     NODE_PROP_FLOAT,
     NODE_PROP_INT,
     NODE_PROP_BUTTON,
+    NODE_LAYOUT_VERTICAL,
 )
 
 import sys, os
@@ -35,6 +36,7 @@ from utils.color import (
     get_node_color,
 )
 from utils.widgets import set_font, GRAPH_FONT_SIZE
+from widgets.custom_nodeitem_vertical import CustomNodeItemVertical
 
 
 @dataclass
@@ -52,7 +54,11 @@ class ONNXNode(BaseNode):
     NODE_NAME = 'onnxnode'
 
     def __init__(self):
-        super(ONNXNode, self).__init__()
+        super(ONNXNode, self).__init__(
+            {
+                NODE_LAYOUT_VERTICAL: CustomNodeItemVertical
+            }
+        )
         self.attrs = OrderedDict()
         self.node_name = ""
         self.op = ""
@@ -131,7 +137,11 @@ class ONNXInput(BaseNode):
     # initial default node name.
     NODE_NAME = 'input'
     def __init__(self):
-        super(ONNXInput, self).__init__()
+        super(ONNXInput, self).__init__(
+            {
+                NODE_LAYOUT_VERTICAL: CustomNodeItemVertical
+            }
+        )
         self.node_name = ""
         self.shape = []
         self.dtype = ""
@@ -192,7 +202,11 @@ class ONNXOutput(BaseNode):
     # initial default node name.
     NODE_NAME = 'output'
     def __init__(self):
-        super(ONNXOutput, self).__init__()
+        super(ONNXOutput, self).__init__(
+            {
+                NODE_LAYOUT_VERTICAL: CustomNodeItemVertical
+            }
+        )
         self.node_name = ""
         self.shape = []
         self.dtype:str = ""
