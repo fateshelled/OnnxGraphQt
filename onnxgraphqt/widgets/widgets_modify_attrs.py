@@ -53,13 +53,13 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
     _MAX_DELETE_ATTRIBUTES_COUNT = 5
     _MAX_CONST_COUNT = 4
 
-    def __init__(self, graph: OnnxGraph=None, parent=None) -> None:
+    def __init__(self, graph: OnnxGraph=None, selected_node: str="", parent=None) -> None:
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("modify attributes")
         self.graph = graph
         self.initUI()
-        self.updateUI(self.graph)
+        self.updateUI(self.graph, selected_node)
 
     def initUI(self):
         # self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
@@ -191,7 +191,7 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
         self.set_visible_delete_attributes()
         self.setLayout(base_layout)
 
-    def updateUI(self, graph: OnnxGraph):
+    def updateUI(self, graph: OnnxGraph, selected_node: str=""):
 
         self.cmb_opname.clear()
         if self.graph:
@@ -253,6 +253,10 @@ class ModifyAttrsWidgets(QtWidgets.QDialog):
                 self.edit_const[index]["name"].currentIndexChanged.connect(on_change(index))
                 self.edit_const[index]["value"].setText("")
             self.cmb_opname.currentIndexChanged.connect(cmb_opname_currentIndexChanged)
+
+        if selected_node:
+            if selected_node in self.graph.nodes.keys():
+                self.cmb_opname.setCurrentText(selected_node)
 
     def set_visible_attributes(self):
         for key, widgets in self.edit_attributes.items():

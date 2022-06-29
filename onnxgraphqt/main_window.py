@@ -862,7 +862,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_sidemenu_buttons_enabled(False, btn)
         msg_title = "Modify Attributes and Constants"
 
-        self.current_widgets = ModifyAttrsWidgets(parent=self, graph=self.graph.to_data())
+        selected_nodes = self.graph.selected_nodes()
+        selected_node = ""
+        if len(selected_nodes) > 0:
+            selected_node = selected_nodes[0].node_name
+        self.current_widgets = ModifyAttrsWidgets(parent=self, graph=self.graph.to_data(), selected_node=selected_node)
         while True:
             self.current_widgets.show()
             if self.current_widgets.exec_():
