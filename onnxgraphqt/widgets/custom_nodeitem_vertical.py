@@ -5,6 +5,7 @@ from NodeGraphQt.constants import NodeEnum
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.color import NODE_BG_COLOR, NODE_SELECTED_BORDER_COLOR
+from utils.widgets import set_font
 
 class CustomNodeItemVertical(NodeItemVertical):
     def __init__(self, name='node', parent=None):
@@ -55,8 +56,10 @@ class CustomNodeItemVertical(NodeItemVertical):
             painter.setPen(QtCore.Qt.black)
         else:
             painter.setPen(QtCore.Qt.white)
-        # set_font(painter, font_size=20)
+        if self.selected:
+            set_font(painter, bold=True)
         painter.drawText(QtCore.QRectF(5, 5, rect.width(), rect.height()), self._display_name)
+        set_font(painter, bold=False)
 
         # light overlay on background when selected.
         if self.selected:
