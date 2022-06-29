@@ -1,72 +1,79 @@
 COLOR_WHITE = [235, 235, 235]
+COLOR_PALEGRAY = [230, 230, 230]
 COLOR_LIGHTGRAY = [200, 200, 203]
-COLOR_GRAY = [132, 145, 158]
+COLOR_GRAY = [127, 135, 143]
+COLOR_DARKGRAY = [50, 55, 60]
 COLOR_BLACK = [20, 20, 20]
 
 COLOR_RED = [112, 41, 33]
 COLOR_GREEN = [51, 85, 51]
 COLOR_BLUE = [51, 85, 136]
 COLOR_BROWN = [89, 66, 59]
+COLOR_YELLOW = [255, 255, 153]
 
-COLOR_BG = COLOR_LIGHTGRAY
+COLOR_BG = COLOR_PALEGRAY
 COLOR_FONT = COLOR_BLACK
 COLOR_GRID = COLOR_GRAY
-INPUT_NODE_COLOR = COLOR_WHITE
-OUTPUT_NODE_COLOR = COLOR_WHITE
+INPUT_NODE_COLOR = COLOR_LIGHTGRAY
+OUTPUT_NODE_COLOR = COLOR_LIGHTGRAY
 DEFAULT_COLOR = COLOR_GRAY
+
+NODE_BG_COLOR = COLOR_WHITE
+NODE_BORDER_COLOR = COLOR_DARKGRAY
+NODE_SELECTED_BORDER_COLOR = COLOR_YELLOW
 
 NODE_COLORS = {
     # Generic
-    'Identity': COLOR_BLACK,
+    'Identity': COLOR_DARKGRAY,
     # Constant
-    'Constant': COLOR_BLACK,
-    'ConstantOfShape': COLOR_BLACK,
+    'Constant': COLOR_DARKGRAY,
+    'ConstantOfShape': COLOR_DARKGRAY,
     # Math
-    'Add': COLOR_BLACK,
-    'Sub': COLOR_BLACK,
-    'Mul': COLOR_BLACK,
-    'Div': COLOR_BLACK,
-    'Sqrt': COLOR_BLACK,
-    'Reciprocal': COLOR_BLACK,
-    'Pow': COLOR_BLACK,
-    'Exp': COLOR_BLACK,
-    'Log': COLOR_BLACK,
-    'Abs': COLOR_BLACK,
-    'Neg': COLOR_BLACK,
-    'Ceil': COLOR_BLACK,
-    'Floor': COLOR_BLACK,
+    'Add': COLOR_DARKGRAY,
+    'Sub': COLOR_DARKGRAY,
+    'Mul': COLOR_DARKGRAY,
+    'Div': COLOR_DARKGRAY,
+    'Sqrt': COLOR_DARKGRAY,
+    'Reciprocal': COLOR_DARKGRAY,
+    'Pow': COLOR_DARKGRAY,
+    'Exp': COLOR_DARKGRAY,
+    'Log': COLOR_DARKGRAY,
+    'Abs': COLOR_DARKGRAY,
+    'Neg': COLOR_DARKGRAY,
+    'Ceil': COLOR_DARKGRAY,
+    'Floor': COLOR_DARKGRAY,
     'Clip': COLOR_RED,
-    'Erf': COLOR_BLACK,
-    'IsNan': COLOR_BLACK,
-    'IsInf': COLOR_BLACK,
-    'Sign': COLOR_BLACK,
+    'Erf': COLOR_DARKGRAY,
+    'IsNan': COLOR_DARKGRAY,
+    'IsInf': COLOR_DARKGRAY,
+    'Sign': COLOR_DARKGRAY,
     # Logical
-    'Greater': COLOR_BLACK,
-    'Less': COLOR_BLACK,
-    'Equal': COLOR_BLACK,
-    'Not': COLOR_BLACK,
-    'And': COLOR_BLACK,
-    'Or': COLOR_BLACK,
-    'Xor': COLOR_BLACK,
+    'Greater': COLOR_DARKGRAY,
+    'Less': COLOR_DARKGRAY,
+    'Equal': COLOR_DARKGRAY,
+    'Not': COLOR_DARKGRAY,
+    'And': COLOR_DARKGRAY,
+    'Or': COLOR_DARKGRAY,
+    'Xor': COLOR_DARKGRAY,
     # Trigonometric
-    'Sin': COLOR_BLACK,
-    'Cos': COLOR_BLACK,
-    'Tan': COLOR_BLACK,
-    'Asin': COLOR_BLACK,
-    'Acos': COLOR_BLACK,
-    'Atan': COLOR_BLACK,
-    'Sinh': COLOR_BLACK,
-    'Cosh': COLOR_BLACK,
-    'Tanh': COLOR_BLACK,
-    'Acosh': COLOR_BLACK,
-    'Asinh': COLOR_BLACK,
-    'Atanh': COLOR_BLACK,
-    'Max': COLOR_BLACK,
+    'Sin': COLOR_DARKGRAY,
+    'Cos': COLOR_DARKGRAY,
+    'Tan': COLOR_DARKGRAY,
+    'Asin': COLOR_DARKGRAY,
+    'Acos': COLOR_DARKGRAY,
+    'Atan': COLOR_DARKGRAY,
+    'Sinh': COLOR_DARKGRAY,
+    'Cosh': COLOR_DARKGRAY,
+    'Tanh': COLOR_DARKGRAY,
+    'Acosh': COLOR_DARKGRAY,
+    'Asinh': COLOR_DARKGRAY,
+    'Atanh': COLOR_DARKGRAY,
+    'Max': COLOR_DARKGRAY,
     # Reduction
-    'Sum': COLOR_BLACK,
-    'Mean': COLOR_BLACK,
-    'Max': COLOR_BLACK,
-    'Min': COLOR_BLACK,
+    'Sum': COLOR_DARKGRAY,
+    'Mean': COLOR_DARKGRAY,
+    'Max': COLOR_DARKGRAY,
+    'Min': COLOR_DARKGRAY,
     # Activation
     'Sigmoid': COLOR_RED,
     'HardSigmoid': COLOR_RED,
@@ -86,11 +93,11 @@ NODE_COLORS = {
     'Affine': COLOR_RED,
     'Shrink': COLOR_RED,
     # Random
-    'RandomNormal': COLOR_BLACK,
-    'RandomNormalLike': COLOR_BLACK,
-    'RandomUniform': COLOR_BLACK,
-    'RandomUniformLike': COLOR_BLACK,
-    'Multinomial': COLOR_BLACK,
+    'RandomNormal': COLOR_DARKGRAY,
+    'RandomNormalLike': COLOR_DARKGRAY,
+    'RandomUniform': COLOR_DARKGRAY,
+    'RandomUniformLike': COLOR_DARKGRAY,
+    'Multinomial': COLOR_DARKGRAY,
     # Multiplication
     'EyeLike': COLOR_BLUE,
     'Gemm': COLOR_BLUE,
@@ -98,32 +105,32 @@ NODE_COLORS = {
     'Conv': COLOR_BLUE,
     'ConvTranspose': COLOR_BLUE,
     # Conversion
-    'Cast': COLOR_BLACK,
+    'Cast': COLOR_DARKGRAY,
     # Reorganization
     'Transpose': COLOR_GREEN,
-    'Expand': COLOR_BLACK,
-    'Tile': COLOR_BLACK,
-    'Split': COLOR_BLACK,
+    'Expand': COLOR_DARKGRAY,
+    'Tile': COLOR_DARKGRAY,
+    'Split': COLOR_DARKGRAY,
     'Slice': COLOR_BROWN,
     'DynamicSlice': COLOR_BROWN,
     'Concat': COLOR_BROWN,
     'Gather': COLOR_GREEN,
     'GatherElements': COLOR_GREEN,
-    'ScatterElements': COLOR_BLACK,
-    'Pad': COLOR_BLACK,
-    'SpaceToDepth': COLOR_BLACK,
-    'DepthToSpace': COLOR_BLACK,
-    'Shape': COLOR_BLACK,
-    'Size': COLOR_BLACK,
+    'ScatterElements': COLOR_DARKGRAY,
+    'Pad': COLOR_DARKGRAY,
+    'SpaceToDepth': COLOR_DARKGRAY,
+    'DepthToSpace': COLOR_DARKGRAY,
+    'Shape': COLOR_DARKGRAY,
+    'Size': COLOR_DARKGRAY,
     'Reshape': COLOR_BROWN,
-    'Flatten': COLOR_BLACK,
-    'Squeeze': COLOR_BLACK,
+    'Flatten': COLOR_DARKGRAY,
+    'Squeeze': COLOR_DARKGRAY,
     'Unsqueeze': COLOR_GREEN,
-    'OneHot': COLOR_BLACK,
-    'TopK': COLOR_BLACK,
-    'Where': COLOR_BLACK,
-    'Compress': COLOR_BLACK,
-    'Reverse': COLOR_BLACK,
+    'OneHot': COLOR_DARKGRAY,
+    'TopK': COLOR_DARKGRAY,
+    'Where': COLOR_DARKGRAY,
+    'Compress': COLOR_DARKGRAY,
+    'Reverse': COLOR_DARKGRAY,
     # Pooling
     'GlobalAveragePool': COLOR_GREEN,
     'AveragePool': COLOR_GREEN,
@@ -134,46 +141,46 @@ NODE_COLORS = {
     'GlobalLpPool': COLOR_GREEN,
     'MaxRoiPool': COLOR_GREEN,
     # Reduce
-    'ReduceSum': COLOR_BLACK,
-    'ReduceMean': COLOR_BLACK,
-    'ReduceProd': COLOR_BLACK,
-    'ReduceLogSum': COLOR_BLACK,
-    'ReduceLogSumExp': COLOR_BLACK,
-    'ReduceSumSquare': COLOR_BLACK,
-    'ReduceL1': COLOR_BLACK,
-    'ReduceL2': COLOR_BLACK,
-    'ReduceMax': COLOR_BLACK,
-    'ReduceMin': COLOR_BLACK,
-    'ArgMax': COLOR_BLACK,
-    'ArgMin': COLOR_BLACK,
+    'ReduceSum': COLOR_DARKGRAY,
+    'ReduceMean': COLOR_DARKGRAY,
+    'ReduceProd': COLOR_DARKGRAY,
+    'ReduceLogSum': COLOR_DARKGRAY,
+    'ReduceLogSumExp': COLOR_DARKGRAY,
+    'ReduceSumSquare': COLOR_DARKGRAY,
+    'ReduceL1': COLOR_DARKGRAY,
+    'ReduceL2': COLOR_DARKGRAY,
+    'ReduceMax': COLOR_DARKGRAY,
+    'ReduceMin': COLOR_DARKGRAY,
+    'ArgMax': COLOR_DARKGRAY,
+    'ArgMin': COLOR_DARKGRAY,
     # Imaging
-    'Upsample': COLOR_BLACK,
+    'Upsample': COLOR_DARKGRAY,
     # Flow
-    'If': COLOR_BLACK,
-    'Loop': COLOR_BLACK,
-    'Scan': COLOR_BLACK,
+    'If': COLOR_DARKGRAY,
+    'Loop': COLOR_DARKGRAY,
+    'Scan': COLOR_DARKGRAY,
     # Normalization
-    'InstanceNormalization': COLOR_BLACK,
-    'BatchNormalization': COLOR_BLACK,
-    'LRN': COLOR_BLACK,
-    'MeanVarianceNormalization': COLOR_BLACK,
-    'LpNormalization': COLOR_BLACK,
+    'InstanceNormalization': COLOR_DARKGRAY,
+    'BatchNormalization': COLOR_DARKGRAY,
+    'LRN': COLOR_DARKGRAY,
+    'MeanVarianceNormalization': COLOR_DARKGRAY,
+    'LpNormalization': COLOR_DARKGRAY,
     # collation
-    'Nonzero': COLOR_BLACK,
+    'Nonzero': COLOR_DARKGRAY,
     # NGram
-    'TfldfVectorizer': COLOR_BLACK,
+    'TfldfVectorizer': COLOR_DARKGRAY,
     # Aggregate
-    'RNN': COLOR_BLACK,
-    'GRU': COLOR_BLACK,
-    'LSTM': COLOR_BLACK,
+    'RNN': COLOR_DARKGRAY,
+    'GRU': COLOR_DARKGRAY,
+    'LSTM': COLOR_DARKGRAY,
     # Training
-    'Dropout': COLOR_BLACK,
+    'Dropout': COLOR_DARKGRAY,
     # Quantize
-    'QuantizeLinear': COLOR_BLACK,
+    'QuantizeLinear': COLOR_DARKGRAY,
     'QLinearConv': COLOR_BLUE,
-    'DequantizeLinear': COLOR_BLACK,
+    'DequantizeLinear': COLOR_DARKGRAY,
     'QLinearGlobalAveragePool': COLOR_GREEN,
-    'QLinearAdd': COLOR_BLACK,
+    'QLinearAdd': COLOR_DARKGRAY,
     'QLinearMatMul': COLOR_BLUE,
 }
 

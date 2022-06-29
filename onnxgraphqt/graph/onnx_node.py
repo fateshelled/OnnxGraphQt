@@ -33,6 +33,7 @@ from utils.color import (
     COLOR_GRID,
     INPUT_NODE_COLOR,
     OUTPUT_NODE_COLOR,
+    NODE_BORDER_COLOR,
     get_node_color,
 )
 from utils.widgets import set_font, GRAPH_FONT_SIZE
@@ -99,6 +100,7 @@ class ONNXNode(BaseNode):
 
     def set_op(self, op:str, push_undo=False):
         self.op = op
+        self._view.set_display_name(op)
         if not self.has_property("op"):
             self.create_property("op", self.op, widget_type=NODE_PROP_QLABEL)
         else:
@@ -123,8 +125,8 @@ class ONNXNode(BaseNode):
     def set_color(self, push_undo=False):
         self.view.text_color = COLOR_FONT + [255]
         color = get_node_color(self.op)
-        # return super().set_color(*color)
-        return self.set_property('color', (color[0], color[1], color[2], 255), push_undo)
+        self.set_property('border_color', NODE_BORDER_COLOR + [255], push_undo)
+        self.set_property('color', color + [255], push_undo)
 
     def set_font(self, font_size=GRAPH_FONT_SIZE, bold=False):
         set_font(self.view.text_item, font_size=font_size, bold=bold)
@@ -154,6 +156,7 @@ class ONNXInput(BaseNode):
         self.output_port = self.add_output('multi out', multi_output=True)
         self.set_color()
         self.set_font()
+        self._view.set_display_name("input")
 
     def get_node_name(self):
         self.node_name = self.get_property("node_name")
@@ -189,8 +192,8 @@ class ONNXInput(BaseNode):
 
     def set_color(self, push_undo=False):
         self.view.text_color = COLOR_FONT + [255]
-        # return super().set_color(*INPUT_NODE_COLOR)
-        return self.set_property('color', (INPUT_NODE_COLOR[0], INPUT_NODE_COLOR[1], INPUT_NODE_COLOR[2], 255), push_undo)
+        self.set_property('border_color', NODE_BORDER_COLOR + [255], push_undo)
+        self.set_property('color', INPUT_NODE_COLOR + [255], push_undo)
 
     def set_font(self, font_size=GRAPH_FONT_SIZE, bold=False):
         set_font(self.view.text_item, font_size=font_size, bold=bold)
@@ -219,6 +222,7 @@ class ONNXOutput(BaseNode):
         self.input_port = self.add_input('multi in', multi_input=True)
         self.set_color()
         self.set_font()
+        self._view.set_display_name("output")
 
     def get_node_name(self):
         self.node_name = self.get_property("node_name")
@@ -252,9 +256,10 @@ class ONNXOutput(BaseNode):
         self.input_names = input_names
         self.set_property("input_names", self.input_names, push_undo)
 
-    def set_color(self):
+    def set_color(self, push_undo=False):
         self.view.text_color = COLOR_FONT + [255]
-        return super().set_color(*INPUT_NODE_COLOR)
+        self.set_property('border_color', NODE_BORDER_COLOR + [255], push_undo)
+        self.set_property('color', INPUT_NODE_COLOR + [255], push_undo)
 
     def set_font(self, font_size=GRAPH_FONT_SIZE, bold=False):
         set_font(self.view.text_item, font_size=font_size, bold=bold)
