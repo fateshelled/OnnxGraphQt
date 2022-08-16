@@ -4,7 +4,6 @@ from typing import (
 )
 from collections import OrderedDict
 import copy
-import NodeGraphQt
 
 import numpy as np
 import onnx
@@ -53,6 +52,8 @@ from .onnx_node import (
     ONNXNode,
     OnnxNodeIO
 )
+from autolayout.request_layout import request_layout
+
 
 NUMPY_TYPES_TO_ONNX_DTYPES = {
     np.dtype('float32'): onnx.TensorProto.FLOAT,
@@ -136,7 +137,23 @@ class ONNXNodeGraph(NodeGraph):
     def get_selected_node_names(self)->List[str]:
         return [node.name() for node in self.all_nodes() if node.selected()]
 
-    def get_node_by_name(self, name)->List[Union[ONNXInput, ONNXOutput, ONNXNode]]:
+    def get_input_node_by_name(self, name)->List[ONNXInput]:
+        """
+        Returns node that matches the name.
+
+        Args:
+            name (str): name of the node.
+        Returns:
+            NodeGraphQt.NodeObject: node object.
+        """
+        ret = []
+        for node_id, node in self._model.nodes.items():
+            if isinstance(node, ONNXInput):
+                if node.node_name == name:
+                    ret.append(node)
+        return ret
+
+    def get_node_by_name(self, name)->List[ONNXNode]:
         """
         Returns node that matches the name.
 
@@ -150,8 +167,22 @@ class ONNXNodeGraph(NodeGraph):
             if isinstance(node, ONNXNode):
                 if node.node_name == name:
                     ret.append(node)
-            if node.name() == name:
-                ret.append(node)
+        return ret
+
+    def get_output_node_by_name(self, name)->List[ONNXOutput]:
+        """
+        Returns node that matches the name.
+
+        Args:
+            name (str): name of the node.
+        Returns:
+            NodeGraphQt.NodeObject: node object.
+        """
+        ret = []
+        for node_id, node in self._model.nodes.items():
+            if isinstance(node, ONNXOutput):
+                if node.node_name == name:
+                    ret.append(node)
         return ret
 
     def remove_all_nodes(self, push_undo=False):
@@ -487,15 +518,20 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
 def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
     if push_undo:
         graph.begin_undo('Auto Layout Nodes')
+    x_ratio = 20
+    y_ratio = 5
 
-    edges = NodeGraphToEdges(graph, reverse=True)
-    if len(edges) == 0:
-        return
-    ig_graph = igraph.Graph(edges=edges, directed=True)
-    layout, _graph = ig_graph.layout_sugiyama(hgap=2, return_extended_graph=True)
-    for i, node in enumerate(graph.all_nodes()[::-1]):
-        x, y = layout.coords[i]
-        node.set_property('pos', [float(-x*240), float(-y*120)], push_undo=push_undo)
+    g = graph.to_onnx_gs()
+    layout = request_layout(g)
+    for node_name, pos in layout["inputs"].items():
+        node = graph.get_input_node_by_name(node_name)[0]
+        node.set_property('pos', [float(pos["x"])*x_ratio, float(pos["y"])*y_ratio], push_undo=push_undo)
+    for node_name, pos in layout["nodes"].items():
+        node = graph.get_node_by_name(node_name)[0]
+        node.set_property('pos', [float(pos["x"])*x_ratio, float(pos["y"])*y_ratio], push_undo=push_undo)
+    for node_name, pos in layout["outputs"].items():
+        node = graph.get_output_node_by_name(node_name)[0]
+        node.set_property('pos', [float(pos["x"])*x_ratio, float(pos["y"])*y_ratio], push_undo=push_undo)
 
     if push_undo:
         graph.end_undo()

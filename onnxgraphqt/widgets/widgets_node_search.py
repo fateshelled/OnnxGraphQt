@@ -63,7 +63,10 @@ class NodeSearchWidget(QtWidgets.QDialog):
     def viewClicked(self, index:QtCore.QModelIndex):
         indexItem = self.model.index(index.row(), 0, index.parent())
         node_name = self.model.data(indexItem)
+        inputs = self.graph.get_input_node_by_name(node_name)
         nodes = self.graph.get_node_by_name(node_name)
+        outputs = self.graph.get_output_node_by_name(node_name)
+        nodes = inputs + nodes + outputs
         self.graph.fit_to_selection_node(nodes[0])
         parent = self.parent()
         if hasattr(parent, "properties_bin"):

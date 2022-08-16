@@ -6,6 +6,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from main_window import MainWindow
 from widgets.splash_screen import create_screen
 
+
 if __name__ == "__main__":
     args = sys.argv
     onnx_model_path = args[1] if len(args)>1 else ""
