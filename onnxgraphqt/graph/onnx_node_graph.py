@@ -2,13 +2,11 @@ from dataclasses import dataclass
 from typing import (
     Dict, List, Any, Optional, Union
 )
-from collections import OrderedDict
 import copy
 
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import igraph
 
 from PySide2 import QtCore, QtWidgets
 from NodeGraphQt.constants import (

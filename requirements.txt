@@ -1,4 +1,4 @@
-igraph
+requests
 PySide2
 numpy
 onnx

@@ -14,16 +14,17 @@ ONNX model visualizer. You can edit model structure with GUI!
 - [NodeGraphQt](https://github.com/jchanvfx/NodeGraphQt)
 - PySide2
 - Qt.py
-- igraph
 - Numpy
 - onnx
 - onnx-simplifier
 - onnx_graphsurgeon
 - [simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
+- Node.js
 
 ## Install
 ```bash
 sudo apt install python3-pyside2*
+sudo apt install nodejs
 
 git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt

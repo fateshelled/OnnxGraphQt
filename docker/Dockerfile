@@ -17,7 +17,8 @@ RUN apt update && \
         bash-completion \
         python3-dev \
         python3-pip \
-        python3-pyside2* && \
+        python3-pyside2* \
+        nodejs && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 

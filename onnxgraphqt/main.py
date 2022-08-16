@@ -5,9 +5,11 @@ import time
 from PySide2 import QtCore, QtWidgets, QtGui
 from main_window import MainWindow
 from widgets.splash_screen import create_screen
+import multiprocessing
+from run_dagre_server import run as run_dagre_server
 
 
-if __name__ == "__main__":
+def main():
     args = sys.argv
     onnx_model_path = args[1] if len(args)>1 else ""
 
@@ -45,3 +47,14 @@ if __name__ == "__main__":
     main_window.show()
 
     app.exec_()
+
+if __name__ == "__main__":
+    proc0 = multiprocessing.Process(target=main, daemon=False)
+    proc0.start()
+    print(f"start GUI [{proc0.pid}]")
+
+    proc1 = run_dagre_server()
+
+    proc0.join()
+    proc0.close()
+    proc1.terminate()
