@@ -177,7 +177,7 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication([])
-    window = NodeSearchWidget(graph=ONNXNodeGraph("", 10, "", ""))
+    window = NodeSearchWidget(graph=ONNXNodeGraph("", 10, "", "", "", "", 0, 0))
     window.show()
 
     app.exec_()

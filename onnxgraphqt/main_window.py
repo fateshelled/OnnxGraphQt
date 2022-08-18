@@ -19,6 +19,7 @@ from sbi4onnx import initialize as onnx_tools_batchsize_initialize
 from sor4onnx import rename as onnx_tools_rename
 from onnx2json.onnx2json import convert as onnx_tools_onnx2json
 from json2onnx.json2onnx import convert as onnx_tools_json2onnx
+from ssc4onnx import structure_check
 
 from widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
 from widgets.widgets_message_box import MessageBox
@@ -350,6 +351,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graph.remove_all_nodes(push_undo=push_undo)
         self.graph.load_onnx_graph(onnx_graph, push_undo=push_undo)
+
+        structure_check(onnx_graph=onnx_model)
+        # op_num, mode_size = structure_check(onnx_graph=onnx_model)
+        # print(op_num)
+        # print(f"{mode_size} bytes")
 
         self.set_cursor_arrow()
         dt0 = time.time() - t0
@@ -1351,12 +1357,16 @@ if __name__ == "__main__":
     import signal
     import os, time
     from widgets.splash_screen import create_screen, create_screen_progressbar
+    from run_dagre_server import run as run_dagre_server
+
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QtWidgets.QApplication([])
+
+    proc1 = run_dagre_server()
 
     base_dir = os.path.dirname(__file__)
     # onnx_file = os.path.join(base_dir, "data", "mobilenetv2-12-int8.onnx")
@@ -1390,5 +1400,6 @@ if __name__ == "__main__":
         splash.finish(main_window)
 
     main_window.show()
-
     app.exec_()
+
+    proc1.terminate()
