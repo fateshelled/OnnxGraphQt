@@ -352,7 +352,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graph.remove_all_nodes(push_undo=push_undo)
         self.graph.load_onnx_graph(onnx_graph, push_undo=push_undo)
 
-        structure_check(onnx_graph=onnx_model)
+        if onnx_model_path != "":
+            structure_check(input_onnx_file_path=onnx_model_path)
         # op_num, mode_size = structure_check(onnx_graph=onnx_model)
         # print(op_num)
         # print(f"{mode_size} bytes")
