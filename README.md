@@ -101,11 +101,11 @@ Please refer to each tool's Github repository for detailed usage.
 - [ ] Add Simple Shape Inference tool [[ssi4onnx](https://github.com/PINTO0309/ssi4onnx)]
 - [ ] Add Simple Inference Test[[sit4onnx](https://github.com/PINTO0309/sit4onnx)]
 - [ ] Add Simple Structure Checker[[ssc4onnx](https://github.com/PINTO0309/ssc4onnx)]
-- [ ] Update auto layout algorithm
 
 
 ## References
 - https://github.com/jchanvfx/NodeGraphQt
+- https://github.com/lutzroeder/netron
 - https://github.com/PINTO0309/simple-onnx-processing-tools
 - https://fdwr.github.io/LostOnnxDocs/OperatorFormulas.html
 - https://github.com/onnx/onnx/blob/main/docs/Operators.md
