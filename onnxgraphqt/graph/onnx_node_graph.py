@@ -37,7 +37,6 @@ from utils.color import (
     INPUT_NODE_COLOR,
     OUTPUT_NODE_COLOR,
     get_node_color,
-    PrintColor,
 )
 from utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,

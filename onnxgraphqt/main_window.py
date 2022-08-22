@@ -35,12 +35,13 @@ from widgets.widgets_generate_operator import GenerateOperatorWidgets
 from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets.widgets_rename_op import RenameOpWidget
 from widgets.widgets_node_search import NodeSearchWidget
+from widgets.widgets_inference_test import InferenceTestWidgets
 
 from widgets.custom_properties_bin import CustomPropertiesBinWidget
 
 from graph.onnx_node_graph import ONNXNodeGraph
 from utils.opset import DEFAULT_OPSET
-from utils.color import removePrintColor
+from utils.color import remove_PrintColor
 from utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
 
 
@@ -90,6 +91,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 [
                     SubMenu("&Search", self.btnSearch_clicked, None),
                     SubMenu("Auto &Layout", self.btnAutoLayout_clicked, None),
+                ]
+            ),
+            Menu(
+                "Tools (&T)",
+                [
+                    SubMenu("Inference Test", self.btnInferenceTest_clicked, None),
                 ]
             ),
         ]
@@ -468,6 +475,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def btnSearch_clicked(self):
         self.search_widget.show()
 
+    def btnInferenceTest_clicked(self):
+        w = InferenceTestWidgets(self.graph.to_onnx(), parent=self)
+        w.show()
+
     def btnCombineNetwork_clicked(self):
         btn = self.btnCombineNetwork
         if self.current_button is btn:
@@ -515,7 +526,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -591,7 +602,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -666,7 +677,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -744,7 +755,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -820,7 +831,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     sys.stdout = sys.__stdout__
                     print_msg = f.getvalue()
                     print(print_msg)
-                    print_msg = removePrintColor(print_msg)
+                    print_msg = remove_PrintColor(print_msg)
                     print_msg = print_msg[:1000]
                     f.close()
 
@@ -899,7 +910,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -987,7 +998,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1065,7 +1076,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1144,7 +1155,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1229,7 +1240,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
@@ -1307,7 +1318,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         sys.stdout = sys.__stdout__
                         print_msg = f.getvalue()
                         print(print_msg)
-                        print_msg = removePrintColor(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
                         print_msg = print_msg[:1000]
                         f.close()
                 except BaseException as e:
