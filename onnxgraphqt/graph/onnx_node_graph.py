@@ -519,6 +519,8 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
             single_op_graph = onnx.helper.make_model(graph_def)
             gs_graph = gs.import_onnx(single_op_graph)
             node = gs_graph.nodes[0]
+            for variable in gs_graph.outputs:
+                gs_variables_all[variable.name] = variable
 
         nodes.append(node)
 
