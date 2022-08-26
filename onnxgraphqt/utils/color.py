@@ -186,15 +186,15 @@ NODE_COLORS = {
 def get_node_color(op_name):
     return NODE_COLORS.get(op_name, DEFAULT_COLOR)
 
-class _PrintColor:
-    BLACK          = ['\033[30m', "<font color='#000'>"]
-    RED            = ['\033[31m', "<font color='#FF0000'>"]
-    GREEN          = ['\033[32m', "<font color='#00FF00'>"]
-    YELLOW         = ['\033[33m', "<font color='#FFFF00'>"]
-    BLUE           = ['\033[34m', "<font color='#0000FF'>"]
-    MAGENTA        = ['\033[35m', "<font color='#FF00FF'>"]
-    CYAN           = ['\033[36m', "<font color='#00FFFF'>"]
-    WHITE          = ['\033[37m', "<font color='#FFFFFF'>"]
+class PrintColor:
+    BLACK          = ['\033[30m', "<font color='#222222'>"]
+    RED            = ['\033[31m', "<font color='#F14C4C'>"]
+    GREEN          = ['\033[32m', "<font color='#23D18B'>"]
+    YELLOW         = ['\033[33m', "<font color='#EEEE00'>"]
+    BLUE           = ['\033[34m', "<font color='#4E8ED3'>"]
+    MAGENTA        = ['\033[35m', "<font color='#DD00DD'>"]
+    CYAN           = ['\033[36m', "<font color='#00EEEE'>"]
+    WHITE          = ['\033[37m', "<font color='#EEEEEE'>"]
     COLOR_DEFAULT  = ['\033[39m', ""]
     BOLD           = ['\033[1m', ""]
     UNDERLINE      = ['\033[4m', ""]
@@ -214,7 +214,7 @@ class _PrintColor:
 
 def remove_PrintColor(message:str)->str:
     ret = message
-    for key, v in vars(_PrintColor).items():
+    for key, v in vars(PrintColor).items():
         if key[:2] == "__":
             continue
         ret = ret.replace(v[0], '')
@@ -225,7 +225,7 @@ def remove_PrintColor(message:str)->str:
 
 def replace_PrintColor(message: str)->str:
     ret = message
-    for key, v in vars(_PrintColor).items():
+    for key, v in vars(PrintColor).items():
         if key[:2] == "__":
             continue
         ret = ret.replace(v[0], v[1])
@@ -239,10 +239,10 @@ if __name__ == "__main__":
     text = "\x1b[38;5;11m[W] Found distinct tensors that share the same name:\n[id: 139661839911328] Variable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n[id: 139661797372160] Variable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\nNote: Producer node(s) of first tensor:\n[input_order_convert_transpose_0 (Transpose)\n\tInputs: [\n\t\tVariable (input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n\t]\n\tOutputs: [\n\t\tVariable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n\t]\nAttributes: {'perm': [3, 2, 1, 0]}]\nProducer node(s) of second tensor:\n[input_order_convert_transpose_0 (Transpose)\n\tInputs: [\n\t\tVariable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n\t]\n\tOutputs: [\n\t\tVariable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n\t]\nAttributes: OrderedDict([('perm', [3, 2, 1, 0])])]\x1b[0m\n\x1b[38;5;11m[W] Found distinct tensors that share the same name:\n[id: 139661797372160] Variable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n[id: 139661839911328] Variable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\nNote: Producer node(s) of first tensor:\n[input_order_convert_transpose_0 (Transpose)\n\tInputs: [\n\t\tVariable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n\t]\n\tOutputs: [\n\t\tVariable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n\t]\nAttributes: OrderedDict([('perm', [3, 2, 1, 0])])]\nProducer node(s) of second tensor:\n[input_order_convert_transpose_0 (Transpose)\n\tInputs: [\n\t\tVariable (input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n\t]\n\tOutputs: [\n\t\tVariable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n\t]\nAttributes: {'perm': [3, 2, 1, 0]}]\x1b[0m\n\x1b[38;5;11m[W] Found distinct tensors that share the same name:\n[id: 139661839911328] Variable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n[id: 139661797372160] Variable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\nNote: Producer node(s) of first tensor:\n[]\nProducer node(s) of second tensor:\n[input_order_convert_transpose_0 (Transpose)\n\tInputs: [\n\t\tVariable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n\t]\n\tOutputs: [\n\t\tVariable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n\t]\nAttributes: OrderedDict([('perm', [3, 2, 1, 0])])]\x1b[0m\n\x1b[38;5;11m[W] Found distinct tensors that share the same name:\n[id: 139661839911328] Variable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n[id: 139661797372160] Variable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\nNote: Producer node(s) of first tensor:\n[]\nProducer node(s) of second tensor:\n[input_order_convert_transpose_0 (Transpose)\n\tInputs: [\n\t\tVariable (transpose_out_input): (shape=[224, 224, 3, 'batch_size'], dtype=float32)\n\t]\n\tOutputs: [\n\t\tVariable (transpose_out_input): (shape=['batch_size', 3, 224, 224], dtype=float32)\n\t]\nAttributes: OrderedDict([('perm', [3, 2, 1, 0])])]\x1b[0m\n\x1b[33mWARNING:\x1b[0m The input shape of the next OP does not match the output shape. Be sure to open the .onnx file to verify the certainty of the geometry.\n\x1b[33mWARNING:\x1b[0m onnx.onnx_cpp2py_export.shape_inference.InferenceError: [ShapeInferenceError] (op_type:Transpose, node name: input_order_convert_transpose_0): [ShapeInferenceError] Inferred shape and existing shape differ in dimension 1: (224) vs (3)\n\x1b[32mINFO:\x1b[0m Finish!\n"
     print(remove_PrintColor(text))
     print("------------------------------")
-    for key, v in vars(_PrintColor).items():
+    for key, v in vars(PrintColor).items():
         if key[:2] == "__":
             continue
-        print(f"{v[0]}{key}{_PrintColor.RESET[0]}")
+        print(f"{v[0]}{key}{PrintColor.RESET[0]}")
     print("------------------------------")
     print()
     print(replace_PrintColor(text))

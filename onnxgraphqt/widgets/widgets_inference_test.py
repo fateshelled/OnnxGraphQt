@@ -1,11 +1,9 @@
-from collections import namedtuple
 import subprocess
-from typing import List, Dict, Union
-import time
+from typing import List, Union
+import tempfile
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
-import numpy as np
 import onnx
 import onnxruntime as ort
 
@@ -69,12 +67,21 @@ class InferenceTestWidgets(QtWidgets.QDialog):
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("inference test")
-        self.tmp_filename: str = "tmp.onnx"
+        self.tmp_filename: str = f"tmp.onnx"
+        self.fp = tempfile.NamedTemporaryFile()
+        self.tmp_filename = self.fp.name + ".onnx"
         try:
             onnx.save(onnx_model, self.tmp_filename)
         except BaseException as e:
             raise e
         self.initUI()
+
+    def __del__(self) -> None:
+        print(f"delete {self.tmp_filename}")
+        try:
+            os.remove(self.tmp_filename)
+        except BaseException as e:
+            raise e
 
     def initUI(self):
         set_font(self, font_size=BASE_FONT_SIZE)
@@ -160,10 +167,10 @@ class InferenceTestWidgets(QtWidgets.QDialog):
         self.inference_process.start()
 
 
-
 if __name__ == "__main__":
     import signal
     import os
+    from utils.color import PrintColor
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
@@ -176,4 +183,14 @@ if __name__ == "__main__":
     window = InferenceTestWidgets(model)
     window.show()
 
+    window.update_text(f"{PrintColor.BLACK[1]}BLACK{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.RED[1]}RED{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.GREEN[1]}GREEN{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.YELLOW[1]}YELLOW{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.BLUE[1]}BLUE{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.MAGENTA[1]}MAGENTA{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.CYAN[1]}CYAN{PrintColor.RESET[1]}")
+    window.update_text(f"{PrintColor.WHITE[1]}WHITE{PrintColor.RESET[1]}")
+
     app.exec_()
+    del window
