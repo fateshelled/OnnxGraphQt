@@ -30,6 +30,9 @@ git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt
 python3 -m pip install -U nvidia-pyindex
 python3 -m pip install -U Qt.py
+# If you want to use InferenceTest, install onnxruntime or onnxruntime-gpu
+# python3 -m pip install -U onnxruntime
+# python3 -m pip install -U onnxruntime-gpu
 python3 -m pip install -U -r requirements.txt
 ```
 

@@ -29,6 +29,7 @@ RUN git clone https://github.com/fateshelled/OnnxGraphQt && \
     python3 -m pip install -U pip && \
     python3 -m pip install -U nvidia-pyindex && \
     python3 -m pip install -U Qt.py && \
+    python3 -m pip install -U onnxruntime && \
     python3 -m pip install -U -r requirements.txt && \
     rm -rf ~/.cache/pip
 

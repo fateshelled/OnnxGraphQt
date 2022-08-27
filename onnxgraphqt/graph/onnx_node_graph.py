@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from typing import (
-    Dict, List, Any, Optional, Union
-)
+from typing import Dict, List, Any
 import copy
 
 import numpy as np
@@ -241,13 +239,17 @@ class ONNXNodeGraph(NodeGraph):
         n.set_op(onnx_node.op) # str
         if n.op in ['Constant', 'ConstantOfShape']:
             name = onnx_node.outputs[0].name
-            dtype = str(onnx_node.attrs["value"].values.dtype)
-            shape = onnx_node.attrs["value"].shape
-            values = onnx_node.attrs["value"].values
-            onnx_outputs:List[OnnxNodeIO] = []
-            onnx_outputs += [OnnxNodeIO(name, dtype, shape, values)]
-            if len(onnx_outputs) > 0:
-                n.set_onnx_outputs(onnx_outputs)
+            if hasattr(onnx_node.attrs["value"], "values"):
+                dtype = str(onnx_node.attrs["value"].values.dtype)
+                shape = onnx_node.attrs["value"].shape
+                values = onnx_node.attrs["value"].values
+            else:
+                dtype = onnx_node.outputs[0].dtype
+                shape = onnx_node.outputs[0].shape
+                values = np.asarray(onnx_node.attrs["value"], dtype=dtype)
+                dtype = str(dtype)
+            onnx_outputs = [OnnxNodeIO(name, dtype, shape, values)]
+            n.set_onnx_outputs(onnx_outputs)
             d = {
                 "dtype": dtype,
                 "values": values

@@ -9,11 +9,12 @@ def request_layout(onnx_graph: gs.Graph) -> dict:
 
     try:
         res = requests.post("http://localhost:3000/layout", json=data)
-        print(f"status: {res.status_code}")
+        print(f"[dagre server] status code: {res.status_code}")
         if res.status_code == 200:
             content = json.loads(res.content.decode('utf-8'))
             return content
     except BaseException as e:
+        print(e)
         raise(e)
 
 if __name__ == "__main__":
