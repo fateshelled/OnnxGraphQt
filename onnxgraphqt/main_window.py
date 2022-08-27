@@ -74,8 +74,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # Window size
         self.setGeometry(0, 0, self._default_window_width, self._default_window_height)
 
-        # MenuBar
         icon_dir = os.path.join(os.path.dirname(__file__), "data/icon")
+
+        window_icon = QtGui.QIcon(os.path.join(icon_dir, "../splash.png"))
+        self.setWindowIcon(window_icon)
+
+        # MenuBar
         menu_list = [
             Menu(
                 "File (&F)",
