@@ -429,11 +429,11 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
                 elif val == -1 or val is None:
                     v = gs.Variable(name=name, dtype=dtype, shape=shape)
                     gs_variables_all[name] = v
-                elif isinstance(val, list):
+                elif isinstance(val, (list, float, int)):
                     v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
                     gs_variables_all[name] = v
                 else:
-                    v = gs.Constant(name=name, values=val)
+                    v = gs.Constant(name=name, values=np.array(val))
                     gs_variables_all[name] = v
                 input_gs_variables.append(v)
 
@@ -447,7 +447,7 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
                 elif val == -1 or val is None:
                     v = gs.Variable(name=name, dtype=dtype, shape=shape)
                     gs_variables_all[name] = v
-                elif isinstance(val, list):
+                elif isinstance(val, (list, float, int)):
                     v = gs.Constant(name=name, values=np.array(val, dtype=dtype).reshape(shape))
                     gs_variables_all[name] = v
                 else:
