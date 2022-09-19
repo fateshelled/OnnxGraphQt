@@ -3,10 +3,11 @@ import sys, os
 import signal
 import time
 from PySide2 import QtCore, QtWidgets, QtGui
-from main_window import MainWindow
-from widgets.splash_screen import create_screen
 import multiprocessing
-from run_dagre_server import run as run_dagre_server
+
+from .main_window import MainWindow
+from .run_dagre_server import run as run_dagre_server
+from .widgets.splash_screen import create_screen
 
 
 def main():

@@ -4,12 +4,11 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
-from utils.operators import onnx_opsets, opnames, OperatorVersion
-from graph.onnx_node_graph import OnnxGraph
-from widgets.widgets_message_box import MessageBox
 
+from ..graph.onnx_node_graph import OnnxGraph
+from ..utils.operators import OperatorVersion, onnx_opsets, opnames
+from ..utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font
+from .widgets_message_box import MessageBox
 
 AVAILABLE_DTYPES = [
     'float32',

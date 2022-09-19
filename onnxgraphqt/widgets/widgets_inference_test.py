@@ -8,9 +8,9 @@ import onnx
 import onnxruntime as ort
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
-from utils.color import replace_PrintColor
+
+from ..utils.color import replace_PrintColor
+from ..utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font
 
 ONNX_PROVIDER_TABLE = {
     "TensorrtExecutionProvider": ["tensorrt"],

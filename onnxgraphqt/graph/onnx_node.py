@@ -26,8 +26,8 @@ from NodeGraphQt.constants import (
 )
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.color import (
+
+from ..utils.color import (
     COLOR_BG,
     COLOR_FONT,
     COLOR_GRID,
@@ -36,8 +36,8 @@ from utils.color import (
     NODE_BORDER_COLOR,
     get_node_color,
 )
-from utils.widgets import set_font, GRAPH_FONT_SIZE
-from widgets.custom_nodeitem_vertical import CustomNodeItemVertical
+from ..utils.widgets import GRAPH_FONT_SIZE, set_font
+from ..widgets.custom_nodeitem_vertical import CustomNodeItemVertical
 
 
 @dataclass

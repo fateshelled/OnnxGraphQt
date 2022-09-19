@@ -25,8 +25,9 @@ from NodeGraphQt.base.model import NodeGraphModel
 from NodeGraphQt.widgets.viewer import NodeViewer
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.color import (
+
+
+from ..utils.color import (
     COLOR_BG,
     COLOR_FONT,
     COLOR_GRID,
@@ -36,20 +37,19 @@ from utils.color import (
     OUTPUT_NODE_COLOR,
     get_node_color,
 )
-from utils.dtype import (
-    DTYPES_TO_NUMPY_TYPES,
-    DTYPES_TO_ONNX_DTYPES,
-)
-from utils.style import set_context_menu_style
-from utils.widgets import pipe_paint
+from ..utils.style import set_context_menu_style
+from ..utils.widgets import pipe_paint
 from .onnx_node import (
     ONNXInput,
     ONNXOutput,
     ONNXNode,
     OnnxNodeIO
 )
-from autolayout.request_layout import request_layout
-
+from ..utils.dtype import (
+    DTYPES_TO_NUMPY_TYPES,
+    DTYPES_TO_ONNX_DTYPES,
+)
+from ..autolayout.request_layout import request_layout
 
 NUMPY_TYPES_TO_ONNX_DTYPES = {
     np.dtype('float32'): onnx.TensorProto.FLOAT,

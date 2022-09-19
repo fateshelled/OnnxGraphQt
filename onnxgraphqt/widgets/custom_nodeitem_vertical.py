@@ -3,9 +3,10 @@ from NodeGraphQt.qgraphics.node_base import NodeItemVertical
 from NodeGraphQt.constants import NodeEnum
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.color import NODE_BG_COLOR, NODE_SELECTED_BORDER_COLOR
-from utils.widgets import set_font
+
+from ..utils.color import NODE_BG_COLOR, NODE_SELECTED_BORDER_COLOR
+from ..utils.widgets import set_font
+
 
 class CustomNodeItemVertical(NodeItemVertical):
     def __init__(self, name='node', parent=None):

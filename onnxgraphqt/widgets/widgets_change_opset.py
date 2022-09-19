@@ -3,11 +3,10 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from widgets.widgets_message_box import MessageBox
-from utils.opset import DEFAULT_OPSET
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
 
+from ..utils.opset import DEFAULT_OPSET
+from ..utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font
+from .widgets_message_box import MessageBox
 
 ChangeOpsetProperties = namedtuple("ChangeOpsetProperties",
     [

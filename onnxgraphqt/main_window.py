@@ -21,28 +21,26 @@ from onnx2json.onnx2json import convert as onnx_tools_onnx2json
 from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 from ssc4onnx import structure_check
 
-from widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
-from widgets.widgets_message_box import MessageBox
-from widgets.widgets_combine_network import CombineNetworkWidgets
-from widgets.widgets_extract_network import ExtractNetworkWidgets
-from widgets.widgets_add_node import AddNodeWidgets
-from widgets.widgets_change_opset import ChangeOpsetWidget
-from widgets.widgets_change_channel import ChangeChannelWidgets
-from widgets.widgets_constant_shrink import ConstantShrinkWidgets
-from widgets.widgets_modify_attrs import ModifyAttrsWidgets
-from widgets.widgets_delete_node import DeleteNodeWidgets
-from widgets.widgets_generate_operator import GenerateOperatorWidgets
-from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
-from widgets.widgets_rename_op import RenameOpWidget
-from widgets.widgets_node_search import NodeSearchWidget
-from widgets.widgets_inference_test import InferenceTestWidgets
-
-from widgets.custom_properties_bin import CustomPropertiesBinWidget
-
-from graph.onnx_node_graph import ONNXNodeGraph
-from utils.opset import DEFAULT_OPSET
-from utils.color import remove_PrintColor
-from utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
+from .graph.onnx_node_graph import ONNXNodeGraph
+from .utils.color import remove_PrintColor
+from .utils.opset import DEFAULT_OPSET
+from .utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, createIconButton, set_font
+from .widgets.custom_properties_bin import CustomPropertiesBinWidget
+from .widgets.widgets_add_node import AddNodeWidgets
+from .widgets.widgets_change_channel import ChangeChannelWidgets
+from .widgets.widgets_change_opset import ChangeOpsetWidget
+from .widgets.widgets_combine_network import CombineNetworkWidgets
+from .widgets.widgets_constant_shrink import ConstantShrinkWidgets
+from .widgets.widgets_delete_node import DeleteNodeWidgets
+from .widgets.widgets_extract_network import ExtractNetworkWidgets
+from .widgets.widgets_generate_operator import GenerateOperatorWidgets
+from .widgets.widgets_inference_test import InferenceTestWidgets
+from .widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
+from .widgets.widgets_menubar import Menu, MenuBarWidget, Separator, SubMenu
+from .widgets.widgets_message_box import MessageBox
+from .widgets.widgets_modify_attrs import ModifyAttrsWidgets
+from .widgets.widgets_node_search import NodeSearchWidget
+from .widgets.widgets_rename_op import RenameOpWidget
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -1371,8 +1369,8 @@ class MainWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
     import signal
     import os, time
-    from widgets.splash_screen import create_screen, create_screen_progressbar
-    from run_dagre_server import run as run_dagre_server
+    from .widgets.splash_screen import create_screen, create_screen_progressbar
+    from .run_dagre_server import run as run_dagre_server
 
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)

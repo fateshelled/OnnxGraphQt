@@ -6,11 +6,11 @@ from ast import literal_eval
 import numpy as np
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from widgets.widgets_message_box import MessageBox
-from utils.opset import DEFAULT_OPSET
-from utils.operators import onnx_opsets, opnames, OperatorVersion, latest_opset
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+
+from ..utils.operators import OperatorVersion, latest_opset, onnx_opsets, opnames
+from ..utils.opset import DEFAULT_OPSET
+from ..utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font
+from .widgets_message_box import MessageBox
 
 
 AVAILABLE_DTYPES = [
