@@ -1370,7 +1370,6 @@ if __name__ == "__main__":
     import signal
     import os, time
     from .widgets.splash_screen import create_screen, create_screen_progressbar
-    from .run_dagre_server import run as run_dagre_server
 
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -1379,7 +1378,10 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication([])
 
-    proc1 = run_dagre_server()
+    from . import layout_backend, LayoutBackend
+    if layout_backend == LayoutBackend.node_dagre:
+        from .run_dagre_server import run as run_dagre_server
+        proc1 = run_dagre_server()
 
     base_dir = os.path.dirname(__file__)
     # onnx_file = os.path.join(base_dir, "data", "mobilenetv2-12-int8.onnx")
@@ -1415,4 +1417,4 @@ if __name__ == "__main__":
     main_window.show()
     app.exec_()
 
-    proc1.terminate()
+    #proc1.terminate()
