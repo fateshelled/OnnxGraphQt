@@ -48,18 +48,25 @@ def main():
 
     app.exec_()
 
-if __name__ == "__main__":
-    proc0 = multiprocessing.Process(target=main, daemon=False)
-    proc0.start()
-    print(f"start GUI [{proc0.pid}]")
 
+def mainWrapper():
     from . import layout_backend, LayoutBackend
+
     if layout_backend == LayoutBackend.node_dagre:
         from .run_dagre_server import run as run_dagre_server
+        proc0 = multiprocessing.Process(target=main, daemon=False)
+        proc0.start()
+        print(f"start GUI [{proc0.pid}]")
+
         proc1 = run_dagre_server()
 
-    proc0.join()
-    proc0.close()
+        proc0.join()
+        proc0.close()
 
-    if layout_backend == LayoutBackend.node_dagre:
         proc1.terminate()
+    else:
+        return main()
+
+
+if __name__ == "__main__":
+    mainWrapper()

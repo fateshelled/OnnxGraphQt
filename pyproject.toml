@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.2.0", "wheel", "setuptools_scm[toml]>=3.4.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OnnxGraphQt"
+readme = "README.md"
+description = "An ONNX model visualizer and editor"
+authors = [{name = "fateshelled"}]
+license = {text = "MIT"}
+classifiers = [
+	"Development Status :: 4 - Beta",
+	"Environment :: Other Environment",
+	"Intended Audience :: Developers",
+	"License :: Public Domain",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python",
+	"Programming Language :: Python :: 3",
+	"Programming Language :: Python :: 3 :: Only",
+	"Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["ONNX", "surgeon"]
+urls = {Homepage = "https://github.com/fateshelled/OnnxGraphQt"}
+requires-python = ">=3.4"
+dependencies = [
+	"PySide2",
+	"numpy",
+	"onnx",
+	"onnx-simplifier",
+	"protobuf >= 3.20.0",
+	"onnx_graphsurgeon",  # https://github.com/NVIDIA/TensorRT/tree/master/tools/onnx-graphsurgeon
+	"NodeGraphQt", # https://github.com/jchanvfx/NodeGraphQt
+	"simple-onnx-processing-tools",
+	"networkx",
+	"pygraphviz",
+]
+
+dynamic = ["version"]
+
+[project.scripts]
+onnxgraphqt = "onnxgraphqt.__main__:mainWrapper"
+
+[tool.setuptools]
+zip-safe = true
+
+[tool.setuptools.packages.find]
+include = ["onnxgraphqt", "onnxgraphqt.*"]
+
+[tool.setuptools_scm]
