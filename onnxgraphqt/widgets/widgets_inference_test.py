@@ -67,7 +67,6 @@ class InferenceTestWidgets(QtWidgets.QDialog):
         super().__init__(parent)
         self.setModal(False)
         self.setWindowTitle("inference test")
-        self.tmp_filename: str = f"tmp.onnx"
         self.fp = tempfile.NamedTemporaryFile()
         self.tmp_filename = self.fp.name + ".onnx"
         try:

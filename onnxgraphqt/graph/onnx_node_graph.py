@@ -1,8 +1,11 @@
 from dataclasses import dataclass
 from typing import Dict, List, Any
 import copy
+import tempfile
+import shutil
 
 import numpy as np
+import cv2
 import onnx
 import onnx_graphsurgeon as gs
 
@@ -90,6 +93,7 @@ class ONNXNodeGraph(NodeGraph):
 
         self._viewer = (
             kwargs.get('viewer') or NodeViewer(undo_stack=self._undo_stack))
+        # self._viewer.use_OpenGL()
 
         # self._build_context_menu()
         # self._register_builtin_nodes()
@@ -113,11 +117,75 @@ class ONNXNodeGraph(NodeGraph):
             ONNXOutput,
         ])
         self.set_background_color(*COLOR_BG)
-        self.set_grid_mode(ViewerEnum.GRID_DISPLAY_DOTS)
+        self.set_grid_mode(ViewerEnum.GRID_DISPLAY_LINES.value)
+        # self.set_grid_mode(ViewerEnum.GRID_DISPLAY_NONE.value)
         self.set_grid_color(*COLOR_GRID)
         set_context_menu_style(self, text_color=COLOR_FONT, bg_color=COLOR_WHITE, selected_color=COLOR_GRAY)
         # # Disable right click menu
         # self.disable_context_menu(True)
+
+    def export_to_png(self, export_filename="screenshot.png"):
+        exp = os.path.splitext(export_filename)[1]
+        if exp == "":
+            exp = ".png"
+            export_filename = export_filename + exp
+
+        current_screen_rect = self._viewer.scene_rect()
+        pos = np.array([node.get_property("pos") for node in self.all_nodes()])
+        view_x0 = np.min(pos[:, 0])
+        view_y0 = np.min(pos[:, 1])
+        view_width = np.max(pos[:, 0]) - view_x0
+        view_height = np.max(pos[:, 1]) - view_y0
+
+        offset = 50
+        view_x0 = int(view_x0 - 0.5 - offset)
+        view_y0 = int(view_y0 - 0.5 - offset)
+        view_width = int(view_width + 0.5 + offset)
+        view_height = int(view_height + 0.5 + offset)
+
+        res_x = 600
+        res_y = 600
+        total_x = len(list(range(view_x0, view_width, res_x)))
+        total_y = len(list(range(view_y0, view_height, res_y)))
+        total = total_x * total_y
+        count_x = 0
+        tmpname = tempfile.NamedTemporaryFile().name
+        base_fn = f"{tmpname}_screenshot{exp}"
+        print(f"temp file: {base_fn}")
+        for x0 in range(view_x0, view_width, res_x):
+            count_y = 0
+            fn_x = f"{tmpname}_screenshot_{count_x}.png"
+            for y0 in range(view_y0, view_height, res_y):
+                self._viewer.set_scene_rect([x0, y0, res_x, res_y])
+                pixmap = self._viewer.grab()
+                fn_y = f"{tmpname}_{count_x}_{count_y}.png"
+                pixmap.save(fn_y, "PNG")
+                img = cv2.imread(fn_y)
+                if os.path.exists(fn_x):
+                    imgs_y = []
+                    imgs_y.append(cv2.imread(fn_x))
+                    imgs_y.append(img[1:-5, 1:-23])
+                    cv2.imwrite(fn_x, np.vstack(imgs_y))
+                else:
+                    cv2.imwrite(fn_x, (img[1:-5, 1:-23]))
+                os.remove(fn_y)
+                count_y += 1
+                print("\r" + f"screenshot {count_x * total_y + count_y} / {total}", end="")
+            img_x = cv2.imread(fn_x)
+            if os.path.exists(base_fn):
+                imgs_x = []
+                imgs_x.append(cv2.imread(base_fn))
+                imgs_x.append(img_x)
+                cv2.imwrite(base_fn, np.hstack(imgs_x))
+            else:
+                cv2.imwrite(base_fn, img_x)
+            os.remove(fn_x)
+            count_x += 1
+        shutil.move(base_fn, export_filename)
+        print()
+        print(f"save as '{export_filename}'")
+
+        self._viewer.set_scene_rect(current_screen_rect)
 
     def reset_selection(self):
         for node in self.all_nodes():

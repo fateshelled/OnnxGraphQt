@@ -36,6 +36,7 @@ from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets.widgets_rename_op import RenameOpWidget
 from widgets.widgets_node_search import NodeSearchWidget
 from widgets.widgets_inference_test import InferenceTestWidgets
+from widgets.progress_dialog import start_progress_dialog
 
 from widgets.custom_properties_bin import CustomPropertiesBinWidget
 
@@ -86,6 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 [
                     SubMenu("Open", self.btnOpenONNX_clicked, None),
                     SubMenu("Export", self.btnExportONNX_clicked, None),
+                    SubMenu("Export PNG", self.btnExportPNG_clicked, None),
                     Separator(),
                     SubMenu("Exit", self.exit, None),
                 ]
@@ -221,6 +223,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graph.update_pipe_paint()
         self.graph.auto_layout(push_undo=False)
+
         if update_layout:
             self.graph.fit_to_selection()
         self.graph.reset_selection()
@@ -432,7 +435,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.open_onnx(file_name)
         self.set_sidemenu_buttons_enabled(True)
 
-
     def btnExportONNX_clicked(self):
         self.set_sidemenu_buttons_enabled(False)
         file_name, filter = QtWidgets.QFileDialog.getSaveFileName(
@@ -463,6 +465,31 @@ class MainWindow(QtWidgets.QMainWindow):
         MessageBox.info(
             ["Success.", f"Export to {file_name}."],
             "Export ONNX",
+            parent=self)
+        self.set_sidemenu_buttons_enabled(True)
+
+    def btnExportPNG_clicked(self):
+        self.set_sidemenu_buttons_enabled(False)
+        default_file_name = "screenshot.png"
+        dialog = QtWidgets.QFileDialog(
+            self,
+            caption="Export Graph Image",
+            directory=os.path.abspath(os.curdir),
+            filter="*.png")
+        dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
+        dialog.selectFile(default_file_name)
+        ret = dialog.exec_()
+        if ret == 0:
+            self.set_sidemenu_buttons_enabled(True)
+            return
+        file_name = dialog.selectedFiles()[0]
+        if not file_name:
+            self.set_sidemenu_buttons_enabled(True)
+            return
+        self.graph.export_to_png(file_name)
+        MessageBox.info(
+            ["Success.", f"Export to {file_name}."],
+            "Export PNG",
             parent=self)
         self.set_sidemenu_buttons_enabled(True)
 
