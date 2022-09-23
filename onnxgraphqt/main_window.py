@@ -36,7 +36,6 @@ from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets.widgets_rename_op import RenameOpWidget
 from widgets.widgets_node_search import NodeSearchWidget
 from widgets.widgets_inference_test import InferenceTestWidgets
-from widgets.progress_dialog import start_progress_dialog
 
 from widgets.custom_properties_bin import CustomPropertiesBinWidget
 
