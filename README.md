@@ -15,6 +15,7 @@ ONNX model visualizer. You can edit model structure with GUI!
 - PySide2
 - Qt.py
 - Numpy
+- OpenCV
 - onnx
 - onnx-simplifier
 - onnx_graphsurgeon
@@ -51,6 +52,7 @@ cd OnnxGraphQt
 cd OnnxGraphQt
 
 # Open empty graph
+# node.js server starts on the backend (port 3000)
 python3 onnxgraphqt/main.py
 
 # Open with onnx model
@@ -58,7 +60,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
 
-![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/173088722-a6ba22d4-d49a-4663-b2c2-a9a28e69c75a.png)
+![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/191985653-35243b1a-ad6b-4070-b5ba-0b9d94a8643a.jpg)
 
 
 ### Open Onnx Model
@@ -66,7 +68,7 @@ Open file dialog from menubar(File - Open) or drag and drop from file manager to
 
 Sample model is available at `ONNXGraphQt/onnxgraphqt/data/mobilenetv2-7.onnx`
 
-![file open](https://user-images.githubusercontent.com/53618876/173079093-5cb8b80a-7b2e-46cf-a0c2-ff96f824486b.png)
+![file open](https://user-images.githubusercontent.com/53618876/191985699-aab3fcd0-b2bf-49f9-a1c3-a5eb3495eead.jpg)
 
 
 ### Export
@@ -75,7 +77,7 @@ Export to ONNX file or Json file.
 ### Node detail
 Double click on Node for more information.
 
-![node information](https://user-images.githubusercontent.com/53618876/173081692-da179f1d-bdc2-4122-9d1f-89461410afc4.png)
+![node information](https://user-images.githubusercontent.com/53618876/191985735-2c61aed7-f78c-406d-8f00-45f12109398f.jpg)
 
 ### Node Search
 Node search window can be open from menubar(View - Search).
@@ -97,7 +99,8 @@ Please refer to each tool's Github repository for detailed usage.
 - Initialize Batchsize [[sbi4onnx](https://github.com/PINTO0309/sbi4onnx)]
 - Change Opset [[soc4onnx](https://github.com/PINTO0309/soc4onnx)]
 - Constant Value Shrink [[scs4onnx](https://github.com/PINTO0309/scs4onnx)]
-- Delete Node [[snd4onnx](https://github.com/PINTO0309/snd4onnx)]
+- Delete Node [[snd4onnx](https://github.com/PINTO0309/snd4onnx)])]
+- Inference Test [[sit4onnx](https://github.com/PINTO0309/sit4onnx)]
 
 
 ## ToDo
