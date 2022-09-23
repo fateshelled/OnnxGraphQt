@@ -265,12 +265,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if enable:
             self.menu_bar.menu_actions["Open"].setEnabled(True)
             self.menu_bar.menu_actions["Export"].setEnabled(True)
+            self.menu_bar.menu_actions["Export PNG"].setEnabled(True)
             self.btnCombineNetwork.setEnabled(True)
             self.btnGenerateOperator.setEnabled(True)
             self.btnAddNode.setEnabled(True)
 
             if self.graph.node_count() > 0:
                 self.menu_bar.menu_actions["Export"].setEnabled(True)
+                self.menu_bar.menu_actions["Export PNG"].setEnabled(True)
                 self.btnExtractNetwork.setEnabled(True)
                 self.btnDelNode.setEnabled(True)
                 self.btnConstShrink.setEnabled(True)
@@ -281,6 +283,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnRenameOp.setEnabled(True)
             else:
                 self.menu_bar.menu_actions["Export"].setEnabled(False)
+                self.menu_bar.menu_actions["Export PNG"].setEnabled(False)
                 self.btnExtractNetwork.setEnabled(False)
                 self.btnDelNode.setEnabled(False)
                 self.btnConstShrink.setEnabled(False)
@@ -293,6 +296,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.menu_bar.menu_actions["Open"].setEnabled(False)
             self.menu_bar.menu_actions["Export"].setEnabled(False)
+            self.menu_bar.menu_actions["Export PNG"].setEnabled(False)
             self.btnCombineNetwork.setEnabled(False)
             self.btnExtractNetwork.setEnabled(False)
             self.btnDelNode.setEnabled(False)
