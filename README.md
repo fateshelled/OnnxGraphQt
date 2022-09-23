@@ -25,6 +25,7 @@ ONNX model visualizer. You can edit model structure with GUI!
 ## Install
 ```bash
 sudo apt install python3-pyside2*
+sudo apt install python3-opencv
 sudo apt install nodejs
 
 git clone https://github.com/fateshelled/OnnxGraphQt
