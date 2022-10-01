@@ -21,6 +21,7 @@ ONNX_PROVIDER_TABLE = {
 
 class InferenceProcess(QtCore.QThread):
     signal = QtCore.Signal(str)
+    btn_signal = QtCore.Signal(bool)
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.onnx_file_path: str = ""
@@ -40,6 +41,7 @@ class InferenceProcess(QtCore.QThread):
         self.onnx_execution_provider = onnx_execution_provider
 
     def run(self):
+        self.btn_signal.emit(False)
         cmd = f"sit4onnx "
         cmd += f" --input_onnx_file_path {self.onnx_file_path} "
         cmd += f" --batch_size {self.batch_size} "
@@ -59,9 +61,10 @@ class InferenceProcess(QtCore.QThread):
                 print(txt)
                 self.signal.emit(txt)
                 break
+        self.btn_signal.emit(True)
 
 class InferenceTestWidgets(QtWidgets.QDialog):
-    _DEFAULT_WINDOW_WIDTH = 700
+    _DEFAULT_WINDOW_WIDTH = 600
 
     def __init__(self, onnx_model: onnx.ModelProto=None, parent=None) -> None:
         super().__init__(parent)
@@ -83,11 +86,11 @@ class InferenceTestWidgets(QtWidgets.QDialog):
             raise e
 
     def initUI(self):
-        set_font(self, font_size=BASE_FONT_SIZE)
         self.setFixedWidth(self._DEFAULT_WINDOW_WIDTH)
+        set_font(self, font_size=BASE_FONT_SIZE)
 
         base_layout = QtWidgets.QVBoxLayout()
-        base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
+        # base_layout.setSizeConstraint(base_layout.SizeConstraint.SetFixedSize)
 
         # add layout
         footer_layout = QtWidgets.QVBoxLayout()
@@ -135,14 +138,15 @@ class InferenceTestWidgets(QtWidgets.QDialog):
         self.tb_console.setStyleSheet(f"font-size: {BASE_FONT_SIZE}px; color: #FFFFFF; background-color: #505050;")
         footer_layout.addWidget(self.tb_console)
 
+        # Dialog button
+        self.btn_infer = QtWidgets.QPushButton("inference")
+        self.btn_infer.clicked.connect(self.btn_infer_clicked)
+        footer_layout.addWidget(self.btn_infer)
+
         # inferenceProcess
         self.inference_process = InferenceProcess()
         self.inference_process.signal.connect(self.update_text)
-
-        # Dialog button
-        btn_infer = QtWidgets.QPushButton("inference")
-        btn_infer.clicked.connect(self.btn_infer_clicked)
-        footer_layout.addWidget(btn_infer)
+        self.inference_process.btn_signal.connect(self.btn_infer.setEnabled)
 
         self.setLayout(base_layout)
 
