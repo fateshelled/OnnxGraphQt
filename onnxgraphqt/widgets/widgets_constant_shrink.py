@@ -49,10 +49,12 @@ class ConstantShrinkWidgets(QtWidgets.QDialog):
         lbl_forced_extraction_op_names = QtWidgets.QLabel("forced_extraction_op_names")
         set_font(lbl_forced_extraction_op_names, font_size=LARGE_FONT_SIZE, bold=True)
         self.tb_forced_extraction_op_names = QtWidgets.QLineEdit()
+        self.tb_forced_extraction_op_names.setPlaceholderText("e.g. ['aaa','bbb','ccc']")
 
         lbl_forced_extraction_constant_names = QtWidgets.QLabel("forced_extraction_constant_names")
         set_font(lbl_forced_extraction_constant_names, font_size=LARGE_FONT_SIZE, bold=True)
         self.tb_forced_extraction_constant_names = QtWidgets.QLineEdit()
+        self.tb_forced_extraction_constant_names.setPlaceholderText("e.g. ['aaa','bbb','ccc']")
 
         layout.addRow(lbl_mode, self.cmb_mode)
         layout.addRow(lbl_forced_extraction_op_names, self.tb_forced_extraction_op_names)

@@ -266,7 +266,6 @@ class GenerateOperatorWidgets(QtWidgets.QDialog):
         self.set_visible_add_op_attributes()
 
     def cmb_optype_currentIndexChanged(self, selected_index:int):
-        current_size = self.size()
         selected_operator: OperatorVersion = self.cmb_optype.currentData()
         if selected_operator:
             self.visible_input_valiables_count = selected_operator.inputs
