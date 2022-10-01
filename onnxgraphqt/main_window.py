@@ -76,7 +76,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         icon_dir = os.path.join(os.path.dirname(__file__), "data/icon")
 
-        window_icon = QtGui.QIcon(os.path.join(icon_dir, "../splash.png"))
+        window_icon = QtGui.QIcon(os.path.join(icon_dir, "icon.png"))
         self.setWindowIcon(window_icon)
 
         # MenuBar
