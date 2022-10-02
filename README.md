@@ -61,7 +61,7 @@ python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
 
-![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/191985653-35243b1a-ad6b-4070-b5ba-0b9d94a8643a.jpg)
+![mobilenetv7-7.onnx](https://user-images.githubusercontent.com/53618876/193456965-07b0ccbe-5cfe-4cd8-a233-8dc897dd2446.png)
 
 
 ### Open Onnx Model
@@ -69,7 +69,7 @@ Open file dialog from menubar(File - Open) or drag and drop from file manager to
 
 Sample model is available at `ONNXGraphQt/onnxgraphqt/data/mobilenetv2-7.onnx`
 
-![file open](https://user-images.githubusercontent.com/53618876/191985699-aab3fcd0-b2bf-49f9-a1c3-a5eb3495eead.jpg)
+![file open](https://user-images.githubusercontent.com/53618876/193456986-919c08b1-1382-426e-8b80-5dbe0e6e146d.png)
 
 
 ### Export
@@ -78,7 +78,7 @@ Export to ONNX file or Json file.
 ### Node detail
 Double click on Node for more information.
 
-![node information](https://user-images.githubusercontent.com/53618876/191985735-2c61aed7-f78c-406d-8f00-45f12109398f.jpg)
+![node information](https://user-images.githubusercontent.com/53618876/193457001-1738f4e0-948a-47f5-acdc-63bd4e4f09c8.png)
 
 ### Node Search
 Node search window can be open from menubar(View - Search).
@@ -102,10 +102,10 @@ Please refer to each tool's Github repository for detailed usage.
 - Constant Value Shrink [[scs4onnx](https://github.com/PINTO0309/scs4onnx)]
 - Delete Node [[snd4onnx](https://github.com/PINTO0309/snd4onnx)])]
 - Inference Test [[sit4onnx](https://github.com/PINTO0309/sit4onnx)]
+- Change the INPUT and OUTPUT shape [[sio4onnx](https://github.com/PINTO0309/sio4onnx)]
 
 
 ## ToDo
-- [ ] Add Simple Shape Inference tool [[ssi4onnx](https://github.com/PINTO0309/ssi4onnx)]
 - [ ] Add Simple Structure Checker[[ssc4onnx](https://github.com/PINTO0309/ssc4onnx)]
 
 
