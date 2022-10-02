@@ -20,6 +20,7 @@ from sor4onnx import rename as onnx_tools_rename
 from onnx2json.onnx2json import convert as onnx_tools_onnx2json
 from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 from ssc4onnx import structure_check
+from sio4onnx import io_change as onnx_tools_io_change
 
 from widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
 from widgets.widgets_message_box import MessageBox
@@ -36,6 +37,7 @@ from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
 from widgets.widgets_rename_op import RenameOpWidget
 from widgets.widgets_node_search import NodeSearchWidget
 from widgets.widgets_inference_test import InferenceTestWidgets
+from widgets.widgets_change_input_ouput_shape import ChangeInputOutputShapeWidget
 
 from widgets.custom_properties_bin import CustomPropertiesBinWidget
 
@@ -200,14 +202,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.btnRenameOp = createIconButton("Rename Op\n(sor4onnx)", os.path.join(icon_dir, "sor4onnx.png"))
         self.btnRenameOp.clicked.connect(self.btnRenameOp_clicked)
 
+        self.btnIOChange = createIconButton("IO Change\n(sio4onnx)", os.path.join(icon_dir, "sio4onnx.png"))
+        self.btnIOChange.clicked.connect(self.btnIOChange_clicked)
+
         layout_operator_btn.addWidget(self.btnGenerateOperator, 0, 0)
         layout_operator_btn.addWidget(self.btnAddNode, 0, 1)
         layout_operator_btn.addWidget(self.btnCombineNetwork)
         layout_operator_btn.addWidget(self.btnExtractNetwork)
         layout_operator_btn.addWidget(self.btnRenameOp)
         layout_operator_btn.addWidget(self.btnModifyAttrConst)
-        layout_operator_btn.addWidget(self.btnChannelConvert)
         layout_operator_btn.addWidget(self.btnInitializeBatchSize)
+        layout_operator_btn.addWidget(self.btnIOChange)
+        layout_operator_btn.addWidget(self.btnChannelConvert)
         layout_operator_btn.addWidget(self.btnChangeOpset)
         layout_operator_btn.addWidget(self.btnConstShrink)
         layout_operator_btn.addWidget(self.btnDelNode)
@@ -263,8 +269,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if enable:
             self.menu_bar.menu_actions["Open"].setEnabled(True)
-            self.menu_bar.menu_actions["Export"].setEnabled(True)
-            self.menu_bar.menu_actions["Export PNG"].setEnabled(True)
             self.btnCombineNetwork.setEnabled(True)
             self.btnGenerateOperator.setEnabled(True)
             self.btnAddNode.setEnabled(True)
@@ -280,6 +284,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChannelConvert.setEnabled(True)
                 self.btnInitializeBatchSize.setEnabled(True)
                 self.btnRenameOp.setEnabled(True)
+                self.btnIOChange.setEnabled(True)
             else:
                 self.menu_bar.menu_actions["Export"].setEnabled(False)
                 self.menu_bar.menu_actions["Export PNG"].setEnabled(False)
@@ -291,6 +296,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.btnChannelConvert.setEnabled(False)
                 self.btnInitializeBatchSize.setEnabled(False)
                 self.btnRenameOp.setEnabled(False)
+                self.btnIOChange.setEnabled(False)
 
         else:
             self.menu_bar.menu_actions["Open"].setEnabled(False)
@@ -307,6 +313,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.btnRenameOp.setEnabled(False)
             self.btnGenerateOperator.setEnabled(False)
             self.btnAddNode.setEnabled(False)
+            self.btnIOChange.setEnabled(False)
 
         self.current_button = current_button
         if current_button:
@@ -1262,6 +1269,85 @@ class MainWindow(QtWidgets.QMainWindow):
                         f = io.StringIO()
                         sys.stdout = f
                         onnx_model:onnx.ModelProto = onnx_tools_batchsize_initialize(
+                            onnx_graph=onnx_graph,
+                            non_verbose=False,
+                            **props._asdict()
+                        )
+                    except BaseException as e:
+                        onnx_tool_error = True
+                        raise e
+                    finally:
+                        sys.stdout = sys.__stdout__
+                        print_msg = f.getvalue()
+                        print(print_msg)
+                        print_msg = remove_PrintColor(print_msg)
+                        print_msg = print_msg[:1000]
+                        f.close()
+                except BaseException as e:
+                    exception = e
+                    print(e)
+
+                if onnx_tool_error:
+                    if print_msg:
+                        MessageBox.error(
+                            print_msg,
+                            msg_title,
+                            parent=self)
+                    else:
+                        MessageBox.error(
+                            str(exception),
+                            msg_title,
+                            parent=self)
+                    continue
+
+                if print_msg.strip() and print_msg != "INFO: Finish!\n":
+                    MessageBox.warn(
+                        print_msg,
+                        msg_title,
+                        parent=self)
+
+                model_name = self.windowTitle()
+                self.graph.begin_undo(msg_title)
+                self.load_graph(onnx_model=onnx_model, model_name=model_name, clear_undo_stack=False, push_undo=True)
+                self.graph.end_undo()
+                self.update_graph(update_layout=False)
+                MessageBox.info(
+                    f"complete.",
+                    msg_title,
+                    parent=self)
+                break
+            else:
+                break
+        self.current_widgets = None
+        self.set_sidemenu_buttons_enabled(True)
+        self.set_font_bold(btn, False)
+
+    def btnIOChange_clicked(self, e:bool):
+        btn = self.btnIOChange
+        if self.current_button is btn:
+            self.current_widgets.close()
+            return
+
+        self.set_font_bold(btn, True)
+        self.set_sidemenu_buttons_enabled(False, btn)
+        msg_title = "IO Change"
+
+        d = self.graph.to_data()
+        self.current_widgets = ChangeInputOutputShapeWidget(graph=d, parent=self)
+        while True:
+            self.current_widgets.show()
+            if self.current_widgets.exec_():
+                onnx_tool_error = False
+                print_msg = ""
+
+                exception = None
+                props, _ = self.current_widgets.get_properties()
+                try:
+                    onnx_graph=self.graph.to_onnx(non_verbose=True)
+                    try:
+                        f = io.StringIO()
+                        sys.stdout = f
+                        onnx_model:onnx.ModelProto = onnx_tools_io_change(
                             onnx_graph=onnx_graph,
                             non_verbose=False,
                             **props._asdict()

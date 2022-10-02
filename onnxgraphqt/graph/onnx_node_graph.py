@@ -487,6 +487,7 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
         node = None
         value_info = None
         if n.op not in ['Constant', 'ConstantOfShape']:
+            # not constant
             for inp in n.onnx_inputs:
                 name, dtype, shape, val = inp.name, inp.dtype, inp.shape, inp.values
                 if name in gs_variables_all.keys():
@@ -537,37 +538,37 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
             attr_values = n.attrs["values"]
             shape = attr_values.shape
             if isinstance(attr_values, np.ndarray):
-                dtype = NUMPY_TYPES_TO_ONNX_DTYPES[np.dtype(dtype)]
+                dtype = NUMPY_TYPES_TO_ONNX_DTYPES[attr_values.dtype]
             else:
                 dtype = DTYPES_TO_ONNX_DTYPES[type(attr_values)]
 
             constant_name = [o.name for o in n.onnx_outputs][0]
             value_info = onnx.helper.make_tensor_value_info(
-                constant_name,
-                dtype,
-                shape
-            )
+                            constant_name,
+                            dtype,
+                            shape
+                        )
             if len(shape) == 0:
-                node = onnx.helper.make_node(
-                    n.op,
-                    inputs=[],
-                    outputs=[constant_name],
-                    name=n.node_name,
-                    value=attr_values.tolist()
-                )
+                value = onnx.helper.make_tensor(
+                            name="value",
+                            data_type=dtype,
+                            dims=shape,
+                            vals=[attr_values.tolist()]
+                        )
             else:
-                node = onnx.helper.make_node(
-                    n.op,
-                    inputs=[],
-                    outputs=[constant_name],
-                    name=n.node_name,
-                    value=onnx.helper.make_tensor(
-                        name='value',
-                        data_type=dtype,
-                        dims=shape,
-                        vals=attr_values,
-                    ),
-                )
+                value = onnx.helper.make_tensor(
+                            name="value",
+                            data_type=dtype,
+                            dims=shape,
+                            vals=attr_values.tolist()
+                        )
+            node = onnx.helper.make_node(
+                n.op,
+                inputs=[],
+                outputs=[constant_name],
+                name=n.node_name,
+                value=value
+            )
 
         # 3. Graph Generation
         single_op_graph = None
