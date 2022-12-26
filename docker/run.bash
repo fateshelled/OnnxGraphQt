@@ -12,7 +12,7 @@ then
     chmod a+r $XAUTH
 fi
 
-docker run --rm -it \
+docker run --net=host --rm -it \
         -v=/tmp/.X11-unix:/tmp/.X11-unix:rw \
         -v=${XAUTH}:${XAUTH}:rw \
         -e="XAUTHORITY=${XAUTH}" \
