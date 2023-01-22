@@ -1,4 +1,3 @@
-requests
 PySide2
 numpy
 onnx
@@ -7,3 +6,5 @@ protobuf==3.20.0
 onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
 git+https://github.com/jchanvfx/NodeGraphQt.git@v0.2.2#egg=NodeGraphQt
 simple-onnx-processing-tools
+grandalf
+networkx

@@ -6,7 +6,6 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from main_window import MainWindow
 from widgets.splash_screen import create_screen
 import multiprocessing
-from run_dagre_server import run as run_dagre_server
 
 
 def main():
@@ -53,8 +52,5 @@ if __name__ == "__main__":
     proc0.start()
     print(f"start GUI [{proc0.pid}]")
 
-    proc1 = run_dagre_server()
-
     proc0.join()
     proc0.close()
-    proc1.terminate()

@@ -8,6 +8,7 @@ import numpy as np
 import cv2
 import onnx
 import onnx_graphsurgeon as gs
+import networkx as nx
 
 from PySide2 import QtCore, QtWidgets
 from NodeGraphQt.constants import (
@@ -51,7 +52,7 @@ from .onnx_node import (
     ONNXNode,
     OnnxNodeIO
 )
-from autolayout.request_layout import request_layout
+from autolayout.sugiyama_layout import sugiyama_layout
 
 
 NUMPY_TYPES_TO_ONNX_DTYPES = {
@@ -200,6 +201,21 @@ class ONNXNodeGraph(NodeGraph):
 
     def get_selected_node_names(self)->List[str]:
         return [node.name() for node in self.all_nodes() if node.selected()]
+
+    def get_any_node_by_name(self, name)->List:
+        """
+        Returns node that matches the name.
+
+        Args:
+            name (str): name of the node.
+        Returns:
+            NodeGraphQt.NodeObject: node object.
+        """
+        ret = []
+        for node_id, node in self._model.nodes.items():
+            if node.node_name == name:
+                ret.append(node)
+        return ret
 
     def get_input_node_by_name(self, name)->List[ONNXInput]:
         """
@@ -405,6 +421,8 @@ class ONNXNodeGraph(NodeGraph):
                 outputs[n.name()] = n
         return OnnxGraph(inputs=inputs, outputs=outputs, nodes=nodes, node_inputs=node_inputs)
 
+    def to_networkx(self, reverse=False)->nx.DiGraph:
+        return NodeGraphToNetworkX(self, reverse)
 
     def export(self, file_path:str):
         try:
@@ -609,20 +627,19 @@ def NodeGraphtoONNX(graph: ONNXNodeGraph) -> gs.Graph:
 def auto_layout_nodes(graph:ONNXNodeGraph, push_undo=True):
     if push_undo:
         graph.begin_undo('Auto Layout Nodes')
-    x_ratio = 20
-    y_ratio = 5
 
-    g = graph.to_onnx_gs()
-    layout = request_layout(g)
-    for node_name, pos in layout["inputs"].items():
-        node = graph.get_input_node_by_name(node_name)[0]
-        node.set_property('pos', [float(pos["x"])*x_ratio, float(pos["y"])*y_ratio], push_undo=push_undo)
-    for node_name, pos in layout["nodes"].items():
-        node = graph.get_node_by_name(node_name)[0]
-        node.set_property('pos', [float(pos["x"])*x_ratio, float(pos["y"])*y_ratio], push_undo=push_undo)
-    for node_name, pos in layout["outputs"].items():
-        node = graph.get_output_node_by_name(node_name)[0]
-        node.set_property('pos', [float(pos["x"])*x_ratio, float(pos["y"])*y_ratio], push_undo=push_undo)
+    g = graph.to_networkx(reverse=True)
+    pos = sugiyama_layout(g)
+
+    for node_name, (x, y) in pos.items():
+        nodes = graph.get_any_node_by_name(node_name)
+        if len(nodes) == 0:
+            continue
+        if len(nodes) > 1:
+            print("ERROR!!")
+            continue
+        node = nodes[0]
+        node.set_property('pos', [float(x), -float(y)], push_undo=push_undo)
 
     if push_undo:
         graph.end_undo()
@@ -693,3 +710,23 @@ def ONNXtoNodeGraph(onnx_graph: gs.Graph, node_graph:ONNXNodeGraph, push_undo=Fa
         for op in n.output_ports():
             op.set_locked(state=True, connected_ports=True, push_undo=push_undo)
 
+
+def NodeGraphToNetworkX(graph:ONNXNodeGraph, reverse=False)->nx.DiGraph:
+    nx_g = nx.DiGraph()
+    if reverse:
+        nodes = graph.all_nodes()[::-1]
+        for n in nodes:
+            nx_g.add_node(n.name())
+        for n in graph.all_nodes():
+            for input_nodes in n.connected_input_nodes().values():
+                for inp in input_nodes:
+                    nx_g.add_edge(n.name(), inp.name())
+    else:
+        nodes = graph.all_nodes()
+        for n in nodes:
+            nx_g.add_node(n.name())
+        for n in graph.all_nodes():
+            for input_nodes in n.connected_input_nodes().values():
+                for inp in input_nodes:
+                    nx_g.add_edge(inp.name(), n.name())
+    return nx_g

@@ -18,8 +18,7 @@ RUN apt update && \
         python3-dev \
         python3-pip \
         python3-pyside2* \
-        python3-opencv \
-        nodejs && \
+        python3-opencv && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
