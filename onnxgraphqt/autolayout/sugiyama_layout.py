@@ -11,6 +11,8 @@ def sugiyama_layout(g: nx.Graph):
     class defaultview(object):
         w, h = 400, 100
     for v in gg.V(): v.view = defaultview()
+    if len(gg.C) == 0:
+        return {}
     sug = SugiyamaLayout(gg.C[0])
     sug.init_all(optimize=False)
     sug.draw()
