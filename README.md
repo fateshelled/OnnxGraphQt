@@ -20,13 +20,13 @@ ONNX model visualizer. You can edit model structure with GUI!
 - onnx-simplifier
 - onnx_graphsurgeon
 - [simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
-- Node.js
+- networkx
+- grandalf
 
 ## Install
 ```bash
 sudo apt install python3-pyside2*
 sudo apt install python3-opencv
-sudo apt install nodejs
 
 git clone https://github.com/fateshelled/OnnxGraphQt
 cd OnnxGraphQt
@@ -53,7 +53,6 @@ cd OnnxGraphQt
 cd OnnxGraphQt
 
 # Open empty graph
-# node.js server starts on the backend (port 3000)
 python3 onnxgraphqt/main.py
 
 # Open with onnx model
