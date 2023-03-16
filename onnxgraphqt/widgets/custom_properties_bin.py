@@ -3,6 +3,7 @@ from NodeGraphQt.custom_widgets.properties_bin.node_property_widgets import _Pro
 
 from .custom_properties import CustomNodePropWidget
 
+
 class CustomPropertiesBinWidget(QtWidgets.QWidget):
     """
     The :class:`NodeGraphQt.PropertiesBinWidget` is a list widget for displaying

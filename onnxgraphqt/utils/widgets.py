@@ -1,8 +1,9 @@
 from typing import List
+import math
 from PySide2 import QtCore, QtWidgets, QtGui
 from NodeGraphQt.constants import PipeEnum
 from NodeGraphQt.qgraphics.pipe import PIPE_STYLES
-import math
+
 
 BASE_FONT_SIZE = 16
 LARGE_FONT_SIZE = 18

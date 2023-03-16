@@ -19,6 +19,7 @@ from utils.color import (
     get_node_color,
 )
 from utils.widgets import set_font, GRAPH_FONT_SIZE
+from widgets.custom_node_item import CustomNodeItem
 
 
 @dataclass
@@ -36,7 +37,7 @@ class ONNXNode(BaseNode):
     NODE_NAME = 'onnxnode'
 
     def __init__(self):
-        super(ONNXNode, self).__init__()
+        super(ONNXNode, self).__init__(qgraphics_item=CustomNodeItem)
         self.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
         self.attrs = OrderedDict()
         self.node_name = ""
@@ -116,7 +117,7 @@ class ONNXInput(BaseNode):
     # initial default node name.
     NODE_NAME = 'input'
     def __init__(self):
-        super(ONNXInput, self).__init__()
+        super(ONNXInput, self).__init__(qgraphics_item=CustomNodeItem)
         self.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
         self.node_name = ""
         self.shape = []
@@ -179,7 +180,7 @@ class ONNXOutput(BaseNode):
     # initial default node name.
     NODE_NAME = 'output'
     def __init__(self):
-        super(ONNXOutput, self).__init__()
+        super(ONNXOutput, self).__init__(qgraphics_item=CustomNodeItem)
         self.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
         self.node_name = ""
         self.shape = []
