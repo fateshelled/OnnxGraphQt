@@ -5,25 +5,7 @@ from typing import (
 from collections import OrderedDict
 
 from NodeGraphQt import BaseNode
-from NodeGraphQt.constants import (
-    NODE_PROP_QLABEL,
-    NODE_PROP_QLINEEDIT,
-    NODE_PROP_QTEXTEDIT,
-    NODE_PROP_QCOMBO,
-    NODE_PROP_QCHECKBOX,
-    NODE_PROP_QSPINBOX,
-    NODE_PROP_COLORPICKER,
-    NODE_PROP_SLIDER,
-    NODE_PROP_FILE,
-    NODE_PROP_FILE_SAVE,
-    NODE_PROP_VECTOR2,
-    NODE_PROP_VECTOR3,
-    NODE_PROP_VECTOR4,
-    NODE_PROP_FLOAT,
-    NODE_PROP_INT,
-    NODE_PROP_BUTTON,
-    NODE_LAYOUT_VERTICAL,
-)
+from NodeGraphQt.constants import NodeEnum, LayoutDirectionEnum, NodePropWidgetEnum
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -37,7 +19,6 @@ from utils.color import (
     get_node_color,
 )
 from utils.widgets import set_font, GRAPH_FONT_SIZE
-from widgets.custom_nodeitem_vertical import CustomNodeItemVertical
 
 
 @dataclass
@@ -55,11 +36,8 @@ class ONNXNode(BaseNode):
     NODE_NAME = 'onnxnode'
 
     def __init__(self):
-        super(ONNXNode, self).__init__(
-            {
-                NODE_LAYOUT_VERTICAL: CustomNodeItemVertical
-            }
-        )
+        super(ONNXNode, self).__init__()
+        self.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
         self.attrs = OrderedDict()
         self.node_name = ""
         self.op = ""
@@ -67,9 +45,9 @@ class ONNXNode(BaseNode):
         self.onnx_outputs = []
 
         # create node inputs.
-        self.input_port = self.add_input('multi in', multi_input=True)
+        self.input_port = self.add_input('multi in', multi_input=True, display_name=False)
         # create node outputs.
-        self.output_port = self.add_output('multi out', multi_output=True)
+        self.output_port = self.add_output('multi out', multi_output=True, display_name=False)
         self.set_font()
 
     def set_attrs(self, attrs:OrderedDict, push_undo=False):
@@ -79,9 +57,9 @@ class ONNXNode(BaseNode):
                 self.set_property(key + "_", val, push_undo=push_undo)
             else:
                 if key == "dtype":
-                    self.create_property(key + "_", val, widget_type=NODE_PROP_QLABEL)
+                    self.create_property(key + "_", val, widget_type=NodePropWidgetEnum.QLABEL)
                 else:
-                    self.create_property(key + "_", val, widget_type=NODE_PROP_QLINEEDIT)
+                    self.create_property(key + "_", val, widget_type=NodePropWidgetEnum.QLINE_EDIT)
 
     def get_attrs(self)->OrderedDict:
         d = [(key, self.get_property(key + "_")) for key in self.attrs.keys()]
@@ -90,7 +68,7 @@ class ONNXNode(BaseNode):
     def set_node_name(self, node_name:str, push_undo=False):
         self.node_name = node_name
         if not self.has_property("node_name"):
-            self.create_property("node_name", self.node_name, widget_type=NODE_PROP_QLINEEDIT)
+            self.create_property("node_name", self.node_name, widget_type=NodePropWidgetEnum.QLINE_EDIT)
         else:
             self.set_property("node_name", self.node_name, push_undo=push_undo)
 
@@ -100,9 +78,9 @@ class ONNXNode(BaseNode):
 
     def set_op(self, op:str, push_undo=False):
         self.op = op
-        self._view.set_display_name(op)
+        self._view.name = op
         if not self.has_property("op"):
-            self.create_property("op", self.op, widget_type=NODE_PROP_QLABEL)
+            self.create_property("op", self.op, widget_type=NodePropWidgetEnum.QLABEL)
         else:
             self.set_property("op", self.op, push_undo=push_undo)
 
@@ -110,7 +88,7 @@ class ONNXNode(BaseNode):
         self.onnx_inputs = onnx_inputs
         value = [[inp.name, inp.dtype, inp.shape, inp.values] for inp in self.onnx_inputs]
         if not self.has_property("inputs_"):
-            self.create_property("inputs_", value, widget_type=NODE_PROP_QLINEEDIT)
+            self.create_property("inputs_", value, widget_type=NodePropWidgetEnum.QLINE_EDIT)
         else:
             self.set_property("inputs_", value, push_undo=push_undo)
 
@@ -118,7 +96,7 @@ class ONNXNode(BaseNode):
         self.onnx_outputs = onnx_outputs
         value = [[out.name, out.dtype, out.shape, out.values] for out in self.onnx_outputs]
         if not self.has_property("outputs_"):
-            self.create_property("outputs_",  value, widget_type=NODE_PROP_QLINEEDIT)
+            self.create_property("outputs_",  value, widget_type=NodePropWidgetEnum.QLINE_EDIT)
         else:
             self.set_property("outputs_", value, push_undo=push_undo)
 
@@ -132,31 +110,27 @@ class ONNXNode(BaseNode):
         set_font(self.view.text_item, font_size=font_size, bold=bold)
 
 
-
 class ONNXInput(BaseNode):
     # unique node identifier.
     __identifier__ = 'nodes.node'
     # initial default node name.
     NODE_NAME = 'input'
     def __init__(self):
-        super(ONNXInput, self).__init__(
-            {
-                NODE_LAYOUT_VERTICAL: CustomNodeItemVertical
-            }
-        )
+        super(ONNXInput, self).__init__()
+        self.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
         self.node_name = ""
         self.shape = []
         self.dtype = ""
         self.output_names = []
-        self.create_property("node_name", self.node_name, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("shape", self.shape, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("output_names", self.output_names, widget_type=NODE_PROP_QTEXTEDIT)
+        self.create_property("node_name", self.node_name, widget_type=NodePropWidgetEnum.QLINE_EDIT)
+        self.create_property("shape", self.shape, widget_type=NodePropWidgetEnum.QLINE_EDIT)
+        self.create_property("dtype", self.dtype, widget_type=NodePropWidgetEnum.QLINE_EDIT)
+        self.create_property("output_names", self.output_names, widget_type=NodePropWidgetEnum.QTEXT_EDIT)
         # create node outputs.
-        self.output_port = self.add_output('multi out', multi_output=True)
+        self.output_port = self.add_output('multi out', multi_output=True, display_name=False)
         self.set_color()
         self.set_font()
-        self._view.set_display_name("input")
+        self._view.name = "input"
 
     def get_node_name(self):
         self.node_name = self.get_property("node_name")
@@ -205,24 +179,21 @@ class ONNXOutput(BaseNode):
     # initial default node name.
     NODE_NAME = 'output'
     def __init__(self):
-        super(ONNXOutput, self).__init__(
-            {
-                NODE_LAYOUT_VERTICAL: CustomNodeItemVertical
-            }
-        )
+        super(ONNXOutput, self).__init__()
+        self.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
         self.node_name = ""
         self.shape = []
         self.dtype:str = ""
         self.input_names = []
-        self.create_property("node_name", self.node_name, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("shape", self.shape, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("dtype", self.dtype, widget_type=NODE_PROP_QLINEEDIT)
-        self.create_property("input_names", self.input_names, widget_type=NODE_PROP_QTEXTEDIT)
+        self.create_property("node_name", self.node_name, widget_type=NodePropWidgetEnum.QLINE_EDIT)
+        self.create_property("shape", self.shape, widget_type=NodePropWidgetEnum.QLINE_EDIT)
+        self.create_property("dtype", self.dtype, widget_type=NodePropWidgetEnum.QLINE_EDIT)
+        self.create_property("input_names", self.input_names, widget_type=NodePropWidgetEnum.QTEXT_EDIT)
         # create node inputs.
-        self.input_port = self.add_input('multi in', multi_input=True)
+        self.input_port = self.add_input('multi in', multi_input=True, display_name=False)
         self.set_color()
         self.set_font()
-        self._view.set_display_name("output")
+        self._view.name = "output"
 
     def get_node_name(self):
         self.node_name = self.get_property("node_name")

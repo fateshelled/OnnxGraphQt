@@ -12,21 +12,22 @@ import networkx as nx
 
 from PySide2 import QtCore, QtWidgets
 from NodeGraphQt.constants import (
-    NODE_LAYOUT_HORIZONTAL,
-    NODE_LAYOUT_VERTICAL,
     ViewerEnum,
 )
-from NodeGraphQt.base import node, graph
-from NodeGraphQt.qgraphics import pipe
-node.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
-graph.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
-pipe.NODE_LAYOUT_DIRECTION = NODE_LAYOUT_VERTICAL
 
 from NodeGraphQt import NodeGraph, BaseNode, Port
 from NodeGraphQt.base.node import NodeObject
 from NodeGraphQt.base.factory import NodeFactory
 from NodeGraphQt.base.model import NodeGraphModel
 from NodeGraphQt.widgets.viewer import NodeViewer
+from NodeGraphQt.constants import (
+    URI_SCHEME,
+    URN_SCHEME,
+    LayoutDirectionEnum,
+    PipeLayoutEnum,
+    PortTypeEnum,
+    ViewerEnum
+)
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -71,39 +72,49 @@ class OnnxGraph:
     node_inputs: Dict[NAME, OnnxNodeIO]
 
 class ONNXNodeGraph(NodeGraph):
-    def __super__init__(self, parent=None, **kwargs):
-        """
-        Args:
-            parent (object): object parent.
-            **kwargs (dict): Used for overriding internal objects at init time.
-        """
-        super(NodeGraph, self).__init__(parent)
-        self.setObjectName('NodeGraph')
-        self._model = (
-            kwargs.get('model') or NodeGraphModel())
-        self._node_factory = (
-            kwargs.get('node_factory') or NodeFactory())
+    # def __super__init__(self, parent=None, **kwargs):
+    #     """
+    #     Args:
+    #         parent (object): object parent.
+    #         **kwargs (dict): Used for overriding internal objects at init time.
+    #     """
+    #     super(NodeGraph, self).__init__(parent)
+    #     self.setObjectName('NodeGraph')
+    #     self._model = (
+    #         kwargs.get('model') or NodeGraphModel())
+    #     layout_direction = kwargs.get('layout_direction')
+    #     if layout_direction:
+    #         if layout_direction not in [e.value for e in LayoutDirectionEnum]:
+    #             layout_direction = LayoutDirectionEnum.HORIZONTAL.value
+    #         self._model.layout_direction = layout_direction
+    #     else:
+    #         layout_direction = self._model.layout_direction
+    #     self._node_factory = (
+    #         kwargs.get('node_factory') or NodeFactory())
 
-        self._undo_view = None
-        self._undo_stack = (
-            kwargs.get('undo_stack') or QtWidgets.QUndoStack(self))
+    #     self._undo_view = None
+    #     self._undo_stack = (
+    #         kwargs.get('undo_stack') or QtWidgets.QUndoStack(self))
 
-        self._widget = None
+    #     self._widget = None
 
-        self._sub_graphs = {}
+    #     self._sub_graphs = {}
 
-        self._viewer = (
-            kwargs.get('viewer') or NodeViewer(undo_stack=self._undo_stack))
-        # self._viewer.use_OpenGL()
+    #     self._viewer = (
+    #         kwargs.get('viewer') or NodeViewer(undo_stack=self._undo_stack))
+    #     self._viewer.set_layout_direction(layout_direction)\
 
-        # self._build_context_menu()
-        # self._register_builtin_nodes()
-        self._wire_signals()
+    #     self._context_menu = {}
+
+    #     # self._register_context_menu()
+    #     # self._register_builtin_nodes()
+    #     self._wire_signals()
 
     def __init__(self, name: str, opset: int, doc_string: str, import_domains: str,
                  producer_name: str, producer_version: str, ir_version: int, model_version: int,
                  parent=None, **kwargs):
-        self.__super__init__(parent, **kwargs)
+        # self.__super__init__(parent, **kwargs)
+        super().__init__(parent, layout_direction=1, **kwargs)
         self.name = name
         self.opset = opset
         self.doc_string = doc_string

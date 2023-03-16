@@ -230,6 +230,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graph.auto_layout(push_undo=False)
 
         if update_layout:
+            self.graph.reset_selection()
             self.graph.fit_to_selection()
         self.graph.reset_selection()
 

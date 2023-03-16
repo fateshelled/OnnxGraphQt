@@ -1,6 +1,5 @@
 from PySide2 import QtWidgets, QtCore, QtGui
-from Qt import QtCompat
-from NodeGraphQt.custom_widgets.properties_bin import PropertiesDelegate, PropertiesList
+from NodeGraphQt.custom_widgets.properties_bin.node_property_widgets import _PropertiesList
 
 from .custom_properties import CustomNodePropWidget
 
@@ -35,7 +34,7 @@ class CustomPropertiesBinWidget(QtWidgets.QWidget):
     def __init__(self, parent=None, node_graph=None):
         super(CustomPropertiesBinWidget, self).__init__(parent)
         self.setWindowTitle('Properties Bin')
-        self._prop_list = PropertiesList()
+        self._prop_list = _PropertiesList()
         self.resize(450, 400)
 
         self._block_signal = False
@@ -110,12 +109,7 @@ class CustomPropertiesBinWidget(QtWidgets.QWidget):
 if __name__ == '__main__':
     import sys
     from NodeGraphQt import BaseNode, NodeGraph
-    from NodeGraphQt.constants import (NODE_PROP_QLABEL,
-                                       NODE_PROP_QLINEEDIT,
-                                       NODE_PROP_QCOMBO,
-                                       NODE_PROP_QSPINBOX,
-                                       NODE_PROP_COLORPICKER,
-                                       NODE_PROP_SLIDER)
+    from NodeGraphQt.constants import NodePropWidgetEnum
 
 
     class TestNode(BaseNode):
@@ -124,19 +118,19 @@ if __name__ == '__main__':
         def __init__(self):
             super(TestNode, self).__init__()
             self.create_property('label_test', 'foo bar',
-                                 widget_type=NODE_PROP_QLABEL)
+                                 widget_type=NodePropWidgetEnum.QLABEL)
             self.create_property('text_edit', 'hello',
-                                 widget_type=NODE_PROP_QLINEEDIT)
+                                 widget_type=NodePropWidgetEnum.QLINE_EDIT)
             self.create_property('color_picker', (0, 0, 255),
-                                 widget_type=NODE_PROP_COLORPICKER)
+                                 widget_type=NodePropWidgetEnum.COLOR_PICKER)
             self.create_property('integer', 10,
-                                 widget_type=NODE_PROP_QSPINBOX)
+                                 widget_type=NodePropWidgetEnum.QSPIN_BOX)
             self.create_property('list', 'foo',
                                  items=['foo', 'bar'],
-                                 widget_type=NODE_PROP_QCOMBO)
+                                 widget_type=NodePropWidgetEnum.QCOMBO_BOX)
             self.create_property('range', 50,
                                  range=(45, 55),
-                                 widget_type=NODE_PROP_SLIDER)
+                                 widget_type=NodePropWidgetEnum.SLIDER)
 
     def prop_changed(node_id, prop_name, prop_value):
         print('-'*100)

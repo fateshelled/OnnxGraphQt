@@ -4,7 +4,7 @@ onnx
 onnx-simplifier
 protobuf==3.20.0
 onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
-git+https://github.com/jchanvfx/NodeGraphQt.git@v0.2.2#egg=NodeGraphQt
+git+https://github.com/jchanvfx/NodeGraphQt.git@v0.5.2#egg=NodeGraphQt
 simple-onnx-processing-tools
 grandalf
 networkx
