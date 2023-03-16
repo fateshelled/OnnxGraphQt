@@ -146,8 +146,10 @@ class ONNXNodeGraph(NodeGraph):
         pos = np.array([node.get_property("pos") for node in self.all_nodes()])
         view_x0 = np.min(pos[:, 0])
         view_y0 = np.min(pos[:, 1])
-        view_width = np.max(pos[:, 0]) - view_x0
-        view_height = np.max(pos[:, 1]) - view_y0
+        view_x1 = np.max(pos[:, 0])
+        view_y1 = np.max(pos[:, 1])
+        view_width = view_x1 - view_x0
+        view_height = view_y1 - view_y0
 
         offset = 50
         view_x0 = int(view_x0 - 0.5 - offset)
@@ -155,8 +157,8 @@ class ONNXNodeGraph(NodeGraph):
         view_width = int(view_width + 0.5 + offset)
         view_height = int(view_height + 0.5 + offset)
 
-        res_x = 600
-        res_y = 600
+        res_x = 1200
+        res_y = 1200
         total_x = len(list(range(view_x0, view_width, res_x)))
         total_y = len(list(range(view_y0, view_height, res_y)))
         total = total_x * total_y
