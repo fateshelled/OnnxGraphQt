@@ -5,7 +5,7 @@ import tempfile
 import shutil
 
 import numpy as np
-import cv2
+from PIL import Image
 import onnx
 import onnx_graphsurgeon as gs
 import networkx as nx
@@ -172,27 +172,25 @@ class ONNXNodeGraph(NodeGraph):
             for y0 in range(view_y0, view_height, res_y):
                 self._viewer.set_scene_rect([x0, y0, res_x, res_y])
                 pixmap = self._viewer.grab()
-                fn_y = f"{tmpname}_{count_x}_{count_y}.png"
-                pixmap.save(fn_y, "PNG")
-                img = cv2.imread(fn_y)
+                qimg = pixmap.toImage()
+                img = np.array(qimg.constBits()).reshape(qimg.height(), qimg.width(), -1)
                 if os.path.exists(fn_x):
                     imgs_y = []
-                    imgs_y.append(cv2.imread(fn_x))
+                    imgs_y.append(np.array(Image.open(fn_x)))
                     imgs_y.append(img[1:-5, 1:-23])
-                    cv2.imwrite(fn_x, np.vstack(imgs_y))
+                    Image.fromarray(np.vstack(imgs_y)).save(fn_x)
                 else:
-                    cv2.imwrite(fn_x, (img[1:-5, 1:-23]))
-                os.remove(fn_y)
+                    Image.fromarray(img[1:-5, 1:-23]).save(fn_x)
                 count_y += 1
                 print("\r" + f"screenshot {count_x * total_y + count_y} / {total}", end="")
-            img_x = cv2.imread(fn_x)
+            img_x = np.array(Image.open(fn_x))
             if os.path.exists(base_fn):
                 imgs_x = []
-                imgs_x.append(cv2.imread(base_fn))
+                imgs_x.append(np.array(Image.open(base_fn)))
                 imgs_x.append(img_x)
-                cv2.imwrite(base_fn, np.hstack(imgs_x))
+                Image.fromarray(np.hstack(imgs_x)).save(base_fn)
             else:
-                cv2.imwrite(base_fn, img_x)
+                Image.fromarray(img_x).save(base_fn)
             os.remove(fn_x)
             count_x += 1
         shutil.move(base_fn, export_filename)

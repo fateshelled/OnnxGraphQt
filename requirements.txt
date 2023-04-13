@@ -1,5 +1,6 @@
 PySide2
 numpy
+pillow
 onnx
 onnx-simplifier
 protobuf==3.20.0
