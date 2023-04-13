@@ -22,29 +22,29 @@ from json2onnx.json2onnx import convert as onnx_tools_json2onnx
 from ssc4onnx import structure_check
 from sio4onnx import io_change as onnx_tools_io_change
 
-from widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
-from widgets.widgets_message_box import MessageBox
-from widgets.widgets_combine_network import CombineNetworkWidgets
-from widgets.widgets_extract_network import ExtractNetworkWidgets
-from widgets.widgets_add_node import AddNodeWidgets
-from widgets.widgets_change_opset import ChangeOpsetWidget
-from widgets.widgets_change_channel import ChangeChannelWidgets
-from widgets.widgets_constant_shrink import ConstantShrinkWidgets
-from widgets.widgets_modify_attrs import ModifyAttrsWidgets
-from widgets.widgets_delete_node import DeleteNodeWidgets
-from widgets.widgets_generate_operator import GenerateOperatorWidgets
-from widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
-from widgets.widgets_rename_op import RenameOpWidget
-from widgets.widgets_node_search import NodeSearchWidget
-from widgets.widgets_inference_test import InferenceTestWidgets
-from widgets.widgets_change_input_ouput_shape import ChangeInputOutputShapeWidget
+from onnxgraphqt.widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
+from onnxgraphqt.widgets.widgets_combine_network import CombineNetworkWidgets
+from onnxgraphqt.widgets.widgets_extract_network import ExtractNetworkWidgets
+from onnxgraphqt.widgets.widgets_add_node import AddNodeWidgets
+from onnxgraphqt.widgets.widgets_change_opset import ChangeOpsetWidget
+from onnxgraphqt.widgets.widgets_change_channel import ChangeChannelWidgets
+from onnxgraphqt.widgets.widgets_constant_shrink import ConstantShrinkWidgets
+from onnxgraphqt.widgets.widgets_modify_attrs import ModifyAttrsWidgets
+from onnxgraphqt.widgets.widgets_delete_node import DeleteNodeWidgets
+from onnxgraphqt.widgets.widgets_generate_operator import GenerateOperatorWidgets
+from onnxgraphqt.widgets.widgets_initialize_batchsize import InitializeBatchsizeWidget
+from onnxgraphqt.widgets.widgets_rename_op import RenameOpWidget
+from onnxgraphqt.widgets.widgets_node_search import NodeSearchWidget
+from onnxgraphqt.widgets.widgets_inference_test import InferenceTestWidgets
+from onnxgraphqt.widgets.widgets_change_input_ouput_shape import ChangeInputOutputShapeWidget
 
-from widgets.custom_properties_bin import CustomPropertiesBinWidget
+from onnxgraphqt.widgets.custom_properties_bin import CustomPropertiesBinWidget
 
-from graph.onnx_node_graph import ONNXNodeGraph
-from utils.opset import DEFAULT_OPSET
-from utils.color import remove_PrintColor
-from utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
+from onnxgraphqt.graph.onnx_node_graph import ONNXNodeGraph
+from onnxgraphqt.utils.opset import DEFAULT_OPSET
+from onnxgraphqt.utils.color import remove_PrintColor
+from onnxgraphqt.utils.widgets import BASE_FONT_SIZE, LARGE_FONT_SIZE, set_font, createIconButton
 
 
 class MainWindow(QtWidgets.QMainWindow):

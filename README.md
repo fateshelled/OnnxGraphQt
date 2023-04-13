@@ -52,10 +52,10 @@ cd OnnxGraphQt
 cd OnnxGraphQt
 
 # Open empty graph
-python3 onnxgraphqt/main.py
+python3 onnxgraphqt
 
 # Open with onnx model
-python3 onnxgraphqt/main.py onnxgraphqt/data/mobilenetv2-7.onnx
+python3 onnxgraphqt onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
 

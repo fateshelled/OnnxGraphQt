@@ -5,12 +5,10 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 import numpy as np
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from widgets.widgets_message_box import MessageBox
-from utils.opset import DEFAULT_OPSET
-from utils.operators import onnx_opsets, opnames, OperatorVersion, latest_opset
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
+from onnxgraphqt.utils.opset import DEFAULT_OPSET
+from onnxgraphqt.utils.operators import onnx_opsets, opnames, OperatorVersion, latest_opset
+from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
 
 
 AVAILABLE_DTYPES = [

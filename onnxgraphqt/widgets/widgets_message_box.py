@@ -1,6 +1,7 @@
 from PySide2 import QtCore, QtWidgets, QtGui
 from typing import Union, List
 
+
 class MessageBox(QtWidgets.QMessageBox):
     def __init__(self,
                  text:Union[str, List[str]],

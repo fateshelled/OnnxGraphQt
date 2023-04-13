@@ -3,10 +3,8 @@ import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 from ast import literal_eval
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
-from widgets.widgets_message_box import MessageBox
+from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
 
 
 ConstantShrinkProperties = namedtuple("ConstantShrinkProperties",

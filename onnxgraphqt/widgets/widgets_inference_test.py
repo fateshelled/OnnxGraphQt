@@ -7,10 +7,9 @@ from ast import literal_eval
 import onnx
 import onnxruntime as ort
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
-from utils.color import replace_PrintColor
+import os
+from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.utils.color import replace_PrintColor
 
 ONNX_PROVIDER_TABLE = {
     "TensorrtExecutionProvider": ["tensorrt"],

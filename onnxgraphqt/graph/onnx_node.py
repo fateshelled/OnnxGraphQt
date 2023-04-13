@@ -7,9 +7,7 @@ from collections import OrderedDict
 from NodeGraphQt import BaseNode
 from NodeGraphQt.constants import NodeEnum, LayoutDirectionEnum, NodePropWidgetEnum
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.color import (
+from onnxgraphqt.utils.color import (
     COLOR_BG,
     COLOR_FONT,
     COLOR_GRID,
@@ -18,8 +16,8 @@ from utils.color import (
     NODE_BORDER_COLOR,
     get_node_color,
 )
-from utils.widgets import set_font, GRAPH_FONT_SIZE
-from widgets.custom_node_item import CustomNodeItem
+from onnxgraphqt.utils.widgets import set_font, GRAPH_FONT_SIZE
+from onnxgraphqt.widgets.custom_node_item import CustomNodeItem
 
 
 @dataclass

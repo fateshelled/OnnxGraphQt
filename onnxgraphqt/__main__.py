@@ -1,10 +1,9 @@
-
 import sys, os
 import signal
 import time
 from PySide2 import QtCore, QtWidgets, QtGui
-from main_window import MainWindow
-from widgets.splash_screen import create_screen
+from onnxgraphqt.main_window import MainWindow
+from onnxgraphqt.widgets.splash_screen import create_screen
 import multiprocessing
 
 

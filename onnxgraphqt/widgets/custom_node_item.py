@@ -3,10 +3,8 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from NodeGraphQt.constants import NodeEnum
 from NodeGraphQt.qgraphics.node_base import NodeItem
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.color import NODE_BG_COLOR, NODE_SELECTED_BORDER_COLOR
-from utils.widgets import set_font
+from onnxgraphqt.utils.color import NODE_BG_COLOR, NODE_SELECTED_BORDER_COLOR
+from onnxgraphqt.utils.widgets import set_font
 
 
 class CustomNodeItem(NodeItem):

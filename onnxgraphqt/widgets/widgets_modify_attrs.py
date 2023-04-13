@@ -9,11 +9,9 @@ from sam4onnx.onnx_attr_const_modify import (
     CONSTANT_DTYPES_TO_NUMPY_TYPES
 )
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from graph.onnx_node_graph import OnnxGraph
-from widgets.widgets_message_box import MessageBox
-from utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.graph.onnx_node_graph import OnnxGraph
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
+from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
 
 
 ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",

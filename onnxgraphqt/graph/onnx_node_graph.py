@@ -29,9 +29,8 @@ from NodeGraphQt.constants import (
     ViewerEnum
 )
 
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.color import (
+import os
+from onnxgraphqt.utils.color import (
     COLOR_BG,
     COLOR_FONT,
     COLOR_GRID,
@@ -41,19 +40,19 @@ from utils.color import (
     OUTPUT_NODE_COLOR,
     get_node_color,
 )
-from utils.dtype import (
+from onnxgraphqt.utils.dtype import (
     DTYPES_TO_NUMPY_TYPES,
     DTYPES_TO_ONNX_DTYPES,
 )
-from utils.style import set_context_menu_style
-from utils.widgets import pipe_paint
+from onnxgraphqt.utils.style import set_context_menu_style
+from onnxgraphqt.utils.widgets import pipe_paint
 from .onnx_node import (
     ONNXInput,
     ONNXOutput,
     ONNXNode,
     OnnxNodeIO
 )
-from autolayout.sugiyama_layout import sugiyama_layout
+from onnxgraphqt.autolayout.sugiyama_layout import sugiyama_layout
 
 
 NUMPY_TYPES_TO_ONNX_DTYPES = {
