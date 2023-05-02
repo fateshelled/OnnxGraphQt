@@ -35,6 +35,7 @@ python3 -m pip install -U Qt.py
 # python3 -m pip install -U onnxruntime
 # python3 -m pip install -U onnxruntime-gpu
 python3 -m pip install -U -r requirements.txt
+python3 -m pip install .
 ```
 
 ## Run with Docker
@@ -49,13 +50,11 @@ cd OnnxGraphQt
 
 ## Usage
 ```bash
-cd OnnxGraphQt
-
 # Open empty graph
-python3 onnxgraphqt
+onnxgraphqt
 
 # Open with onnx model
-python3 onnxgraphqt onnxgraphqt/data/mobilenetv2-7.onnx
+onnxgraphqt onnxgraphqt/data/mobilenetv2-7.onnx
 
 ```
 

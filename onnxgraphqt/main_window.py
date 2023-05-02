@@ -1,5 +1,6 @@
 import sys, os, io
 import time
+import signal
 
 from PySide2 import QtCore, QtWidgets, QtGui
 import onnx
@@ -24,6 +25,7 @@ from sio4onnx import io_change as onnx_tools_io_change
 
 from onnxgraphqt.widgets.widgets_menubar import MenuBarWidget, Menu, Separator, SubMenu
 from onnxgraphqt.widgets.widgets_message_box import MessageBox
+from onnxgraphqt.widgets.splash_screen import create_screen
 from onnxgraphqt.widgets.widgets_combine_network import CombineNetworkWidgets
 from onnxgraphqt.widgets.widgets_extract_network import ExtractNetworkWidgets
 from onnxgraphqt.widgets.widgets_add_node import AddNodeWidgets
@@ -1485,11 +1487,47 @@ class MainWindow(QtWidgets.QMainWindow):
         sys.exit(0)
 
 
-if __name__ == "__main__":
-    import signal
-    import os, time
-    from widgets.splash_screen import create_screen, create_screen_progressbar
+def main():
+    args = sys.argv
+    onnx_model_path = args[1] if len(args)>1 else ""
 
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    app = QtWidgets.QApplication([])
+
+    splash = create_screen()
+    splash.show()
+    time.sleep(0.05)
+    msg = ""
+    msg_align = QtCore.Qt.AlignBottom
+    msg_color = QtGui.QColor.fromRgb(255, 255, 255)
+    if onnx_model_path:
+        msg = f"loading [{os.path.basename(onnx_model_path)}]"
+    else:
+        msg = "loading..."
+    splash.showMessage(msg, alignment=msg_align, color=msg_color)
+    print(msg)
+    if not onnx_model_path:
+        time.sleep(1.0)
+
+    app.processEvents()
+
+    main_window = MainWindow(onnx_model_path=onnx_model_path)
+
+    msg = "load complete."
+    splash.showMessage(msg, alignment=msg_align, color=msg_color)
+    print(msg)
+    time.sleep(0.1)
+
+    app.processEvents()
+
+    splash.finish(main_window)
+    main_window.show()
+
+    app.exec_()
+
+
+if __name__ == "__main__":
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

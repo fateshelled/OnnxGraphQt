@@ -29,6 +29,9 @@ dependencies = [
   "networkx",
 ]
 
+[project.entry-points.console_scripts]
+onnxgraphqt = "onnxgraphqt:main"
+
 [tool.setuptools.packages.find]
 exclude = ["docker", "build", "tmp"]
 
