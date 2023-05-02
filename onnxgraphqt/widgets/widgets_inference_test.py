@@ -41,7 +41,7 @@ class InferenceProcess(QtCore.QThread):
 
     def run(self):
         self.btn_signal.emit(False)
-        cmd = f"sit4onnx "
+        cmd = f"python3 -m sit4onnx "  # fix for docker
         cmd += f" --input_onnx_file_path {self.onnx_file_path} "
         cmd += f" --batch_size {self.batch_size} "
         cmd += f" --test_loop_count {self.test_loop_count} "
