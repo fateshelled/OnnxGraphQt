@@ -35,6 +35,8 @@ python3 -m pip install -U Qt.py
 # python3 -m pip install -U onnxruntime
 # python3 -m pip install -U onnxruntime-gpu
 python3 -m pip install -U -r requirements.txt
+
+# Install OnnxGraphQt
 python3 -m pip install .
 ```
 
