@@ -172,7 +172,7 @@ class InferenceTestWidgets(QtWidgets.QDialog):
 if __name__ == "__main__":
     import signal
     import os
-    from utils.color import PrintColor
+    from onnxgraphqt.utils.color import PrintColor
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

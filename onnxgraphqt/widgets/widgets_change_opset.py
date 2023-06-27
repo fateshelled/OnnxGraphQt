@@ -2,9 +2,9 @@ from collections import namedtuple
 import signal
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from onnxgraphqt.widgets.widgets_message_box import MessageBox
 from onnxgraphqt.utils.opset import DEFAULT_OPSET
 from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
 
 
 ChangeOpsetProperties = namedtuple("ChangeOpsetProperties",

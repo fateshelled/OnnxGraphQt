@@ -5,8 +5,8 @@ import os
 from ast import literal_eval
 
 from onnxgraphqt.graph.onnx_node_graph import OnnxGraph
-from onnxgraphqt.widgets.widgets_message_box import MessageBox
 from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
 
 
 ChangeInputOutputShapeProperties = namedtuple("ChangeInputOutputShapeProperties",
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     import os
     import onnx
     import onnx_graphsurgeon as gs
-    from graph.onnx_node_graph import ONNXNodeGraph
+    from onnxgraphqt.graph.onnx_node_graph import ONNXNodeGraph
     # handle SIGINT to make the app terminate on CTRL+C
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 

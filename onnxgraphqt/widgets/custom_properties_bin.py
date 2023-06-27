@@ -1,7 +1,7 @@
 from PySide2 import QtWidgets, QtCore, QtGui
 from NodeGraphQt.custom_widgets.properties_bin.node_property_widgets import _PropertiesList
 
-from .custom_properties import CustomNodePropWidget
+from onnxgraphqt.widgets.custom_properties import CustomNodePropWidget
 
 
 class CustomPropertiesBinWidget(QtWidgets.QWidget):

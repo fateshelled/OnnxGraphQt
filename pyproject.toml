@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "OnnxGraphQt"
+name = "onnxgraphqt"
 version = "0.0.1"
 authors = [
   { name="fateshelled", email="53618876+fateshelled@users.noreply.github.com" },
 ]
 description = "ONNX model visualizer"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {text = "MIT LICENSE"}
 classifiers = [
     "Programming Language :: Python :: 3",
 ]

@@ -10,8 +10,8 @@ from sam4onnx.onnx_attr_const_modify import (
 )
 
 from onnxgraphqt.graph.onnx_node_graph import OnnxGraph
-from onnxgraphqt.widgets.widgets_message_box import MessageBox
 from onnxgraphqt.utils.widgets import set_font, BASE_FONT_SIZE, LARGE_FONT_SIZE
+from onnxgraphqt.widgets.widgets_message_box import MessageBox
 
 
 ModifyAttrsProperties = namedtuple("ModifyAttrsProperties",
