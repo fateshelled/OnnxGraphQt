@@ -52,7 +52,7 @@ from .onnx_node import (
     ONNXNode,
     OnnxNodeIO
 )
-from onnxgraphqt.autolayout.sugiyama_layout import sugiyama_layout
+from .autolayout.sugiyama_layout import sugiyama_layout
 
 
 NUMPY_TYPES_TO_ONNX_DTYPES = {
